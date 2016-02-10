@@ -1,0 +1,25 @@
+{
+  "name": "react-image-lightbox",
+  "version": "1.0.0",
+  "description": "Lightbox component for React.js",
+  "scripts": {},
+  "keywords": [
+    "react",
+    "react-component",
+    "image",
+    "lightbox"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/fritz-c/react-image-lightbox.git"
+  },
+  "author": "fritz-c",
+  "license": "MIT",
+  "dependencies": {
+    "react": "^0.14.7"
+  },
+  "devDependencies": {
+    "babel": "^6.5.1",
+    "gulp": "^3.9.1"
+  }
+}
