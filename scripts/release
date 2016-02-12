@@ -1,0 +1,4 @@
+#!/bin/bash
+
+scripts/build
+node_modules/.bin/release

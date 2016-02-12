@@ -33,6 +33,7 @@
     "react": "^0.14.0",
     "react-dom": "^0.14.0",
     "reactify": "^1.1.1",
+    "rf-release": "^0.4.0",
     "uglify-js": "^2.6.1",
     "webpack": "^1.12.13",
     "webpack-dev-server": "^1.14.1"
