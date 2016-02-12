@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>React-image-lightbox by fritz-c</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name">React-image-lightbox</h1>
+      <h2 class="project-tagline">Lightbox component for React.js</h2>
+      <a href="https://github.com/fritz-c/react-image-lightbox" class="btn">View on GitHub</a>
+      <a href="https://github.com/fritz-c/react-image-lightbox/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/fritz-c/react-image-lightbox/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
+
+    <section class="main-content">
+      <h1>
+<a id="react-image-lightbox" class="anchor" href="#react-image-lightbox" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>React Image Lightbox</h1>
+
+<p>A flexible lightbox component for displaying images in a React project.</p>
+
+<p>Features</p>
+
+<ul>
+<li>Few dependencies</li>
+<li>Keyboard shortcuts (with rate limiting)</li>
+<li>Image preloading for smoother viewing</li>
+<li>Flexible rendering using src values assigned on the fly</li>
+</ul>
+
+<h2>
+<a id="example" class="anchor" href="#example" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Example</h2>
+
+<div class="highlight highlight-source-js-jsx"><pre><span class="pl-k">var</span><span class="pl-smi"> React</span><span class="pl-k">    =</span> <span class="pl-en">require</span>(<span class="pl-s"><span class="pl-pds">'</span>react<span class="pl-pds">'</span></span>);
+<span class="pl-k">var</span><span class="pl-smi"> Lightbox</span><span class="pl-k"> =</span> <span class="pl-en">require</span>(<span class="pl-s"><span class="pl-pds">'</span>react-image-lightbox<span class="pl-pds">'</span></span>);
+
+<span class="pl-k">var</span><span class="pl-smi"> images</span><span class="pl-k"> =</span> [
+    <span class="pl-s"><span class="pl-pds">'</span>http://placekitten.com/1500/500<span class="pl-pds">'</span></span>,
+    <span class="pl-s"><span class="pl-pds">'</span>http://placekitten.com/4000/3000<span class="pl-pds">'</span></span>,
+    <span class="pl-s"><span class="pl-pds">'</span>http://placekitten.com/800/1200<span class="pl-pds">'</span></span>,
+    <span class="pl-s"><span class="pl-pds">'</span>http://placekitten.com/1500/1500<span class="pl-pds">'</span></span>
+];
+
+<span class="pl-c1"><span class="pl-k">module.<span class="pl-c1">exports</span></span></span><span class="pl-k"> =</span> <span class="pl-smi">React</span><span class="pl-k">.</span><span class="pl-en">createClass</span>({
+    <span class="pl-en">getInitialState</span>: <span class="pl-k">function</span>() {
+<span class="pl-k">        return</span> {
+<span class="pl-c1">            <span class="pl-s">index</span>:</span> <span class="pl-c1">0</span>,
+<span class="pl-c1">            <span class="pl-s">isOpen</span>:</span><span class="pl-c1"> false</span>
+        };
+    },
+    <span class="pl-en">openLightbox</span>: <span class="pl-k">function</span>() {
+<span class="pl-v">        this</span><span class="pl-k">.</span><span class="pl-en">setState</span>({<span class="pl-c1"> <span class="pl-s">isOpen</span>:</span><span class="pl-c1"> true</span> });
+    },
+    <span class="pl-en">closeLightbox</span>: <span class="pl-k">function</span>() {
+<span class="pl-v">        this</span><span class="pl-k">.</span><span class="pl-en">setState</span>({<span class="pl-c1"> <span class="pl-s">isOpen</span>:</span><span class="pl-c1"> false</span> });
+    },
+    <span class="pl-en">moveNext</span>: <span class="pl-k">function</span>() {
+<span class="pl-v">        this</span><span class="pl-k">.</span><span class="pl-en">setState</span>({<span class="pl-c1"> <span class="pl-s">index</span>:</span> (<span class="pl-v">this</span><span class="pl-k">.</span><span class="pl-smi">state</span><span class="pl-k">.</span><span class="pl-smi">index</span><span class="pl-k"> +</span> <span class="pl-c1">1</span>)<span class="pl-k"> %</span><span class="pl-smi"> images</span><span class="pl-k">.</span><span class="pl-smi">length</span> });
+    },
+    <span class="pl-en">movePrev</span>: <span class="pl-k">function</span>() {
+<span class="pl-v">        this</span><span class="pl-k">.</span><span class="pl-en">setState</span>({<span class="pl-c1"> <span class="pl-s">index</span>:</span> (<span class="pl-v">this</span><span class="pl-k">.</span><span class="pl-smi">state</span><span class="pl-k">.</span><span class="pl-smi">index</span><span class="pl-k"> +</span><span class="pl-smi"> images</span><span class="pl-k">.</span><span class="pl-smi">length</span><span class="pl-k"> -</span> <span class="pl-c1">1</span>)<span class="pl-k"> %</span><span class="pl-smi"> images</span><span class="pl-k">.</span><span class="pl-smi">length</span> });
+    },
+    <span class="pl-en">render</span>: <span class="pl-k">function</span>() {
+<span class="pl-k">        var</span><span class="pl-smi"> lightbox</span><span class="pl-k"> =</span> <span class="pl-s"><span class="pl-pds">'</span><span class="pl-pds">'</span></span>;
+<span class="pl-k">        if</span> (<span class="pl-v">this</span><span class="pl-k">.</span><span class="pl-smi">state</span><span class="pl-k">.</span><span class="pl-smi">isOpen</span>) {
+<span class="pl-smi">            lightbox</span><span class="pl-k"> =</span> (
+                &lt;<span class="pl-ent">Lightbox</span>
+                    <span class="pl-e">mainSrc</span><span class="pl-k">=</span><span class="pl-pse">{</span><span class="pl-s1"><span class="pl-smi">images</span>[<span class="pl-v">this</span><span class="pl-k">.</span><span class="pl-smi">state</span><span class="pl-k">.</span><span class="pl-smi">index</span>]</span><span class="pl-pse">}</span>
+                    <span class="pl-e">nextSrc</span><span class="pl-k">=</span><span class="pl-pse">{</span><span class="pl-s1"><span class="pl-smi">images</span>[(<span class="pl-v">this</span><span class="pl-k">.</span><span class="pl-smi">state</span><span class="pl-k">.</span><span class="pl-smi">index</span><span class="pl-k"> +</span> <span class="pl-c1">1</span>)<span class="pl-k"> %</span><span class="pl-smi"> images</span><span class="pl-k">.</span><span class="pl-smi">length</span>]</span><span class="pl-pse">}</span>
+                    <span class="pl-e">prevSrc</span><span class="pl-k">=</span><span class="pl-pse">{</span><span class="pl-s1"><span class="pl-smi">images</span>[(<span class="pl-v">this</span><span class="pl-k">.</span><span class="pl-smi">state</span><span class="pl-k">.</span><span class="pl-smi">index</span><span class="pl-k"> +</span><span class="pl-smi"> images</span><span class="pl-k">.</span><span class="pl-smi">length</span><span class="pl-k"> -</span> <span class="pl-c1">1</span>)<span class="pl-k"> %</span><span class="pl-smi"> images</span><span class="pl-k">.</span><span class="pl-smi">length</span>]</span><span class="pl-pse">}</span>
+
+                    <span class="pl-e">onCloseRequest</span><span class="pl-k">=</span><span class="pl-pse">{</span><span class="pl-s1"><span class="pl-v">this</span><span class="pl-k">.</span><span class="pl-smi">closeLightbox</span></span><span class="pl-pse">}</span>
+                    <span class="pl-e">onMovePrevRequest</span><span class="pl-k">=</span><span class="pl-pse">{</span><span class="pl-s1"><span class="pl-v">this</span><span class="pl-k">.</span><span class="pl-smi">movePrev</span></span><span class="pl-pse">}</span>
+                    <span class="pl-e">onMoveNextRequest</span><span class="pl-k">=</span><span class="pl-pse">{</span><span class="pl-s1"><span class="pl-v">this</span><span class="pl-k">.</span><span class="pl-smi">moveNext</span></span><span class="pl-pse">}</span>
+                /&gt;
+            );
+        }
+
+<span class="pl-k">        return</span> (
+            &lt;<span class="pl-ent">div</span>&gt;
+                &lt;<span class="pl-ent">button</span> <span class="pl-e">type</span><span class="pl-k">=</span><span class="pl-s"><span class="pl-pds">"</span>button<span class="pl-pds">"</span></span> <span class="pl-e">onClick</span><span class="pl-k">=</span><span class="pl-pse">{</span><span class="pl-s1"><span class="pl-v">this</span><span class="pl-k">.</span><span class="pl-smi">openLightbox</span></span><span class="pl-pse">}</span>&gt;Open Lightbox&lt;/<span class="pl-ent">button</span>&gt;
+                <span class="pl-pse">{</span><span class="pl-s1"><span class="pl-smi">lightbox</span></span><span class="pl-pse">}</span>
+            &lt;/<span class="pl-ent">div</span>&gt;
+        );
+    }
+});
+</pre></div>
+
+<h2>
+<a id="options" class="anchor" href="#options" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Options</h2>
+
+<table>
+<thead>
+<tr>
+<th align="left">Property</th>
+<th align="center">Type</th>
+<th align="center">Default</th>
+<th align="center">Required</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">mainSrc</td>
+<td align="center">string</td>
+<td align="center"></td>
+<td align="center">yes</td>
+<td align="left">Main display image url</td>
+</tr>
+<tr>
+<td align="left">prevSrc</td>
+<td align="center">string</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="left">Previous display image url (displayed to the left). If left undefined, movePrev actions will not be performed, and the button not displayed</td>
+</tr>
+<tr>
+<td align="left">nextSrc</td>
+<td align="center">string</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="left">Next display image url (displayed to the right). If left undefined, moveNext actions will not be performed, and the button not displayed</td>
+</tr>
+<tr>
+<td align="left">mainSrcThumbnail</td>
+<td align="center">string</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="left">Thumbnail image url corresponding to props.mainSrc</td>
+</tr>
+<tr>
+<td align="left">prevSrcThumbnail</td>
+<td align="center">string</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="left">Thumbnail image url corresponding to props.prevSrc</td>
+</tr>
+<tr>
+<td align="left">nextSrcThumbnail</td>
+<td align="center">string</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="left">Thumbnail image url corresponding to props.nextSrc</td>
+</tr>
+<tr>
+<td align="left">onCloseRequest</td>
+<td align="center">func</td>
+<td align="center"></td>
+<td align="center">yes</td>
+<td align="left">Close window event. Should change the parent state such that the lightbox is not rendered</td>
+</tr>
+<tr>
+<td align="left">onMovePrevRequest</td>
+<td align="center">func</td>
+<td align="center">empty function</td>
+<td align="center"></td>
+<td align="left">Move to previous image event. Should change the parent state such that props.prevSrc becomes props.mainSrc, props.mainSrc becomes props.nextSrc, etc.</td>
+</tr>
+<tr>
+<td align="left">onMoveNextRequest</td>
+<td align="center">func</td>
+<td align="center">empty function</td>
+<td align="center"></td>
+<td align="left">Move to next image event. Should change the parent state such that props.nextSrc becomes props.mainSrc, props.mainSrc becomes props.prevSrc, etc.</td>
+</tr>
+<tr>
+<td align="left">discourageDownloads</td>
+<td align="center">bool</td>
+<td align="center"><code>false</code></td>
+<td align="center"></td>
+<td align="left">Enable download discouragement (prevents [right-click -&gt; Save Image As...])</td>
+</tr>
+<tr>
+<td align="left">animationDisabled</td>
+<td align="center">bool</td>
+<td align="center"><code>false</code></td>
+<td align="center"></td>
+<td align="left">Disable all animation</td>
+</tr>
+<tr>
+<td align="left">animationOnKeyInput</td>
+<td align="center">bool</td>
+<td align="center"><code>false</code></td>
+<td align="center"></td>
+<td align="left">Disable animation on actions performed with keyboard shortcuts</td>
+</tr>
+<tr>
+<td align="left">animationDuration</td>
+<td align="center">number</td>
+<td align="center"><code>300</code></td>
+<td align="center"></td>
+<td align="left">Animation duration (ms)</td>
+</tr>
+<tr>
+<td align="left">keyRepeatLimit</td>
+<td align="center">number</td>
+<td align="center"><code>180</code></td>
+<td align="center"></td>
+<td align="left">Required interval of time (ms) between key actions (prevents excessively fast navigation of images)</td>
+</tr>
+<tr>
+<td align="left">keyRepeatKeyupBonus</td>
+<td align="center">number</td>
+<td align="center"><code>40</code></td>
+<td align="center"></td>
+<td align="left">Amount of time (ms) restored after each keyup (makes rapid key presses slightly faster than holding down the key to navigate images)</td>
+</tr>
+<tr>
+<td align="left">imageTitle</td>
+<td align="center">string</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="left">Image title</td>
+</tr>
+<tr>
+<td align="left">toolbarButtons</td>
+<td align="center">node[]</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="left">Array of custom toolbar buttons</td>
+</tr>
+<tr>
+<td align="left">imagePadding</td>
+<td align="center">number</td>
+<td align="center"><code>10</code></td>
+<td align="center"></td>
+<td align="left">Padding (px) between the edge of the window and the lightbox</td>
+</tr>
+</tbody>
+</table>
+
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/fritz-c/react-image-lightbox">React-image-lightbox</a> is maintained by <a href="https://github.com/fritz-c">fritz-c</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      </footer>
+
+    </section>
+
+  
+  </body>
+</html>
