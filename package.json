@@ -19,6 +19,9 @@
     "Chris Fritz"
   ],
   "license": "MIT",
+  "dependencies": {
+    "radium": "^0.16.6"
+  },
   "peerDependencies": {
     "react": "^0.14.0"
   },
@@ -27,7 +30,6 @@
     "browserify-shim": "^3.8.12",
     "envify": "3.4.0",
     "jsx-loader": "^0.13.2",
-    "radium": "^0.16.6",
     "react": "^0.14.0",
     "react-dom": "^0.14.0",
     "reactify": "^1.1.1",
@@ -43,6 +45,7 @@
   ],
   "browserify-shim": {
     "react": "global:React",
-    "react-dom": "global:ReactDOM"
+    "react-dom": "global:ReactDOM",
+    "radium": "global:Radium"
   }
 }

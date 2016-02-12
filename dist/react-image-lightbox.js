@@ -6,9 +6,11 @@
  */
 'use strict';
 
-var React = (typeof window !== "undefined" ? window['React'] : typeof global !== "undefined" ? global['React'] : null);
+var React  = (typeof window !== "undefined" ? window['React'] : typeof global !== "undefined" ? global['React'] : null);
+var radium = (typeof window !== "undefined" ? window['Radium'] : typeof global !== "undefined" ? global['Radium'] : null);
+var styles = require('../helpers/styles.js');
 
-module.exports = React.createClass({displayName: "exports",
+var ReactImageLightbox = React.createClass({displayName: "ReactImageLightbox",
     propTypes: {
         ///////////////////////////////
         // Image sources
@@ -419,23 +421,20 @@ module.exports = React.createClass({displayName: "exports",
 
     render: function() {
         // Transition settings for sliding animations
-        var transitionStyle = 'none';
+        var transitionStyle = {};
         if (!this.props.animationDisabled && this.isAnimating()) {
-            transitionStyle = [
-                'left '  + String(this.props.animationDuration) + 'ms',
-                'right ' + String(this.props.animationDuration) + 'ms',
-            ].join(', ');
+            transitionStyle = styles.imageAnimating(this.props.animationDuration);
         }
 
         // Images to be displayed
         var images = [];
-        var addImage = function(srcType, imageClass) {
+        var addImage = function(srcType, imageClass, baseStyle) {
             var imageSrc = this.props[srcType];
             if (!imageSrc) {
                 return;
             }
 
-            var imageStyle = { transition : transitionStyle };
+            var imageStyle = [styles.image, baseStyle, transitionStyle];
             var fitSizes = {};
 
             if (this.isImageLoaded(imageSrc)) {
@@ -457,18 +456,21 @@ module.exports = React.createClass({displayName: "exports",
                 return;
             }
 
-            imageStyle.width  = fitSizes.width;
-            imageStyle.height = fitSizes.height;
+            imageStyle.push({
+                width  : fitSizes.width,
+                height : fitSizes.height,
+            });
 
             if (this.props.discourageDownloads) {
-                imageStyle.backgroundImage = 'url(\'' + imageSrc + '\')';
+                imageStyle.push({ backgroundImage: 'url(\'' + imageSrc + '\')' });
+                imageStyle.push(styles.imageDiscourager);
                 images.push(
                     React.createElement("div", {
                         className: imageClass, 
                         style: imageStyle, 
                         key: imageSrc
                     }, 
-                        React.createElement("div", {className: "rlb-download-blocker"})
+                        React.createElement("div", {className: "download-blocker", style: [styles.image.downloadBlocker]})
                     )
                 );
             } else {
@@ -484,22 +486,27 @@ module.exports = React.createClass({displayName: "exports",
         }.bind(this);
 
         // Next Image (displayed on the right)
-        addImage('nextSrc', 'rlb-image-next');
+        addImage('nextSrc', 'image-next', styles.imageNext);
         // Main Image
-        addImage('mainSrc', 'rlb-image-current');
+        addImage('mainSrc', 'image-current', styles.imageCurrent);
         // Previous Image (displayed on the left)
-        addImage('prevSrc', 'rlb-image-prev');
+        addImage('prevSrc', 'image-prev', styles.imagePrev);
 
         var noop = function(){};
 
         return (
             React.createElement("div", {// Floating modal with closing animations
-                className: "rlb-outer" + (this.state.isClosing ? ' rlb-closing' : ''), 
-                style: { transition: 'opacity ' + String(this.props.animationDuration) + 'ms'}
+                className: "outer" + (this.state.isClosing ? ' closing' : ''), 
+                style: [
+                    styles.outer,
+                    styles.outer.animating(this.props.animationDuration),
+                    this.state.isClosing ? styles.outerClosing : {},
+                ]
             }, 
 
                 React.createElement("div", {// Image holder
-                    className: "rlb-inner"
+                    className: "inner", 
+                    style: [styles.inner]
                 }, 
                     images
                 ), 
@@ -507,7 +514,9 @@ module.exports = React.createClass({displayName: "exports",
                 !this.props.prevSrc ? '' :
                     React.createElement("button", {// Move to previous image button
                         type: "button", 
-                        className: "rlb-prev-button", 
+                        className: "prev-button", 
+                        key: "prev", 
+                        style: [styles.navButtons, styles.navButtonPrev], 
                         onClick: !this.isAnimating() ? this.requestMovePrev : noop}// Ignore clicks during animation
                     ), 
                 
@@ -515,40 +524,214 @@ module.exports = React.createClass({displayName: "exports",
                 !this.props.nextSrc ? '' :
                     React.createElement("button", {// Move to next image button
                         type: "button", 
-                        className: "rlb-next-button", 
+                        className: "next-button", 
+                        key: "next", 
+                        style: [styles.navButtons, styles.navButtonNext], 
                         onClick: !this.isAnimating() ? this.requestMoveNext : noop}// Ignore clicks during animation
                     ), 
                 
 
                 React.createElement("div", {// Lightbox toolbar
-                    className: "rlb-toolbar"
+                    className: "toolbar", 
+                    style: [styles.toolbar]
                 }, 
-                    React.createElement("ul", {className: "rlb-toolbar-left"}, 
-                        React.createElement("li", null, 
-                            this.props.imageTitle
+                    React.createElement("ul", {className: "toolbar-left", style: [styles.toolbarSide, styles.toolbarLeftSide]}, 
+                        React.createElement("li", {style: [styles.toolbarItem]}, 
+                            React.createElement("span", {style: [styles.toolbarItemChild]}, this.props.imageTitle)
                         )
                     ), 
-                    React.createElement("ul", {className: "rlb-toolbar-right"}, 
+
+                    React.createElement("ul", {className: "toolbar-right", style: [styles.toolbarSide, styles.toolbarRightSide]}, 
                         !this.props.toolbarButtons ? '' : this.props.toolbarButtons.map(function(button, i) {
-                            return (React.createElement("li", {key: i}, button));
+                            return (React.createElement("li", {key: i, style: [styles.toolbarItem]}, button));
                         }), 
 
-                        React.createElement("li", null, 
+                        React.createElement("li", {style: [styles.toolbarItem]}, 
                             React.createElement("button", {// Lightbox close button
                                 type: "button", 
-                                className: "rlb-close", 
+                                className: "close", 
+                                style: [styles.toolbarItemChild, styles.closeButton], 
                                 onClick: !this.isAnimating() ? this.requestClose : noop}// Ignore clicks during animation
                             )
                         )
                     )
+
                 )
             )
         );
     }
 });
 
-},{}],2:[function(require,module,exports){
+module.exports = radium(ReactImageLightbox);
+
+},{"../helpers/styles.js":2}],2:[function(require,module,exports){
+var toolbarHeight = '50px';
+var styles = {
+    outer: {
+        backgroundColor : 'rgba(0, 0, 0, 0.85)',
+        position        : 'fixed',
+        top             : 0,
+        left            : 0,
+        right           : 0,
+        bottom          : 0,
+        zIndex          : 1000,
+        width           : '100%',
+        height          : '100%',
+
+        animating: function(duration) {
+            return {
+                transition: 'opacity ' + String(duration) + 'ms',
+            };
+        },
+    },
+    outerClosing: {
+        opacity: 0,
+    },
+    inner: {
+        position : 'absolute',
+        top      : 0,
+        left     : 0,
+        right    : 0,
+        bottom   : 0,
+    },
+
+    image: {
+        position   : 'absolute',
+        top        : 0,
+        bottom     : 0,
+        margin     : 'auto',
+        maxWidth   : '100%',
+        maxHeight  : '100%',
+        transition : 'left 300ms, right 300ms',
+    },
+    imagePrev: {
+        left: '-100%',
+        right: '100%',
+    },
+    imageNext: {
+        left: '100%',
+        right: '-100%',
+    },
+    imageCurrent: {
+        left: 0,
+        right: 0,
+    },
+    imageDiscourager: {
+        backgroundRepeat   : 'no-repeat',
+        backgroundPosition : 'center',
+        backgroundSize     : 'contain',
+    },
+    imageAnimating: function(duration) {
+        return {
+            transition: [
+                'left '  + String(duration) + 'ms',
+                'right ' + String(duration) + 'ms',
+            ].join(', '),
+        };
+    },
+
+    navButtons: {
+        border   : 'none',
+        position : 'absolute',
+        top      : 0,
+        bottom   : 0,
+        width    : '20px',
+        height   : '34px',
+        padding  : '40px 40px',
+        margin   : 'auto',
+        cursor   : 'pointer',
+        opacity  : 0.7,
+
+        ':hover': {
+            opacity: 1,
+        },
+
+        ':active': {
+            opacity: 0.7,
+        },
+    },
+    navButtonPrev: {
+        left       : 0,
+        background : 'url(\'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZlcnNpb249IjEuMSIgd2lkdGg9IjIwIiBoZWlnaHQ9IjM0Ij48cGF0aCBkPSJtIDE5LDMgLTIsLTIgLTE2LDE2IDE2LDE2IDEsLTEgLTE1LC0xNSAxNSwtMTUgeiIgZmlsbD0iI0ZGRiIvPjwvc3ZnPg==\') no-repeat center',
+    },
+    navButtonNext: {
+        right      : 0,
+        background : 'url(\'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZlcnNpb249IjEuMSIgd2lkdGg9IjIwIiBoZWlnaHQ9IjM0Ij48cGF0aCBkPSJtIDEsMyAyLC0yIDE2LDE2IC0xNiwxNiAtMSwtMSAxNSwtMTUgLTE1LC0xNSB6IiBmaWxsPSIjRkZGIi8+PC9zdmc+\') no-repeat center',
+    },
+
+    downloadBlocker: {
+        position        : 'absolute',
+        top             : 0,
+        left            : 0,
+        right           : 0,
+        bottom          : 0,
+        backgroundImage : 'url(\'../img/please-use-download-button.gif\')',
+        backgroundSize  : 'cover',
+    },
+
+    toolbar: {
+        backgroundColor : 'rgba(0, 0, 0, 0.5)',
+        position        : 'absolute',
+        left            : 0,
+        top             : 0,
+        right           : 0,
+        height          : toolbarHeight,
+    },
+    toolbarSide: {
+        lineHeight : toolbarHeight,
+        position   : 'absolute',
+        top        : 0,
+        bottom     : 0,
+        margin     : 0,
+        maxWidth   : '48%',
+    },
+    toolbarLeftSide: {
+        paddingLeft  : '20px',
+        paddingRight : 0,
+        left         : 0,
+    },
+    toolbarRightSide: {
+        paddingLeft  : 0,
+        paddingRight : '20px',
+        right        : 0,
+    },
+    toolbarItem: {
+        display       : 'inline-block',
+        lineHeight    : toolbarHeight,
+        padding       : '0 6px',
+        color         : '#FFFFFF',
+        fontSize      : '120%',
+        maxWidth      : '100%',
+        overflow      : 'hidden',
+        textOverflow  : 'ellipsis',
+        whiteSpace    : 'nowrap',
+
+    },
+    toolbarItemChild: {
+        verticalAlign: 'middle',
+    },
+
+    closeButton: {
+        width      : '25px',
+        height     : '25px',
+        cursor     : 'pointer',
+        border     : 'none',
+        background : 'url(\'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZlcnNpb249IjEuMSIgd2lkdGg9IjIwIiBoZWlnaHQ9IjIwIj48cGF0aCBkPSJtIDEsMyAxLjI1LC0xLjI1IDcuNSw3LjUgNy41LC03LjUgMS4yNSwxLjI1IC03LjUsNy41IDcuNSw3LjUgLTEuMjUsMS4yNSAtNy41LC03LjUgLTcuNSw3LjUgLTEuMjUsLTEuMjUgNy41LC03LjUgLTcuNSwtNy41IHoiIGZpbGw9IiNGRkYiLz48L3N2Zz4=\') no-repeat center',
+
+        ':hover': {
+            opacity: 0.7,
+        },
+
+        ':active': {
+            outline: 'none',
+        },
+    },
+};
+
+module.exports = styles;
+
+},{}],3:[function(require,module,exports){
 module.exports = require('./components/react-image-lightbox.jsx');
 
-},{"./components/react-image-lightbox.jsx":1}]},{},[2])(2)
+},{"./components/react-image-lightbox.jsx":1}]},{},[3])(3)
 });
