@@ -1,8 +1,13 @@
 {
   "name": "react-image-lightbox",
   "version": "1.0.0",
-  "description": "Lightbox component for React.js",
-  "scripts": {},
+  "description": "A lightbox component for React.js",
+  "scripts": {
+    "start": "scripts/dev-examples"
+  },
+  "directories": {
+    "example": "examples"
+  },
   "main": "./lib/index",
   "repository": {
     "type": "git",
@@ -21,12 +26,14 @@
     "browserify": "^13.0.0",
     "browserify-shim": "^3.8.12",
     "envify": "3.4.0",
-    "jsx-loader": "0.13.2",
+    "jsx-loader": "^0.13.2",
     "radium": "^0.16.6",
     "react": "^0.14.0",
     "react-dom": "^0.14.0",
     "reactify": "^1.1.1",
-    "uglify-js": "^2.6.1"
+    "uglify-js": "^2.6.1",
+    "webpack": "^1.12.13",
+    "webpack-dev-server": "^1.14.1"
   },
   "keywords": [
     "react",
