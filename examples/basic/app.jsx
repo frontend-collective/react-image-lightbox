@@ -5,9 +5,10 @@ var Lightbox = require('../../lib/index');
 var appElement = document.getElementById('example');
 
 var images = [
-    'http://placekitten.com/300/400',
+    'http://placekitten.com/1500/500',
     'http://placekitten.com/4000/3000',
     'http://placekitten.com/800/1200',
+    // 'http://placekitten.com/300/400',
     'http://placekitten.com/1500/1500'
 ];
 
@@ -28,7 +29,7 @@ var App = React.createClass({
         this.setState({ index: (this.state.index + 1) % images.length });
     },
     movePrev: function() {
-        this.setState({ index: (this.state.index - 1) % images.length });
+        this.setState({ index: (this.state.index + images.length - 1) % images.length });
     },
     render: function() {
         var lightbox = '';

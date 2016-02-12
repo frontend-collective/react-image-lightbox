@@ -5,9 +5,11 @@
  */
 'use strict';
 
-var React = require('react');
+var React  = require('react');
+var radium = require('radium');
+var styles = require('../helpers/styles.js');
 
-module.exports = React.createClass({
+var ReactImageLightbox = React.createClass({
     propTypes: {
         ///////////////////////////////
         // Image sources
@@ -418,23 +420,20 @@ module.exports = React.createClass({
 
     render: function() {
         // Transition settings for sliding animations
-        var transitionStyle = 'none';
+        var transitionStyle = {};
         if (!this.props.animationDisabled && this.isAnimating()) {
-            transitionStyle = [
-                'left '  + String(this.props.animationDuration) + 'ms',
-                'right ' + String(this.props.animationDuration) + 'ms',
-            ].join(', ');
+            transitionStyle = styles.imageAnimating(this.props.animationDuration);
         }
 
         // Images to be displayed
         var images = [];
-        var addImage = function(srcType, imageClass) {
+        var addImage = function(srcType, imageClass, baseStyle) {
             var imageSrc = this.props[srcType];
             if (!imageSrc) {
                 return;
             }
 
-            var imageStyle = { transition : transitionStyle };
+            var imageStyle = [styles.image, baseStyle, transitionStyle];
             var fitSizes = {};
 
             if (this.isImageLoaded(imageSrc)) {
@@ -456,18 +455,21 @@ module.exports = React.createClass({
                 return;
             }
 
-            imageStyle.width  = fitSizes.width;
-            imageStyle.height = fitSizes.height;
+            imageStyle.push({
+                width  : fitSizes.width,
+                height : fitSizes.height,
+            });
 
             if (this.props.discourageDownloads) {
-                imageStyle.backgroundImage = 'url(\'' + imageSrc + '\')';
+                imageStyle.push({ backgroundImage: 'url(\'' + imageSrc + '\')' });
+                imageStyle.push(styles.imageDiscourager);
                 images.push(
                     <div
                         className={imageClass}
                         style={imageStyle}
                         key={imageSrc}
                     >
-                        <div className="rlb-download-blocker" />
+                        <div className="download-blocker" style={[styles.image.downloadBlocker]}/>
                     </div>
                 );
             } else {
@@ -483,22 +485,27 @@ module.exports = React.createClass({
         }.bind(this);
 
         // Next Image (displayed on the right)
-        addImage('nextSrc', 'rlb-image-next');
+        addImage('nextSrc', 'image-next', styles.imageNext);
         // Main Image
-        addImage('mainSrc', 'rlb-image-current');
+        addImage('mainSrc', 'image-current', styles.imageCurrent);
         // Previous Image (displayed on the left)
-        addImage('prevSrc', 'rlb-image-prev');
+        addImage('prevSrc', 'image-prev', styles.imagePrev);
 
         var noop = function(){};
 
         return (
             <div // Floating modal with closing animations
-                className={"rlb-outer" + (this.state.isClosing ? ' rlb-closing' : '')}
-                style={{ transition: 'opacity ' + String(this.props.animationDuration) + 'ms' }}
+                className={"outer" + (this.state.isClosing ? ' closing' : '')}
+                style={[
+                    styles.outer,
+                    styles.outer.animating(this.props.animationDuration),
+                    this.state.isClosing ? styles.outerClosing : {},
+                ]}
             >
 
                 <div // Image holder
-                    className="rlb-inner"
+                    className="inner"
+                    style={[styles.inner]}
                 >
                     {images}
                 </div>
@@ -506,7 +513,9 @@ module.exports = React.createClass({
                 {!this.props.prevSrc ? '' :
                     <button // Move to previous image button
                         type="button"
-                        className="rlb-prev-button"
+                        className="prev-button"
+                        key="prev"
+                        style={[styles.navButtons, styles.navButtonPrev]}
                         onClick={!this.isAnimating() ? this.requestMovePrev : noop} // Ignore clicks during animation
                     />
                 }
@@ -514,34 +523,42 @@ module.exports = React.createClass({
                 {!this.props.nextSrc ? '' :
                     <button // Move to next image button
                         type="button"
-                        className="rlb-next-button"
+                        className="next-button"
+                        key="next"
+                        style={[styles.navButtons, styles.navButtonNext]}
                         onClick={!this.isAnimating() ? this.requestMoveNext : noop} // Ignore clicks during animation
                     />
                 }
 
                 <div // Lightbox toolbar
-                    className="rlb-toolbar"
+                    className="toolbar"
+                    style={[styles.toolbar]}
                 >
-                    <ul className="rlb-toolbar-left">
-                        <li>
-                            {this.props.imageTitle}
+                    <ul className="toolbar-left" style={[styles.toolbarSide, styles.toolbarLeftSide]}>
+                        <li style={[styles.toolbarItem]}>
+                            <span style={[styles.toolbarItemChild]}>{this.props.imageTitle}</span>
                         </li>
                     </ul>
-                    <ul className="rlb-toolbar-right">
+
+                    <ul className="toolbar-right" style={[styles.toolbarSide, styles.toolbarRightSide]}>
                         {!this.props.toolbarButtons ? '' : this.props.toolbarButtons.map(function(button, i) {
-                            return (<li key={i}>{button}</li>);
+                            return (<li key={i} style={[styles.toolbarItem]}>{button}</li>);
                         })}
 
-                        <li>
+                        <li style={[styles.toolbarItem]}>
                             <button // Lightbox close button
                                 type="button"
-                                className="rlb-close"
+                                className="close"
+                                style={[styles.toolbarItemChild, styles.closeButton]}
                                 onClick={!this.isAnimating() ? this.requestClose : noop} // Ignore clicks during animation
                             />
                         </li>
                     </ul>
+
                 </div>
             </div>
         );
     }
 });
+
+module.exports = radium(ReactImageLightbox);

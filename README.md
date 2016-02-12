@@ -15,7 +15,7 @@ var React    = require('react');
 var Lightbox = require('react-image-lightbox');
 
 var images = [
-    'http://placekitten.com/300/400',
+    'http://placekitten.com/1500/500',
     'http://placekitten.com/4000/3000',
     'http://placekitten.com/800/1200',
     'http://placekitten.com/1500/1500'
@@ -38,7 +38,7 @@ module.exports = React.createClass({
         this.setState({ index: (this.state.index + 1) % images.length });
     },
     movePrev: function() {
-        this.setState({ index: (this.state.index - 1) % images.length });
+        this.setState({ index: (this.state.index + images.length - 1) % images.length });
     },
     render: function() {
         var lightbox = '';
