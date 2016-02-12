@@ -17,10 +17,10 @@ var React    = require('react');
 var Lightbox = require('react-image-lightbox');
 
 var images = [
-    'http://placekitten.com/1500/500',
-    'http://placekitten.com/4000/3000',
-    'http://placekitten.com/800/1200',
-    'http://placekitten.com/1500/1500'
+    '//placekitten.com/1500/500',
+    '//placekitten.com/4000/3000',
+    '//placekitten.com/800/1200',
+    '//placekitten.com/1500/1500'
 ];
 
 module.exports = React.createClass({

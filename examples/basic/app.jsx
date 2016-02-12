@@ -5,11 +5,11 @@ var Lightbox = require('../../lib/index');
 var appElement = document.getElementById('example');
 
 var images = [
-    'http://placekitten.com/1500/500',
-    'http://placekitten.com/4000/3000',
-    'http://placekitten.com/800/1200',
-    // 'http://placekitten.com/300/400',
-    'http://placekitten.com/1500/1500'
+    '//placekitten.com/1500/500',
+    '//placekitten.com/4000/3000',
+    '//placekitten.com/800/1200',
+    // '//placekitten.com/300/400',
+    '//placekitten.com/1500/1500'
 ];
 
 var App = React.createClass({
