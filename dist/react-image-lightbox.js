@@ -1,13 +1,14 @@
-/*!
+(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.ReactImageLightbox = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+/*
  * react-image-lightbox 1.0.0
  * Copyright 2016 Chris Fritz All rights reserved.
- * Open source under the MIT License
+ * @license Open source under the MIT License
  */
 'use strict';
 
-var React = require('react');
+var React = (typeof window !== "undefined" ? window['React'] : typeof global !== "undefined" ? global['React'] : null);
 
-module.exports = React.createClass({
+module.exports = React.createClass({displayName: "exports",
     propTypes: {
         ///////////////////////////////
         // Image sources
@@ -446,11 +447,11 @@ module.exports = React.createClass({
             } else {
                 // Fall back to loading icon if the thumbnail has not been loaded
                 images.push(
-                    <div
-                        className={imageClass + ' not-loaded'}
-                        style={imageStyle}
-                        key={imageSrc}
-                    />
+                    React.createElement("div", {
+                        className: imageClass + ' not-loaded', 
+                        style: imageStyle, 
+                        key: imageSrc}
+                    )
                 );
 
                 return;
@@ -462,22 +463,22 @@ module.exports = React.createClass({
             if (this.props.discourageDownloads) {
                 imageStyle.backgroundImage = 'url(\'' + imageSrc + '\')';
                 images.push(
-                    <div
-                        className={imageClass}
-                        style={imageStyle}
-                        key={imageSrc}
-                    >
-                        <div className="rlb-download-blocker" />
-                    </div>
+                    React.createElement("div", {
+                        className: imageClass, 
+                        style: imageStyle, 
+                        key: imageSrc
+                    }, 
+                        React.createElement("div", {className: "rlb-download-blocker"})
+                    )
                 );
             } else {
                 images.push(
-                    <img
-                        className={imageClass}
-                        style={imageStyle}
-                        src={imageSrc}
-                        key={imageSrc}
-                    />
+                    React.createElement("img", {
+                        className: imageClass, 
+                        style: imageStyle, 
+                        src: imageSrc, 
+                        key: imageSrc}
+                    )
                 );
             }
         }.bind(this);
@@ -492,56 +493,62 @@ module.exports = React.createClass({
         var noop = function(){};
 
         return (
-            <div // Floating modal with closing animations
-                className={"rlb-outer" + (this.state.isClosing ? ' rlb-closing' : '')}
-                style={{ transition: 'opacity ' + String(this.props.animationDuration) + 'ms' }}
-            >
+            React.createElement("div", {// Floating modal with closing animations
+                className: "rlb-outer" + (this.state.isClosing ? ' rlb-closing' : ''), 
+                style: { transition: 'opacity ' + String(this.props.animationDuration) + 'ms'}
+            }, 
 
-                <div // Image holder
-                    className="rlb-inner"
-                >
-                    {images}
-                </div>
+                React.createElement("div", {// Image holder
+                    className: "rlb-inner"
+                }, 
+                    images
+                ), 
 
-                {!this.props.prevSrc ? '' :
-                    <button // Move to previous image button
-                        type="button"
-                        className="rlb-prev-button"
-                        onClick={!this.isAnimating() ? this.requestMovePrev : noop} // Ignore clicks during animation
-                    />
-                }
+                !this.props.prevSrc ? '' :
+                    React.createElement("button", {// Move to previous image button
+                        type: "button", 
+                        className: "rlb-prev-button", 
+                        onClick: !this.isAnimating() ? this.requestMovePrev : noop}// Ignore clicks during animation
+                    ), 
+                
 
-                {!this.props.nextSrc ? '' :
-                    <button // Move to next image button
-                        type="button"
-                        className="rlb-next-button"
-                        onClick={!this.isAnimating() ? this.requestMoveNext : noop} // Ignore clicks during animation
-                    />
-                }
+                !this.props.nextSrc ? '' :
+                    React.createElement("button", {// Move to next image button
+                        type: "button", 
+                        className: "rlb-next-button", 
+                        onClick: !this.isAnimating() ? this.requestMoveNext : noop}// Ignore clicks during animation
+                    ), 
+                
 
-                <div // Lightbox toolbar
-                    className="rlb-toolbar"
-                >
-                    <ul className="rlb-toolbar-left">
-                        <li>
-                            {this.props.imageTitle}
-                        </li>
-                    </ul>
-                    <ul className="rlb-toolbar-right">
-                        {!this.props.toolbarButtons ? '' : this.props.toolbarButtons.map(function(button, i) {
-                            return (<li key={i}>{button}</li>);
-                        })}
+                React.createElement("div", {// Lightbox toolbar
+                    className: "rlb-toolbar"
+                }, 
+                    React.createElement("ul", {className: "rlb-toolbar-left"}, 
+                        React.createElement("li", null, 
+                            this.props.imageTitle
+                        )
+                    ), 
+                    React.createElement("ul", {className: "rlb-toolbar-right"}, 
+                        !this.props.toolbarButtons ? '' : this.props.toolbarButtons.map(function(button, i) {
+                            return (React.createElement("li", {key: i}, button));
+                        }), 
 
-                        <li>
-                            <button // Lightbox close button
-                                type="button"
-                                className="rlb-close"
-                                onClick={!this.isAnimating() ? this.requestClose : noop} // Ignore clicks during animation
-                            />
-                        </li>
-                    </ul>
-                </div>
-            </div>
+                        React.createElement("li", null, 
+                            React.createElement("button", {// Lightbox close button
+                                type: "button", 
+                                className: "rlb-close", 
+                                onClick: !this.isAnimating() ? this.requestClose : noop}// Ignore clicks during animation
+                            )
+                        )
+                    )
+                )
+            )
         );
     }
+});
+
+},{}],2:[function(require,module,exports){
+module.exports = require('./components/react-image-lightbox.jsx');
+
+},{"./components/react-image-lightbox.jsx":1}]},{},[2])(2)
 });

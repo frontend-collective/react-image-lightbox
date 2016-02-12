@@ -3,23 +3,39 @@
   "version": "1.0.0",
   "description": "Lightbox component for React.js",
   "scripts": {},
+  "main": "./lib/index",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/fritz-c/react-image-lightbox.git"
+  },
+  "homepage": "https://github.com/fritz-c/react-image-lightbox",
+  "bugs": "https://github.com/fritz-c/react-image-lightbox/issues",
+  "authors": [
+    "Chris Fritz"
+  ],
+  "license": "MIT",
+  "peerDependencies": {
+    "react": "^0.14.0"
+  },
+  "devDependencies": {
+    "browserify": "^13.0.0",
+    "browserify-shim": "^3.8.12",
+    "envify": "3.4.0",
+    "jsx-loader": "0.13.2",
+    "radium": "^0.16.6",
+    "react": "^0.14.0",
+    "react-dom": "^0.14.0",
+    "reactify": "^1.1.1",
+    "uglify-js": "^2.6.1"
+  },
   "keywords": [
     "react",
     "react-component",
     "image",
     "lightbox"
   ],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/fritz-c/react-image-lightbox.git"
-  },
-  "author": "fritz-c",
-  "license": "MIT",
-  "dependencies": {
-    "react": "^0.14.7"
-  },
-  "devDependencies": {
-    "babel": "^6.5.1",
-    "gulp": "^3.9.1"
+  "browserify-shim": {
+    "react": "global:React",
+    "react-dom": "global:ReactDOM"
   }
 }
