@@ -1,5 +1,7 @@
 # React Image Lightbox
 
+[![NPM](https://nodei.co/npm/react-image-lightbox.png)](https://npmjs.org/package/react-image-lightbox)
+
 A flexible lightbox component for displaying images in a React project.
 
 [DEMO](https://fritz-c.github.io/react-image-lightbox/)
