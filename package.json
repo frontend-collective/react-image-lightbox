@@ -8,7 +8,7 @@
   "directories": {
     "example": "examples"
   },
-  "main": "./lib/index",
+  "main": "./dist/react-image-lightbox",
   "repository": {
     "type": "git",
     "url": "https://github.com/fritz-c/react-image-lightbox.git"
