@@ -602,7 +602,6 @@ var styles = {
         margin     : 'auto',
         maxWidth   : '100%',
         maxHeight  : '100%',
-        transition : 'left 300ms, right 300ms',
     },
     imagePrev: {
         left: '-100%',
