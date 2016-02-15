@@ -1,4 +1,10 @@
 #!/bin/bash
 
-scripts/build
+# Run build scripts
+node_modules/.bin/gulp clean:lib
+node_modules/.bin/gulp build:lib
+node_modules/.bin/gulp clean:dist
+node_modules/.bin/gulp build:dist
+
+# Run release scripts
 node_modules/.bin/release

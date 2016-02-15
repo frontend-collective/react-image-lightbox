@@ -7,7 +7,7 @@
 
 var React  = require('react');
 var radium = require('radium');
-var styles = require('../helpers/styles.js');
+var styles = require('./styles');
 
 var ReactImageLightbox = React.createClass({
     propTypes: {

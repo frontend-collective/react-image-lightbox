@@ -1,8 +1,6 @@
 var React    = require('react');
 var ReactDOM = require('react-dom');
-var Lightbox = require('../../lib/index');
-
-var appElement = document.getElementById('example');
+var Lightbox = require('react-image-lightbox');
 
 var images = [
     '//placekitten.com/1500/500',
@@ -56,4 +54,4 @@ var App = React.createClass({
     }
 });
 
-ReactDOM.render(<App/>, appElement);
+ReactDOM.render(<App/>, document.getElementById('app'));

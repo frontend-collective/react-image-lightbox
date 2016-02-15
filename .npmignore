@@ -1,1 +1,2 @@
-*.jsx
+bower.json
+examples/dist
