@@ -97,7 +97,7 @@ var styles = {
         left            : 0,
         right           : 0,
         bottom          : 0,
-        backgroundImage : 'url(\'../img/please-use-download-button.gif\')',
+        backgroundImage : 'url(\'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7\')',
         backgroundSize  : 'cover',
     },
 

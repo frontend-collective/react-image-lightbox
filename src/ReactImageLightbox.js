@@ -469,7 +469,7 @@ var ReactImageLightbox = React.createClass({
                         style={imageStyle}
                         key={imageSrc}
                     >
-                        <div className="download-blocker" style={[styles.image.downloadBlocker]}/>
+                        <div className="download-blocker" style={[styles.downloadBlocker]}/>
                     </div>
                 );
             } else {
