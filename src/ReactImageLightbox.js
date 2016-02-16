@@ -155,6 +155,12 @@ var ReactImageLightbox = React.createClass({
 
         // Time the last keydown event was called (used in keyboard action rate limiting)
         this.lastKeyDownTime = 0;
+
+        // Used to differentiate between images with identical src
+        this.keyCounter = 0;
+
+        // Used to detect a move when all src's remain unchanged (four or more of the same image in a row)
+        this.moveRequested = false;
     },
 
     componentDidMount: function() {
@@ -170,10 +176,12 @@ var ReactImageLightbox = React.createClass({
 
     componentWillReceiveProps: function(nextProps) {
         var sourcesChanged = this.getSrcTypes().some(function(srcType) {
-            return this.props[srcType] != nextProps[srcType];
+            return this.props[srcType.name] != nextProps[srcType.name];
         }.bind(this));
 
-        if (sourcesChanged) {
+        if (sourcesChanged || this.moveRequested) {
+            this.moveRequested = false;
+
             // Enable animated states
             if (!this.props.animationDisabled && (!this.keyPressed || this.props.animationOnKeyInput)) {
                 var movedToPrev = this.props.mainSrc == nextProps.nextSrc;
@@ -237,7 +245,7 @@ var ReactImageLightbox = React.createClass({
             case key.esc:
                 event.preventDefault();
                 if (this.props.animationDisabled || !this.props.animationOnKeyInput) {
-                    this.props.onCloseRequest(event); // immediate
+                    this.requestClose(event, true); // immediate
                 } else {
                     this.requestClose(event); // animated
                 }
@@ -251,7 +259,7 @@ var ReactImageLightbox = React.createClass({
 
                 event.preventDefault();
                 this.keyPressed = true;
-                this.props.onMovePrevRequest(event);
+                this.requestMovePrev(event);
                 break;
 
             // Right arrow key moves to next image
@@ -262,7 +270,7 @@ var ReactImageLightbox = React.createClass({
 
                 event.preventDefault();
                 this.keyPressed = true;
-                this.props.onMoveNextRequest(event);
+                this.requestMoveNext(event);
                 break;
 
             default:
@@ -270,7 +278,11 @@ var ReactImageLightbox = React.createClass({
     },
 
     // Request that the lightbox be closed
-    requestClose: function(event) {
+    requestClose: function(event, isImmediate) {
+        if (isImmediate) {
+            return this.props.onCloseRequest(event);
+        }
+
         var closeLightbox = function() {
             // Call the parent close request
             this.props.onCloseRequest(event);
@@ -289,11 +301,15 @@ var ReactImageLightbox = React.createClass({
 
     // Request to transition to the previous image
     requestMovePrev: function(event) {
+        this.keyCounter--;
+        this.moveRequested = true;
         this.props.onMovePrevRequest(event);
     },
 
     // Request to transition to the next image
     requestMoveNext: function(event) {
+        this.keyCounter++;
+        this.moveRequested = true;
         this.props.onMoveNextRequest(event);
     },
 
@@ -318,12 +334,30 @@ var ReactImageLightbox = React.createClass({
     // Get image src types
     getSrcTypes: function() {
         return [
-            'mainSrc',
-            'mainSrcThumbnail',
-            'nextSrc',
-            'nextSrcThumbnail',
-            'prevSrc',
-            'prevSrcThumbnail',
+            {
+                name      : 'mainSrc',
+                keyEnding : 'i' + this.keyCounter,
+            },
+            {
+                name      : 'mainSrcThumbnail',
+                keyEnding : 't' + this.keyCounter,
+            },
+            {
+                name      : 'nextSrc',
+                keyEnding : 'i' + (this.keyCounter + 1),
+            },
+            {
+                name      : 'nextSrcThumbnail',
+                keyEnding : 't' + (this.keyCounter + 1),
+            },
+            {
+                name      : 'prevSrc',
+                keyEnding : 'i' + (this.keyCounter - 1),
+            },
+            {
+                name      : 'prevSrcThumbnail',
+                keyEnding : 't' + (this.keyCounter - 1),
+            },
         ];
     },
 
@@ -409,9 +443,11 @@ var ReactImageLightbox = React.createClass({
 
         // Load the images
         this.getSrcTypes().forEach(function(srcType) {
+            var type = srcType.name;
+
             // Load unloaded images
-            if (props[srcType] && !this.isImageLoaded(props[srcType])) {
-                this.loadImage(props[srcType], generateImageLoadedCallback(srcType, props[srcType]));
+            if (props[type] && !this.isImageLoaded(props[type])) {
+                this.loadImage(props[type], generateImageLoadedCallback(type, props[type]));
             }
         }.bind(this));
     },
@@ -427,6 +463,12 @@ var ReactImageLightbox = React.createClass({
         if (!this.props.animationDisabled && this.isAnimating()) {
             transitionStyle = styles.imageAnimating(this.props.animationDuration);
         }
+
+        // Key endings to differentiate between images with the same src
+        var keyEndings = {};
+        this.getSrcTypes().forEach(function(srcType) {
+            keyEndings[srcType.name] = srcType.keyEnding;
+        });
 
         // Images to be displayed
         var images = [];
@@ -451,7 +493,7 @@ var ReactImageLightbox = React.createClass({
                     <div
                         className={imageClass + ' not-loaded'}
                         style={imageStyle}
-                        key={imageSrc}
+                        key={imageSrc + keyEndings[srcType]}
                     />
                 );
 
@@ -470,7 +512,7 @@ var ReactImageLightbox = React.createClass({
                     <div
                         className={imageClass}
                         style={imageStyle}
-                        key={imageSrc}
+                        key={imageSrc + keyEndings[srcType]}
                     >
                         <div className="download-blocker" style={[styles.downloadBlocker]}/>
                     </div>
@@ -481,7 +523,7 @@ var ReactImageLightbox = React.createClass({
                         className={imageClass}
                         style={imageStyle}
                         src={imageSrc}
-                        key={imageSrc}
+                        key={imageSrc + keyEndings[srcType]}
                     />
                 );
             }
