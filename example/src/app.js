@@ -3,13 +3,47 @@ var ReactDOM = require('react-dom');
 var Lightbox = require('react-image-lightbox');
 
 var images = [
-    '//placekitten.com/1500/500',
-    '//placekitten.com/4000/3000',
-    '//placekitten.com/800/1200',
+    '//placekitten.com/1500/500?image=3',
+    '//placekitten.com/2000/1500?image=8',
+    '//placekitten.com/800/1200?image=5',
     // '//placekitten.com/300/400',
-    '//placekitten.com/1500/1500'
+    '//placekitten.com/1500/1500?image=13',
 ];
 
+var titles = [
+    "<b>heyhey</b>",
+    (
+        <span>
+            by&nbsp;
+            <a href="http://flickr.com/photos/titrans/">
+                quatre mains
+            </a>
+            &nbsp;(<a href="http://creativecommons.org/licenses/by/2.0/" title="Attribution License">
+                Some rights reserved
+            </a>)
+        </span>
+    ),
+    (
+        <span>
+            by&nbsp;
+            <a href="http://flickr.com/photos/lachlanrogers/">latch.r</a>
+            &nbsp;(<a href="http://creativecommons.org/licenses/by-sa/2.0/" title="Attribution-ShareAlike License">
+                Some rights reserved
+            </a>)
+        </span>
+    ),
+    (
+        <span>
+            by&nbsp;
+            <a href="http://flickr.com/photos/fazen/">
+                fazen
+            </a>
+            &nbsp;(<a href="http://creativecommons.org/licenses/by/2.0/" title="Attribution License">
+                Some rights reserved
+            </a>)
+        </span>
+    ),
+];
 var App = React.createClass({
     getInitialState: function() {
         return {
@@ -41,6 +75,8 @@ var App = React.createClass({
                     onCloseRequest={this.closeLightbox}
                     onMovePrevRequest={this.movePrev}
                     onMoveNextRequest={this.moveNext}
+
+                    imageTitle={titles[this.state.index]}
                 />
             );
         }
