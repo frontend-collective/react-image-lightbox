@@ -362,11 +362,16 @@ var ReactImageLightbox = React.createClass({
     },
 
     // Get sizing for when an image is larger than the window
-    getFitSizes: function(width, height) {
+    getFitSizes: function(width, height, stretch) {
         var windowHeight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
         var windowWidth  = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
-        var maxHeight    = Math.min(windowHeight - (this.props.imagePadding * 2), height);
-        var maxWidth     = Math.min(windowWidth - (this.props.imagePadding * 2), width);
+        var maxHeight    = windowHeight - (this.props.imagePadding * 2);
+        var maxWidth     = windowWidth - (this.props.imagePadding * 2);
+
+        if (!stretch) {
+            maxHeight = Math.min(maxHeight, height);
+            maxWidth  = Math.min(maxWidth, width);
+        }
 
         var maxRatio = maxWidth / maxHeight;
         var srcRatio = width / height;
@@ -486,7 +491,7 @@ var ReactImageLightbox = React.createClass({
             } else if (this.isImageLoaded(this.props[srcType + 'Thumbnail'])) {
                 // Fall back to using thumbnail if the image has not been loaded
                 imageSrc = this.props[srcType + 'Thumbnail'];
-                fitSizes = this.getFitSizes(this.imageCache[imageSrc].width, this.imageCache[imageSrc].height);
+                fitSizes = this.getFitSizes(this.imageCache[imageSrc].width, this.imageCache[imageSrc].height, true);
             } else {
                 // Fall back to loading icon if the thumbnail has not been loaded
                 images.push(
