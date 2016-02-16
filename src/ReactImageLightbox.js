@@ -94,7 +94,7 @@ var ReactImageLightbox = React.createClass({
         ///////////////////////////////
 
         // Image title
-        imageTitle: React.PropTypes.string,
+        imageTitle: React.PropTypes.node,
 
         ///////////////////////////////
         // Other
