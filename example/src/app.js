@@ -10,6 +10,13 @@ var images = [
     '//placekitten.com/1500/1500?image=13',
 ];
 
+var thumbs = [
+    '//placekitten.com/100/100?image=3',
+    '//placekitten.com/100/100?image=8',
+    '//placekitten.com/100/100?image=5',
+    '//placekitten.com/100/100?image=13',
+];
+
 var titles = [
     "",
     (
@@ -71,6 +78,10 @@ var App = React.createClass({
                     mainSrc={images[this.state.index]}
                     nextSrc={images[(this.state.index + 1) % images.length]}
                     prevSrc={images[(this.state.index + images.length - 1) % images.length]}
+
+                    mainSrcThumbnail={thumbs[this.state.index]}
+                    nextSrcThumbnail={thumbs[(this.state.index + 1) % images.length]}
+                    prevSrcThumbnail={thumbs[(this.state.index + images.length - 1) % images.length]}
 
                     onCloseRequest={this.closeLightbox}
                     onMovePrevRequest={this.movePrev}
