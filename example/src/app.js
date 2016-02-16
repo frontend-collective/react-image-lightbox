@@ -11,7 +11,7 @@ var images = [
 ];
 
 var titles = [
-    "<b>heyhey</b>",
+    "",
     (
         <span>
             by&nbsp;
