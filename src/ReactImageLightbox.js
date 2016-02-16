@@ -391,6 +391,9 @@ var ReactImageLightbox = React.createClass({
             return function(err) {
                 // Give up showing image on error
                 if (err) {
+                    if (window.console) {
+                        window.console.warn(err);
+                    }
                     return;
                 }
 
