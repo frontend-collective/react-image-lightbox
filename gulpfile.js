@@ -18,12 +18,13 @@ var taskConfig = {
             'index.html',
             'standalone.html',
             'svg/*',
+            'images/*',
         ],
         scripts: [
             'app.js',
         ],
         less: [
-            'app.less',
+            'stylesheets/app.less',
         ]
     }
 };

@@ -3,18 +3,17 @@ var ReactDOM = require('react-dom');
 var Lightbox = require('react-image-lightbox');
 
 var images = [
-    '//placekitten.com/1500/500?image=3',
-    '//placekitten.com/2000/1500?image=8',
-    '//placekitten.com/800/1200?image=5',
-    // '//placekitten.com/300/400',
-    '//placekitten.com/1500/1500?image=13',
+    '/images/1.jpg',
+    '/images/2.jpg',
+    '/images/3.jpg',
+    '/images/4.jpg',
 ];
 
 var thumbs = [
-    '//placekitten.com/100/100?image=3',
-    '//placekitten.com/100/100?image=8',
-    '//placekitten.com/100/100?image=5',
-    '//placekitten.com/100/100?image=13',
+    '/images/1_thumb.jpg',
+    '/images/2_thumb.jpg',
+    '/images/3_thumb.jpg',
+    '/images/4_thumb.jpg',
 ];
 
 var titles = [
@@ -94,7 +93,14 @@ var App = React.createClass({
 
         return (
             <div>
-                <button type="button" onClick={this.openLightbox}>Open Lightbox</button>
+                <button
+                    type="button"
+                    id="open-lightbox"
+                    className="demo-button"
+                    onClick={this.openLightbox}
+                >
+                    Open Lightbox
+                </button>
                 {lightbox}
             </div>
         );

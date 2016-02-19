@@ -1,0 +1,22 @@
+@import (inline, css) "./vendor/normalize.css";
+@import (inline, css) "./vendor/stylesheet.css";
+@import (inline, css) "./vendor/github-light.css";
+
+
+.demo-button {
+    border-radius: 5px;
+    background-color: #303030;
+    border: none;
+    color: #FFFFFF;
+    outline: none;
+    padding: 8px 15px;
+
+    &:active {
+        background-color: #000000;
+        text-shadow: 0 0 6px #FFFFFF, 0 0 6px #FFFFFF, 0 0 6px #FFFFFF;
+    }
+
+    &:focus {
+        box-shadow: 0 0 3px 2px #999999;
+    }
+}
