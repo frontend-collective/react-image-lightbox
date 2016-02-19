@@ -17,6 +17,7 @@ var taskConfig = {
         files: [
             'index.html',
             'standalone.html',
+            'svg/*',
         ],
         scripts: [
             'app.js',

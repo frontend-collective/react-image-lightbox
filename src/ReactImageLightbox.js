@@ -596,10 +596,31 @@ var ReactImageLightbox = React.createClass({
                         })}
 
                         <li style={[styles.toolbarItem]}>
+                            <button // Lightbox zoom in button
+                                type="button"
+                                key="zoom-in"
+                                className="zoom-in"
+                                style={[styles.toolbarItemChild, styles.builtinButton, styles.zoomInButton]}
+                                onClick={!this.isAnimating() ? this.zoomIn : noop} // Ignore clicks during animation
+                            />
+                        </li>
+
+                        <li style={[styles.toolbarItem]}>
+                            <button // Lightbox zoom out button
+                                type="button"
+                                key="zoom-out"
+                                className="zoom-out"
+                                style={[styles.toolbarItemChild, styles.builtinButton, styles.zoomOutButton]}
+                                onClick={!this.isAnimating() ? this.zoomOut : noop} // Ignore clicks during animation
+                            />
+                        </li>
+
+                        <li style={[styles.toolbarItem]}>
                             <button // Lightbox close button
                                 type="button"
+                                key="close"
                                 className="close"
-                                style={[styles.toolbarItemChild, styles.closeButton]}
+                                style={[styles.toolbarItemChild, styles.builtinButton, styles.closeButton]}
                                 onClick={!this.isAnimating() ? this.requestClose : noop} // Ignore clicks during animation
                             />
                         </li>
