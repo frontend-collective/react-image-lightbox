@@ -5,9 +5,9 @@
  */
 'use strict';
 
-var React  = require('react');
-var radium = require('radium');
-var styles = require('./styles');
+var React    = require('react');
+var Radium   = require('radium');
+var Styles   = require('./Styles');
 
 var ReactImageLightbox = React.createClass({
     propTypes: {
@@ -466,7 +466,7 @@ var ReactImageLightbox = React.createClass({
         // Transition settings for sliding animations
         var transitionStyle = {};
         if (!this.props.animationDisabled && this.isAnimating()) {
-            transitionStyle = styles.imageAnimating(this.props.animationDuration);
+            transitionStyle = Styles.imageAnimating(this.props.animationDuration);
         }
 
         // Key endings to differentiate between images with the same src
@@ -483,7 +483,7 @@ var ReactImageLightbox = React.createClass({
                 return;
             }
 
-            var imageStyle = [styles.image, baseStyle, transitionStyle];
+            var imageStyle = [Styles.image, baseStyle, transitionStyle];
             var fitSizes = {};
 
             if (this.isImageLoaded(imageSrc)) {
@@ -512,14 +512,14 @@ var ReactImageLightbox = React.createClass({
 
             if (this.props.discourageDownloads) {
                 imageStyle.push({ backgroundImage: 'url(\'' + imageSrc + '\')' });
-                imageStyle.push(styles.imageDiscourager);
+                imageStyle.push(Styles.imageDiscourager);
                 images.push(
                     <div
                         className={imageClass}
                         style={imageStyle}
                         key={imageSrc + keyEndings[srcType]}
                     >
-                        <div className="download-blocker" style={[styles.downloadBlocker]}/>
+                        <div className="download-blocker" style={[Styles.downloadBlocker]}/>
                     </div>
                 );
             } else {
@@ -535,11 +535,11 @@ var ReactImageLightbox = React.createClass({
         }.bind(this);
 
         // Next Image (displayed on the right)
-        addImage('nextSrc', 'image-next', styles.imageNext);
+        addImage('nextSrc', 'image-next', Styles.imageNext);
         // Main Image
-        addImage('mainSrc', 'image-current', styles.imageCurrent);
+        addImage('mainSrc', 'image-current', Styles.imageCurrent);
         // Previous Image (displayed on the left)
-        addImage('prevSrc', 'image-prev', styles.imagePrev);
+        addImage('prevSrc', 'image-prev', Styles.imagePrev);
 
         var noop = function(){};
 
@@ -547,15 +547,15 @@ var ReactImageLightbox = React.createClass({
             <div // Floating modal with closing animations
                 className={"outer" + (this.state.isClosing ? ' closing' : '')}
                 style={[
-                    styles.outer,
-                    styles.outer.animating(this.props.animationDuration),
-                    this.state.isClosing ? styles.outerClosing : {},
+                    Styles.outer,
+                    Styles.outer.animating(this.props.animationDuration),
+                    this.state.isClosing ? Styles.outerClosing : {},
                 ]}
             >
 
                 <div // Image holder
                     className="inner"
-                    style={[styles.inner]}
+                    style={[Styles.inner]}
                 >
                     {images}
                 </div>
@@ -565,7 +565,7 @@ var ReactImageLightbox = React.createClass({
                         type="button"
                         className="prev-button"
                         key="prev"
-                        style={[styles.navButtons, styles.navButtonPrev]}
+                        style={[Styles.navButtons, Styles.navButtonPrev]}
                         onClick={!this.isAnimating() ? this.requestMovePrev : noop} // Ignore clicks during animation
                     />
                 }
@@ -575,52 +575,52 @@ var ReactImageLightbox = React.createClass({
                         type="button"
                         className="next-button"
                         key="next"
-                        style={[styles.navButtons, styles.navButtonNext]}
+                        style={[Styles.navButtons, Styles.navButtonNext]}
                         onClick={!this.isAnimating() ? this.requestMoveNext : noop} // Ignore clicks during animation
                     />
                 }
 
                 <div // Lightbox toolbar
                     className="toolbar"
-                    style={[styles.toolbar]}
+                    style={[Styles.toolbar]}
                 >
-                    <ul className="toolbar-left" style={[styles.toolbarSide, styles.toolbarLeftSide]}>
-                        <li style={[styles.toolbarItem]}>
-                            <span style={[styles.toolbarItemChild]}>{this.props.imageTitle}</span>
+                    <ul className="toolbar-left" style={[Styles.toolbarSide, Styles.toolbarLeftSide]}>
+                        <li style={[Styles.toolbarItem]}>
+                            <span style={[Styles.toolbarItemChild]}>{this.props.imageTitle}</span>
                         </li>
                     </ul>
 
-                    <ul className="toolbar-right" style={[styles.toolbarSide, styles.toolbarRightSide]}>
+                    <ul className="toolbar-right" style={[Styles.toolbarSide, Styles.toolbarRightSide]}>
                         {!this.props.toolbarButtons ? '' : this.props.toolbarButtons.map(function(button, i) {
-                            return (<li key={i} style={[styles.toolbarItem]}>{button}</li>);
+                            return (<li key={i} style={[Styles.toolbarItem]}>{button}</li>);
                         })}
 
-                        <li style={[styles.toolbarItem]}>
+                        <li style={[Styles.toolbarItem]}>
                             <button // Lightbox zoom in button
                                 type="button"
                                 key="zoom-in"
                                 className="zoom-in"
-                                style={[styles.toolbarItemChild, styles.builtinButton, styles.zoomInButton]}
+                                style={[Styles.toolbarItemChild, Styles.builtinButton, Styles.zoomInButton]}
                                 onClick={!this.isAnimating() ? this.zoomIn : noop} // Ignore clicks during animation
                             />
                         </li>
 
-                        <li style={[styles.toolbarItem]}>
+                        <li style={[Styles.toolbarItem]}>
                             <button // Lightbox zoom out button
                                 type="button"
                                 key="zoom-out"
                                 className="zoom-out"
-                                style={[styles.toolbarItemChild, styles.builtinButton, styles.zoomOutButton]}
+                                style={[Styles.toolbarItemChild, Styles.builtinButton, Styles.zoomOutButton]}
                                 onClick={!this.isAnimating() ? this.zoomOut : noop} // Ignore clicks during animation
                             />
                         </li>
 
-                        <li style={[styles.toolbarItem]}>
+                        <li style={[Styles.toolbarItem]}>
                             <button // Lightbox close button
                                 type="button"
                                 key="close"
                                 className="close"
-                                style={[styles.toolbarItemChild, styles.builtinButton, styles.closeButton]}
+                                style={[Styles.toolbarItemChild, Styles.builtinButton, Styles.closeButton]}
                                 onClick={!this.isAnimating() ? this.requestClose : noop} // Ignore clicks during animation
                             />
                         </li>
@@ -632,4 +632,4 @@ var ReactImageLightbox = React.createClass({
     }
 });
 
-module.exports = radium(ReactImageLightbox);
+module.exports = Radium.call(this, ReactImageLightbox);
