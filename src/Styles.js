@@ -1,6 +1,13 @@
 'use strict';
 
+var Radium = require('radium');
 var toolbarHeight = '50px';
+
+var closeWindowKeyframes = Radium.keyframes({
+    '0%': {opacity: '1'},
+    '100%': {opacity: '0'},
+}, 'closeWindow');
+
 var styles = {
     outer: {
         backgroundColor : 'rgba(0, 0, 0, 0.85)',
@@ -12,11 +19,13 @@ var styles = {
         zIndex          : 1000,
         width           : '100%',
         height          : '100%',
-
     },
-    outerAnimating: function(duration) {
+    outerAnimating: function(duration, isClosing) {
         return {
-            transition: 'opacity ' + String(duration) + 'ms',
+            transition         : 'opacity ' + String(duration) + 'ms',
+            animationDuration  : String(duration) + 'ms',
+            animationDirection : isClosing ? 'normal' : 'reverse',
+            animationName      : closeWindowKeyframes,
         };
     },
     outerClosing: {
