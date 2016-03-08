@@ -282,6 +282,11 @@ var ReactImageLightbox = React.createClass({
         }
     },
 
+    // Handle the window resize event
+    handleWindowResize: function(event) {
+        this.forceUpdate();
+    },
+
     // Zoom in on the main image
     zoomIn: function(event) {
         this.setState({ zoomLevel: Math.min(this.state.zoomLevel + 1, Constant.MAX_ZOOM_LEVEL) });
@@ -334,6 +339,7 @@ var ReactImageLightbox = React.createClass({
         if (!this.listenersAttached) {
             document.addEventListener('keydown', this.handleKeyInput);
             document.addEventListener('keyup', this.handleKeyInput);
+            window.addEventListener('resize', this.handleWindowResize);
             this.listenersAttached = true;
         }
     },
@@ -343,6 +349,7 @@ var ReactImageLightbox = React.createClass({
         if (this.listenersAttached) {
             document.removeEventListener('keydown', this.handleKeyInput);
             document.removeEventListener('keyup', this.handleKeyInput);
+            window.removeEventListener('resize', this.handleWindowResize);
             this.listenersAttached = false;
         }
     },
