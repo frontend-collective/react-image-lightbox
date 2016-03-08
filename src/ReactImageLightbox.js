@@ -8,6 +8,7 @@
 var React    = require('react');
 var Radium   = require('radium');
 var Styles   = require('./Styles');
+var Portal   = require('./Portal');
 var Constant = require('./Constant');
 
 var ReactImageLightbox = React.createClass({
@@ -570,90 +571,93 @@ var ReactImageLightbox = React.createClass({
         var noop = function(){};
 
         return (
-            <div // Floating modal with closing animations
-                className={"outer" + (this.state.isClosing ? ' closing' : '')}
-                style={[
-                    Styles.outer,
-                    Styles.outerAnimating(this.props.animationDuration),
-                    this.state.isClosing ? Styles.outerClosing : {},
-                ]}
-            >
-
-                <div // Image holder
-                    className="inner"
-                    style={[Styles.inner]}
+            <Portal>
+                <div // Floating modal with closing animations
+                    className={"outer" + (this.state.isClosing ? ' closing' : '')}
+                    style={[
+                        Styles.outer,
+                        Styles.outerAnimating(this.props.animationDuration),
+                        this.state.isClosing ? Styles.outerClosing : {},
+                    ]}
                 >
-                    {images}
+
+                    <div // Image holder
+                        className="inner"
+                        style={[Styles.inner]}
+                    >
+                        {images}
+                    </div>
+
+                    {!this.props.prevSrc ? '' :
+                        <button // Move to previous image button
+                            type="button"
+                            className="prev-button"
+                            key="prev"
+                            style={[Styles.navButtons, Styles.navButtonPrev]}
+                            onClick={!this.isAnimating() ? this.requestMovePrev : noop} // Ignore clicks during animation
+                        />
+                    }
+
+                    {!this.props.nextSrc ? '' :
+                        <button // Move to next image button
+                            type="button"
+                            className="next-button"
+                            key="next"
+                            style={[Styles.navButtons, Styles.navButtonNext]}
+                            onClick={!this.isAnimating() ? this.requestMoveNext : noop} // Ignore clicks during animation
+                        />
+                    }
+
+                    <div // Lightbox toolbar
+                        className="toolbar"
+                        style={[Styles.toolbar]}
+                    >
+                        <ul className="toolbar-left" style={[Styles.toolbarSide, Styles.toolbarLeftSide]}>
+                            <li style={[Styles.toolbarItem]}>
+                                <span style={[Styles.toolbarItemChild]}>{this.props.imageTitle}</span>
+                            </li>
+                        </ul>
+
+                        <ul className="toolbar-right" style={[Styles.toolbarSide, Styles.toolbarRightSide]}>
+                            {!this.props.toolbarButtons ? '' : this.props.toolbarButtons.map(function(button, i) {
+                                return (<li key={i} style={[Styles.toolbarItem]}>{button}</li>);
+                            })}
+
+                            <li style={[Styles.toolbarItem]}>
+                                {this.state.zoomLevel}
+                                <button // Lightbox zoom in button
+                                    type="button"
+                                    key="zoom-in"
+                                    className="zoom-in"
+                                    style={[Styles.toolbarItemChild, Styles.builtinButton, Styles.zoomInButton]}
+                                    onClick={!this.isAnimating() ? this.zoomIn : noop} // Ignore clicks during animation
+                                />
+                            </li>
+
+                            <li style={[Styles.toolbarItem]}>
+                                <button // Lightbox zoom out button
+                                    type="button"
+                                    key="zoom-out"
+                                    className="zoom-out"
+                                    style={[Styles.toolbarItemChild, Styles.builtinButton, Styles.zoomOutButton]}
+                                    onClick={!this.isAnimating() ? this.zoomOut : noop} // Ignore clicks during animation
+                                />
+                            </li>
+
+                            <li style={[Styles.toolbarItem]}>
+                                <button // Lightbox close button
+                                    type="button"
+                                    key="close"
+                                    className="close"
+                                    style={[Styles.toolbarItemChild, Styles.builtinButton, Styles.closeButton]}
+                                    onClick={!this.isAnimating() ? this.requestClose : noop} // Ignore clicks during animation
+                                />
+                            </li>
+                        </ul>
+
+                    </div>
                 </div>
-
-                {!this.props.prevSrc ? '' :
-                    <button // Move to previous image button
-                        type="button"
-                        className="prev-button"
-                        key="prev"
-                        style={[Styles.navButtons, Styles.navButtonPrev]}
-                        onClick={!this.isAnimating() ? this.requestMovePrev : noop} // Ignore clicks during animation
-                    />
-                }
-
-                {!this.props.nextSrc ? '' :
-                    <button // Move to next image button
-                        type="button"
-                        className="next-button"
-                        key="next"
-                        style={[Styles.navButtons, Styles.navButtonNext]}
-                        onClick={!this.isAnimating() ? this.requestMoveNext : noop} // Ignore clicks during animation
-                    />
-                }
-
-                <div // Lightbox toolbar
-                    className="toolbar"
-                    style={[Styles.toolbar]}
-                >
-                    <ul className="toolbar-left" style={[Styles.toolbarSide, Styles.toolbarLeftSide]}>
-                        <li style={[Styles.toolbarItem]}>
-                            <span style={[Styles.toolbarItemChild]}>{this.props.imageTitle}</span>
-                        </li>
-                    </ul>
-
-                    <ul className="toolbar-right" style={[Styles.toolbarSide, Styles.toolbarRightSide]}>
-                        {!this.props.toolbarButtons ? '' : this.props.toolbarButtons.map(function(button, i) {
-                            return (<li key={i} style={[Styles.toolbarItem]}>{button}</li>);
-                        })}
-
-                        <li style={[Styles.toolbarItem]}>
-                            <button // Lightbox zoom in button
-                                type="button"
-                                key="zoom-in"
-                                className="zoom-in"
-                                style={[Styles.toolbarItemChild, Styles.builtinButton, Styles.zoomInButton]}
-                                onClick={!this.isAnimating() ? this.zoomIn : noop} // Ignore clicks during animation
-                            />
-                        </li>
-
-                        <li style={[Styles.toolbarItem]}>
-                            <button // Lightbox zoom out button
-                                type="button"
-                                key="zoom-out"
-                                className="zoom-out"
-                                style={[Styles.toolbarItemChild, Styles.builtinButton, Styles.zoomOutButton]}
-                                onClick={!this.isAnimating() ? this.zoomOut : noop} // Ignore clicks during animation
-                            />
-                        </li>
-
-                        <li style={[Styles.toolbarItem]}>
-                            <button // Lightbox close button
-                                type="button"
-                                key="close"
-                                className="close"
-                                style={[Styles.toolbarItemChild, Styles.builtinButton, Styles.closeButton]}
-                                onClick={!this.isAnimating() ? this.requestClose : noop} // Ignore clicks during animation
-                            />
-                        </li>
-                    </ul>
-
-                </div>
-            </div>
+            </Portal>
         );
     }
 });
