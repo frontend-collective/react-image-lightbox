@@ -251,11 +251,7 @@ var ReactImageLightbox = React.createClass({
             // ESC key closes the lightbox
             case key.esc:
                 event.preventDefault();
-                if (this.props.animationDisabled || !this.props.animationOnKeyInput) {
-                    this.requestClose(event, true); // immediate
-                } else {
-                    this.requestClose(event); // animated
-                }
+                this.requestClose(event);
                 break;
 
             // Left arrow key moves to previous image
@@ -295,24 +291,23 @@ var ReactImageLightbox = React.createClass({
     },
 
     // Request that the lightbox be closed
-    requestClose: function(event, isImmediate) {
-        if (isImmediate) {
-            return this.props.onCloseRequest(event);
-        }
-
-        var closeLightbox = function() {
+    requestClose: function(event) {
+        var closeLightbox = function closeLightbox() {
             // Call the parent close request
-            this.props.onCloseRequest(event);
+            return this.props.onCloseRequest(event);
         }.bind(this);
 
-        if (!this.props.animationDisabled) {
+        if (this.props.animationDisabled || (event.type === 'keydown' && !this.props.animationOnKeyInput)) {
+            // No animation
+            return closeLightbox();
+        } else {
+            // With animation
+
             // Start closing animation
             this.setState({ isClosing: true });
 
             // Perform the actual closing at the end of the animation
             setTimeout(closeLightbox, this.props.animationDuration);
-        } else {
-            closeLightbox();
         }
     },
 
