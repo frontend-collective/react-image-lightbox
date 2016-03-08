@@ -13,11 +13,11 @@ var styles = {
         width           : '100%',
         height          : '100%',
 
-        animating: function(duration) {
-            return {
-                transition: 'opacity ' + String(duration) + 'ms',
-            };
-        },
+    },
+    outerAnimating: function(duration) {
+        return {
+            transition: 'opacity ' + String(duration) + 'ms',
+        };
     },
     outerClosing: {
         opacity: 0,

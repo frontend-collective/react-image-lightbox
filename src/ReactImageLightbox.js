@@ -8,6 +8,7 @@
 var React    = require('react');
 var Radium   = require('radium');
 var Styles   = require('./Styles');
+var Constant = require('./Constant');
 
 var ReactImageLightbox = React.createClass({
     propTypes: {
@@ -140,6 +141,12 @@ var ReactImageLightbox = React.createClass({
 
             // Main image is being replaced by the next image
             isMovingToNext: false,
+
+            ///////////////////////////////
+            // Zoom settings
+            ///////////////////////////////
+            // Zoom level of image
+            zoomLevel: Constant.MIN_ZOOM_LEVEL,
         };
     },
 
@@ -277,6 +284,16 @@ var ReactImageLightbox = React.createClass({
         }
     },
 
+    // Zoom in on the main image
+    zoomIn: function(event) {
+        this.setState({ zoomLevel: Math.min(this.state.zoomLevel + 1, Constant.MAX_ZOOM_LEVEL) });
+    },
+
+    // Zoom out from the main image
+    zoomOut: function(event) {
+        this.setState({ zoomLevel: Math.max(this.state.zoomLevel - 1, Constant.MIN_ZOOM_LEVEL) });
+    },
+
     // Request that the lightbox be closed
     requestClose: function(event, isImmediate) {
         if (isImmediate) {
@@ -303,6 +320,7 @@ var ReactImageLightbox = React.createClass({
     requestMovePrev: function(event) {
         this.keyCounter--;
         this.moveRequested = true;
+        this.setState({ zoomLevel: Constant.MIN_ZOOM_LEVEL });
         this.props.onMovePrevRequest(event);
     },
 
@@ -310,6 +328,7 @@ var ReactImageLightbox = React.createClass({
     requestMoveNext: function(event) {
         this.keyCounter++;
         this.moveRequested = true;
+        this.setState({ zoomLevel: Constant.MIN_ZOOM_LEVEL });
         this.props.onMoveNextRequest(event);
     },
 
@@ -386,6 +405,11 @@ var ReactImageLightbox = React.createClass({
         }
 
         return fitSizes;
+    },
+
+    // Get sizing when the image is scaled
+    getZoomRatio: function() {
+        return Math.pow(Constant.ZOOM_RATIO, this.state.zoomLevel);
     },
 
     // Detach key and mouse input events
@@ -510,6 +534,13 @@ var ReactImageLightbox = React.createClass({
                 height : fitSizes.height,
             });
 
+            if (srcType === 'mainSrc') {
+                var zoomRatio = this.getZoomRatio();
+                imageStyle.push({
+                    transform: 'scale(' + zoomRatio + ',' + zoomRatio + ')',
+                });
+            }
+
             if (this.props.discourageDownloads) {
                 imageStyle.push({ backgroundImage: 'url(\'' + imageSrc + '\')' });
                 imageStyle.push(Styles.imageDiscourager);
@@ -548,7 +579,7 @@ var ReactImageLightbox = React.createClass({
                 className={"outer" + (this.state.isClosing ? ' closing' : '')}
                 style={[
                     Styles.outer,
-                    Styles.outer.animating(this.props.animationDuration),
+                    Styles.outerAnimating(this.props.animationDuration),
                     this.state.isClosing ? Styles.outerClosing : {},
                 ]}
             >
