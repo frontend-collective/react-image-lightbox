@@ -165,6 +165,9 @@ var ReactImageLightbox = React.createClass({
         // Time the last keydown event was called (used in keyboard action rate limiting)
         this.lastKeyDownTime = 0;
 
+        // Used for debouncing window resize event
+        this.resizeTimeout = null;
+
         // Used to differentiate between images with identical src
         this.keyCounter = 0;
 
@@ -284,7 +287,8 @@ var ReactImageLightbox = React.createClass({
 
     // Handle the window resize event
     handleWindowResize: function(event) {
-        this.forceUpdate();
+        clearTimeout(this.resizeTimeout);
+        this.resizeTimeout = setTimeout(this.forceUpdate.bind(this), 100);
     },
 
     // Zoom in on the main image
