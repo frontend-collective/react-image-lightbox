@@ -194,23 +194,6 @@ var ReactImageLightbox = React.createClass({
         if (sourcesChanged || this.moveRequested) {
             this.moveRequested = false;
 
-            // Enable animated states
-            if (!this.props.animationDisabled && (!this.keyPressed || this.props.animationOnKeyInput)) {
-                var movedToPrev = this.props.mainSrc == nextProps.nextSrc;
-                if (this.props.mainSrc == nextProps.nextSrc) {
-                    this.setState({ isMovingToPrev: true });
-                    setTimeout(function() {
-                        this.setState({ isMovingToPrev: false });
-                    }.bind(this), this.props.animationDuration);
-                } else if (this.props.mainSrc == nextProps.prevSrc) {
-                    this.setState({ isMovingToNext: true });
-                    setTimeout(function() {
-                        this.setState({ isMovingToNext: false });
-                    }.bind(this), this.props.animationDuration);
-                }
-            }
-            this.keyPressed = false;
-
             // Load any new images
             this.loadAllImages(nextProps);
         }
@@ -324,17 +307,41 @@ var ReactImageLightbox = React.createClass({
 
     // Request to transition to the previous image
     requestMovePrev: function(event) {
+        // Reset the zoom level on image move
+        var nextState = { zoomLevel: Constant.MIN_ZOOM_LEVEL };
+
+        // Enable animated states
+        if (!this.props.animationDisabled && (!this.keyPressed || this.props.animationOnKeyInput)) {
+            nextState.isMovingToPrev = true;
+            setTimeout(function() {
+                this.setState({ isMovingToPrev: false });
+            }.bind(this), this.props.animationDuration);
+        }
+        this.keyPressed = false;
+
         this.keyCounter--;
         this.moveRequested = true;
-        this.setState({ zoomLevel: Constant.MIN_ZOOM_LEVEL });
+        this.setState(nextState);
         this.props.onMovePrevRequest(event);
     },
 
     // Request to transition to the next image
     requestMoveNext: function(event) {
+        // Reset the zoom level on image move
+        var nextState = { zoomLevel: Constant.MIN_ZOOM_LEVEL };
+
+        // Enable animated states
+        if (!this.props.animationDisabled && (!this.keyPressed || this.props.animationOnKeyInput)) {
+            nextState.isMovingToNext = true;
+            setTimeout(function() {
+                this.setState({ isMovingToNext: false });
+            }.bind(this), this.props.animationDuration);
+        }
+        this.keyPressed = false;
+
         this.keyCounter++;
         this.moveRequested = true;
-        this.setState({ zoomLevel: Constant.MIN_ZOOM_LEVEL });
+        this.setState(nextState);
         this.props.onMoveNextRequest(event);
     },
 
@@ -515,7 +522,7 @@ var ReactImageLightbox = React.createClass({
                 return;
             }
 
-            var imageStyle = [Styles.image, baseStyle, transitionStyle];
+            var imageStyle = [Styles.image(this.props.animationDuration), baseStyle, transitionStyle];
             var fitSizes = {};
 
             if (this.isImageLoaded(imageSrc)) {
@@ -541,13 +548,6 @@ var ReactImageLightbox = React.createClass({
                 width  : fitSizes.width,
                 height : fitSizes.height,
             });
-
-            if (srcType === 'mainSrc') {
-                var zoomRatio = this.getZoomRatio();
-                imageStyle.push({
-                    transform: 'scale(' + zoomRatio + ',' + zoomRatio + ')',
-                });
-            }
 
             if (this.props.discourageDownloads) {
                 imageStyle.push({ backgroundImage: 'url(\'' + imageSrc + '\')' });
@@ -576,7 +576,7 @@ var ReactImageLightbox = React.createClass({
         // Next Image (displayed on the right)
         addImage('nextSrc', 'image-next', Styles.imageNext);
         // Main Image
-        addImage('mainSrc', 'image-current', Styles.imageCurrent);
+        addImage('mainSrc', 'image-current', Styles.imageCurrent(this.getZoomRatio()));
         // Previous Image (displayed on the left)
         addImage('prevSrc', 'image-prev', Styles.imagePrev);
 

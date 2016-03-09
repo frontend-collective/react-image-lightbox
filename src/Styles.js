@@ -39,13 +39,16 @@ var styles = {
         bottom   : 0,
     },
 
-    image: {
-        position   : 'absolute',
-        top        : 0,
-        bottom     : 0,
-        margin     : 'auto',
-        maxWidth   : '100%',
-        maxHeight  : '100%',
+    image: function(duration) {
+        return {
+            position   : 'absolute',
+            top        : 0,
+            bottom     : 0,
+            margin     : 'auto',
+            maxWidth   : '100%',
+            maxHeight  : '100%',
+            transition : 'transform ' + String(duration) + 'ms',
+        };
     },
     imagePrev: {
         left: '-100%',
@@ -55,9 +58,12 @@ var styles = {
         left: '100%',
         right: '-100%',
     },
-    imageCurrent: {
-        left: 0,
-        right: 0,
+    imageCurrent: function (zoomRatio) {
+        return {
+            transform: 'scale(' + zoomRatio + ',' + zoomRatio + ')',
+            left: 0,
+            right: 0,
+        };
     },
     imageDiscourager: {
         backgroundRepeat   : 'no-repeat',
@@ -67,8 +73,9 @@ var styles = {
     imageAnimating: function(duration) {
         return {
             transition: [
-                'left '  + String(duration) + 'ms',
-                'right ' + String(duration) + 'ms',
+                'transform ' + String(duration) + 'ms',
+                'left '      + String(duration) + 'ms',
+                'right '     + String(duration) + 'ms',
             ].join(', '),
         };
     },
