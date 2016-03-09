@@ -168,6 +168,12 @@ var ReactImageLightbox = React.createClass({
         // Used for debouncing window resize event
         this.resizeTimeout = null;
 
+        // Used to determine when actions are triggered by the scroll wheel
+        this.wheelActionTimeout = null;
+        this.resetScrollTimeout = null;
+        this.scrollX            = 0;
+        this.scrollY            = 0;
+
         // Used to differentiate between images with identical src
         this.keyCounter = 0;
 
@@ -272,6 +278,76 @@ var ReactImageLightbox = React.createClass({
     handleWindowResize: function(event) {
         clearTimeout(this.resizeTimeout);
         this.resizeTimeout = setTimeout(this.forceUpdate.bind(this), 100);
+    },
+
+    // Handle a mouse wheel event over the lightbox container
+    handleOuterMousewheel: function(event) {
+        // Prevent scrolling of the background
+        event.preventDefault();
+        event.stopPropagation();
+
+        var xThreshold = Constant.WHEEL_MOVE_X_THRESHOLD;
+        var yThreshold = Constant.WHEEL_MOVE_Y_THRESHOLD;
+        var actionDelay = 0;
+        var imageZoomDelay = 50;
+        var imageMoveDelay = 500;
+
+        clearTimeout(this.resetScrollTimeout);
+        this.resetScrollTimeout = setTimeout(function() {
+            this.scrollX = 0;
+            this.scrollY = 0;
+        }.bind(this), 300);
+
+        // Prevent rapid-fire zoom behavior
+        if (this.wheelActionTimeout !== null || this.isAnimating()) {
+            return;
+        }
+
+        if (Math.abs(event.deltaY) >= Math.abs(event.deltaX)) {
+            // handle vertical scrolls with zoom
+            this.scrollX = 0;
+            this.scrollY += event.deltaY;
+
+            var bigLeapY = yThreshold / 2;
+            // If the scroll amount has accumulated sufficiently, or a large leap was taken
+            if (this.scrollY >= yThreshold || event.deltaY > bigLeapY) {
+                // Scroll down zooms out
+                this.zoomOut(event);
+                actionDelay = imageZoomDelay;
+                this.scrollY = 0;
+            } else if (this.scrollY <= -1 * yThreshold || event.deltaY < -1 * bigLeapY) {
+                // Scroll up zooms in
+                this.zoomIn(event);
+                actionDelay = imageZoomDelay;
+                this.scrollY = 0;
+            }
+
+        } else {
+            // handle horizontal scrolls with image moves
+            this.scrollY = 0;
+            this.scrollX += event.deltaX;
+
+            var bigLeapX = xThreshold / 2;
+            // If the scroll amount has accumulated sufficiently, or a large leap was taken
+            if (this.scrollX >= xThreshold || event.deltaX >= bigLeapX) {
+                // Scroll right moves to next
+                this.requestMoveNext(event);
+                actionDelay = imageMoveDelay;
+                this.scrollX = 0;
+            } else if (this.scrollX <= -1 * xThreshold || event.deltaX <= -1 * bigLeapX) {
+                // Scroll left moves to previous
+                this.requestMovePrev(event);
+                actionDelay = imageMoveDelay;
+                this.scrollX = 0;
+            }
+        }
+
+        // Allow successive actions after the set delay
+        if (actionDelay !== 0) {
+            this.wheelActionTimeout = setTimeout(function() {
+                this.wheelActionTimeout = null;
+            }.bind(this), actionDelay);
+        }
     },
 
     // Zoom in on the main image
@@ -587,6 +663,7 @@ var ReactImageLightbox = React.createClass({
                 <StyleRoot>
                     <div // Floating modal with closing animations
                         className={"outer" + (this.state.isClosing ? ' closing' : '')}
+                        onWheel={this.handleOuterMousewheel}
                         style={[
                             Styles.outer,
                             Styles.outerAnimating(this.props.animationDuration, this.state.isClosing),
