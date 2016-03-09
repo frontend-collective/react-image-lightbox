@@ -350,6 +350,15 @@ var ReactImageLightbox = React.createClass({
         }
     },
 
+    // Handle a double click on the current image
+    handleImageDoubleClick: function(event) {
+        if (this.state.zoomLevel > Constant.MIN_ZOOM_LEVEL) {
+            this.zoomOut(event);
+        } else {
+            this.zoomIn(event);
+        }
+    },
+
     // Zoom in on the main image
     zoomIn: function(event) {
         this.setState({ zoomLevel: Math.min(this.state.zoomLevel + 1, Constant.MAX_ZOOM_LEVEL) });
@@ -357,7 +366,12 @@ var ReactImageLightbox = React.createClass({
 
     // Zoom out from the main image
     zoomOut: function(event) {
-        this.setState({ zoomLevel: Math.max(this.state.zoomLevel - 1, Constant.MIN_ZOOM_LEVEL) });
+        if (event.type === 'dblclick') {
+            // A double click when zoomed in zooms all the way out
+            this.setState({ zoomLevel: Constant.MIN_ZOOM_LEVEL });
+        } else {
+            this.setState({ zoomLevel: Math.max(this.state.zoomLevel - 1, Constant.MIN_ZOOM_LEVEL) });
+        }
     },
 
     // Request that the lightbox be closed
@@ -631,6 +645,7 @@ var ReactImageLightbox = React.createClass({
                 images.push(
                     <div
                         className={imageClass}
+                        onDoubleClick={this.handleImageDoubleClick}
                         style={imageStyle}
                         key={imageSrc + keyEndings[srcType]}
                     >
@@ -641,6 +656,7 @@ var ReactImageLightbox = React.createClass({
                 images.push(
                     <img
                         className={imageClass}
+                        onDoubleClick={this.handleImageDoubleClick}
                         style={imageStyle}
                         src={imageSrc}
                         key={imageSrc + keyEndings[srcType]}
