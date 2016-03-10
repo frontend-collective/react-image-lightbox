@@ -58,11 +58,13 @@ var styles = {
         left: '100%',
         right: '-100%',
     },
-    imageCurrent: function (zoomRatio) {
+    imageCurrent: function (zoomRatio, offsetX, offsetY) {
         return {
             transform: 'scale(' + zoomRatio + ',' + zoomRatio + ')',
-            left: 0,
-            right: 0,
+            left: offsetX,
+            right: -1 * offsetX,
+            top: offsetY,
+            bottom: -1 * offsetY,
         };
     },
     imageDiscourager: {
