@@ -74,8 +74,11 @@ var styles = {
     imageAnimating: function(duration) {
         return {
             transition: [
-                'left '  + String(duration) + 'ms',
-                'right ' + String(duration) + 'ms',
+                'transform ' + String(duration) + 'ms',
+                'left '      + String(duration) + 'ms',
+                'top '       + String(duration) + 'ms',
+                'right '     + String(duration) + 'ms',
+                'bottom '    + String(duration) + 'ms',
             ].join(', '),
         };
     },

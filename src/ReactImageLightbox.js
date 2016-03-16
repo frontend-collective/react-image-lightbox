@@ -188,9 +188,12 @@ var ReactImageLightbox = React.createClass({
         this.scrollX            = 0;
         this.scrollY            = 0;
 
-        this.isDragging = false;
-        this.dragStartX = 0;
-        this.dragStartY = 0;
+        // Used in panning zoomed images
+        this.isDragging       = false;
+        this.dragStartX       = 0;
+        this.dragStartY       = 0;
+        this.dragStartOffsetX = 0;
+        this.dragStartOffsetY = 0;
 
         // Used to differentiate between images with identical src
         this.keyCounter = 0;
@@ -403,9 +406,11 @@ var ReactImageLightbox = React.createClass({
 
         // Allow dragging when zoomed
         if (this.state.zoomLevel > Constant.MIN_ZOOM_LEVEL) {
-            this.isDragging = true;
-            this.dragStartX = event.clientX - this.state.offsetX;
-            this.dragStartY = event.clientY - this.state.offsetY;
+            this.isDragging       = true;
+            this.dragStartX       = event.clientX;
+            this.dragStartY       = event.clientY;
+            this.dragStartOffsetX = this.state.offsetX;
+            this.dragStartOffsetY = this.state.offsetY;
         }
     },
 
@@ -415,13 +420,15 @@ var ReactImageLightbox = React.createClass({
         if (!this.isDragging) {
             return;
         }
-        var deltaX = event.clientX - this.dragStartX;
-        var deltaY = event.clientY - this.dragStartY;
-        if (this.state.offsetX !== deltaX || this.state.offsetY !== deltaY) {
-            var limitedOffsets = this.getOffsetsLimited(this.state.zoomLevel, deltaX, deltaY);
+
+        var zoomMultiplier = this.getZoomMultiplier();
+
+        var newOffsetX = (this.dragStartX - event.clientX) / zoomMultiplier + this.dragStartOffsetX;
+        var newOffsetY = (this.dragStartY - event.clientY) / zoomMultiplier + this.dragStartOffsetY;
+        if (this.state.offsetX !== newOffsetX || this.state.offsetY !== newOffsetY) {
             this.setState({
-                offsetX: limitedOffsets.offsetX,
-                offsetY: limitedOffsets.offsetY,
+                offsetX: newOffsetX,
+                offsetY: newOffsetY,
             });
         }
     },
@@ -433,6 +440,22 @@ var ReactImageLightbox = React.createClass({
         }
 
         this.isDragging = false;
+
+        // Snap image back into frame if outside max offset range
+        var maxOffsets = this.getMaxOffsets();
+        var nextOffsetX = Math.max(maxOffsets.minX, Math.min(maxOffsets.maxX, this.state.offsetX));
+        var nextOffsetY = Math.max(maxOffsets.minY, Math.min(maxOffsets.maxY, this.state.offsetY));
+        if (nextOffsetX !== this.state.offsetX || nextOffsetY !== this.state.offsetY) {
+            this.setState({
+                offsetX       : nextOffsetX,
+                offsetY       : nextOffsetY,
+                shouldAnimate : true,
+            });
+
+            setTimeout(function() {
+                this.setState({ shouldAnimate: false });
+            }.bind(this), this.props.animationDuration);
+        }
     },
 
     handleZoomInButtonClick: function (event) {
@@ -482,12 +505,11 @@ var ReactImageLightbox = React.createClass({
         var deltaX = (nextBoxWidth - currentBoxWidth) * (percentXInCurrentBox - 0.5);
         var deltaY = (nextBoxHeight - currentBoxHeight) * (percentYInCurrentBox - 0.5);
 
-        var maxOffsets = this.getMaxOffsets();
-
         var nextOffsetX = this.state.offsetX - deltaX;
         var nextOffsetY = this.state.offsetY - deltaY;
 
         // When zooming out, limit the offset so things don't get left askew
+        var maxOffsets = this.getMaxOffsets();
         if (this.state.zoomLevel > nextZoomLevel) {
             nextOffsetX = Math.max(maxOffsets.minX, Math.min(maxOffsets.maxX, nextOffsetX));
             nextOffsetY = Math.max(maxOffsets.minY, Math.min(maxOffsets.maxY, nextOffsetY));
@@ -801,6 +823,9 @@ var ReactImageLightbox = React.createClass({
 
             var imageStyle = [Styles.image(this.props.animationDuration), baseStyle, transitionStyle];
             var fitSizes = {};
+            if (this.state.zoomLevel > Constant.MIN_ZOOM_LEVEL) {
+                imageStyle.push({ cursor: 'move' });
+            }
 
             var bestImageInfo = this.getBestImageForType(srcType);
             if (bestImageInfo === null) {
@@ -927,7 +952,6 @@ var ReactImageLightbox = React.createClass({
                                 })}
 
                                 <li style={[Styles.toolbarItem]}>
-                                    {this.state.zoomLevel}
                                     <button // Lightbox zoom in button
                                         type="button"
                                         key="zoom-in"
