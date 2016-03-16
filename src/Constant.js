@@ -7,7 +7,7 @@ var constants = {
     MIN_ZOOM_LEVEL: 0,
 
     // Max image zoom level
-    MAX_ZOOM_LEVEL: 400,
+    MAX_ZOOM_LEVEL: 300,
 
     // Size ratio between previous and next zoom levels
     ZOOM_RATIO: 1.007,
