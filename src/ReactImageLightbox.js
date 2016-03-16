@@ -12,6 +12,14 @@ var Styles    = require('./Styles');
 var Portal    = require('./Portal');
 var Constant  = require('./Constant');
 
+function _getWindowWidth () {
+    return window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+}
+
+function _getWindowHeight () {
+    return window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
+}
+
 var ReactImageLightbox = React.createClass({
     propTypes: {
         ///////////////////////////////
@@ -138,11 +146,8 @@ var ReactImageLightbox = React.createClass({
             // When Lightbox is mounted, if animation is enabled it will open with the reverse of the closing animation
             isClosing: !this.props.animationDisabled,
 
-            // Main image is being replaced by the previous image
-            isMovingToPrev: false,
-
-            // Main image is being replaced by the next image
-            isMovingToNext: false,
+            // Component parts should animate (e.g., when images are moving, or image is being zoomed)
+            shouldAnimate: false,
 
             ///////////////////////////////
             // Zoom settings
@@ -300,9 +305,7 @@ var ReactImageLightbox = React.createClass({
         event.stopPropagation();
 
         var xThreshold = Constant.WHEEL_MOVE_X_THRESHOLD;
-        var yThreshold = Constant.WHEEL_MOVE_Y_THRESHOLD;
         var actionDelay = 0;
-        var imageZoomDelay = 50;
         var imageMoveDelay = 500;
 
         clearTimeout(this.resetScrollTimeout);
@@ -316,26 +319,7 @@ var ReactImageLightbox = React.createClass({
             return;
         }
 
-        if (Math.abs(event.deltaY) >= Math.abs(event.deltaX)) {
-            // handle vertical scrolls with zoom
-            this.scrollX = 0;
-            this.scrollY += event.deltaY;
-
-            var bigLeapY = yThreshold / 2;
-            // If the scroll amount has accumulated sufficiently, or a large leap was taken
-            if (this.scrollY >= yThreshold || event.deltaY > bigLeapY) {
-                // Scroll down zooms out
-                this.zoomOut(event);
-                actionDelay = imageZoomDelay;
-                this.scrollY = 0;
-            } else if (this.scrollY <= -1 * yThreshold || event.deltaY < -1 * bigLeapY) {
-                // Scroll up zooms in
-                this.zoomIn(event);
-                actionDelay = imageZoomDelay;
-                this.scrollY = 0;
-            }
-
-        } else {
+        if (Math.abs(event.deltaY) < Math.abs(event.deltaX)) {
             // handle horizontal scrolls with image moves
             this.scrollY = 0;
             this.scrollX += event.deltaX;
@@ -363,12 +347,53 @@ var ReactImageLightbox = React.createClass({
         }
     },
 
+    handleImageMouseWheel: function (event) {
+        event.preventDefault();
+        var yThreshold = Constant.WHEEL_MOVE_Y_THRESHOLD;
+
+        if (Math.abs(event.deltaY) >= Math.abs(event.deltaX)) {
+            event.stopPropagation();
+            // If the vertical scroll amount was large enough, perform a zoom
+            if (Math.abs(event.deltaY) < yThreshold) {
+                return;
+            }
+
+            this.scrollX = 0;
+            this.scrollY += event.deltaY;
+
+            this.changeZoom(
+                this.state.zoomLevel - event.deltaY,
+                event.clientX,
+                event.clientY
+            );
+        }
+    },
+
+    getOffsetXFromWindowCenter: function (x) {
+        var windowWidth  = _getWindowWidth();
+        return windowWidth / 2 - x;
+    },
+    getOffsetYFromWindowCenter: function (y) {
+        var windowHeight = _getWindowHeight();
+        return windowHeight / 2 - y;
+    },
+
     // Handle a double click on the current image
     handleImageDoubleClick: function(event) {
         if (this.state.zoomLevel > Constant.MIN_ZOOM_LEVEL) {
-            this.zoomOut(event);
+            // A double click when zoomed in zooms all the way out
+            this.changeZoom(
+                Constant.MIN_ZOOM_LEVEL,
+                event.clientX,
+                event.clientY
+            );
         } else {
-            this.zoomIn(event);
+            // A double click when zoomed all the way out zooms in
+            this.changeZoom(
+                this.state.zoomLevel + Constant.ZOOM_BUTTON_INCREMENT_SIZE,
+                event.clientX,
+                event.clientY
+            );
         }
     },
 
@@ -410,32 +435,69 @@ var ReactImageLightbox = React.createClass({
         this.isDragging = false;
     },
 
-    // Zoom in on the main image
-    zoomIn: function(event) {
-        this.setState({ zoomLevel: Math.min(this.state.zoomLevel + 1, Constant.MAX_ZOOM_LEVEL) });
+    handleZoomInButtonClick: function (event) {
+        this.changeZoom(this.state.zoomLevel + Constant.ZOOM_BUTTON_INCREMENT_SIZE);
     },
 
-    // Zoom out from the main image
-    zoomOut: function(event) {
-        var nextState = {};
-        if (event.type === 'dblclick') {
-            // A double click when zoomed in zooms all the way out
-            nextState.zoomLevel = Constant.MIN_ZOOM_LEVEL;
-        } else {
-            nextState.zoomLevel = Math.max(this.state.zoomLevel - 1, Constant.MIN_ZOOM_LEVEL);
+    handleZoomOutButtonClick: function (event) {
+        this.changeZoom(this.state.zoomLevel - Constant.ZOOM_BUTTON_INCREMENT_SIZE);
+    },
+
+    // Change zoom level
+    changeZoom: function(zoomLevel, clientX, clientY) {
+        var windowWidth  = _getWindowWidth();
+        var windowHeight = _getWindowHeight();
+
+        // Default to the center of the screen to zoom when no mouse position specified
+        clientX = typeof clientX !== 'undefined' ? clientX : windowWidth / 2;
+        clientY = typeof clientY !== 'undefined' ? clientY : windowHeight / 2;
+
+        // Constrain zoom level to the set bounds
+        var nextZoomLevel = Math.max(Constant.MIN_ZOOM_LEVEL, Math.min(Constant.MAX_ZOOM_LEVEL, zoomLevel));
+
+        // Ignore requests that don't change the zoom level
+        if (nextZoomLevel === this.state.zoomLevel) {
+            return;
+        } else if (nextZoomLevel === Constant.MIN_ZOOM_LEVEL) {
+            // Snap back to center if zoomed all the way out
+            return this.setState({
+                zoomLevel : nextZoomLevel,
+                offsetX   : 0,
+                offsetY   : 0,
+            });
         }
 
-        // Arrange offsets so image doesn't poke out at borders
-        var limitedOffsets = this.getOffsetsLimited(nextState.zoomLevel);
-        nextState.offsetX = limitedOffsets.offsetX;
-        nextState.offsetY = limitedOffsets.offsetY;
+        var currentZoomMultiplier = this.getZoomMultiplier();
+        var nextZoomMultiplier    = this.getZoomMultiplier(nextZoomLevel);
 
-        nextState.isMovingToNext = true;
-        setTimeout(function() {
-            this.setState({ isMovingToNext: false });
-        }.bind(this), this.props.animationDuration);
+        var percentXInCurrentBox = clientX / windowWidth;
+        var percentYInCurrentBox = clientY / windowHeight;
 
-        this.setState(nextState);
+        var currentBoxWidth  = windowWidth / currentZoomMultiplier;
+        var currentBoxHeight = windowHeight / currentZoomMultiplier;
+
+        var nextBoxWidth  = windowWidth / nextZoomMultiplier;
+        var nextBoxHeight = windowHeight / nextZoomMultiplier;
+
+        var deltaX = (nextBoxWidth - currentBoxWidth) * (percentXInCurrentBox - 0.5);
+        var deltaY = (nextBoxHeight - currentBoxHeight) * (percentYInCurrentBox - 0.5);
+
+        var maxOffsets = this.getMaxOffsets();
+
+        var nextOffsetX = this.state.offsetX - deltaX;
+        var nextOffsetY = this.state.offsetY - deltaY;
+
+        // When zooming out, limit the offset so things don't get left askew
+        if (this.state.zoomLevel > nextZoomLevel) {
+            nextOffsetX = Math.max(maxOffsets.minX, Math.min(maxOffsets.maxX, nextOffsetX));
+            nextOffsetY = Math.max(maxOffsets.minY, Math.min(maxOffsets.maxY, nextOffsetY));
+        }
+
+        this.setState({
+            zoomLevel : nextZoomLevel,
+            offsetX   : nextOffsetX,
+            offsetY   : nextOffsetY,
+        });
     },
 
     // Request that the lightbox be closed
@@ -459,56 +521,44 @@ var ReactImageLightbox = React.createClass({
         }
     },
 
-    // Request to transition to the previous image
-    requestMovePrev: function(event) {
-        var nextOffsets = this.getOffsetsLimited(Constant.MIN_ZOOM_LEVEL);
-
+    requestMove: function (direction, event) {
         // Reset the zoom level on image move
         var nextState = {
             zoomLevel : Constant.MIN_ZOOM_LEVEL,
-            offsetX   : nextOffsets.offsetX,
-            offsetY   : nextOffsets.offsetY,
+            offsetX   : 0,
+            offsetY   : 0,
         };
 
         // Enable animated states
         if (!this.props.animationDisabled && (!this.keyPressed || this.props.animationOnKeyInput)) {
-            nextState.isMovingToPrev = true;
+            nextState.shouldAnimate = true;
             setTimeout(function() {
-                this.setState({ isMovingToPrev: false });
+                this.setState({ shouldAnimate: false });
             }.bind(this), this.props.animationDuration);
         }
         this.keyPressed = false;
 
-        this.keyCounter--;
         this.moveRequested = true;
-        this.setState(nextState);
-        this.props.onMovePrevRequest(event);
+
+        if (direction === 'prev') {
+            this.keyCounter--;
+            this.setState(nextState);
+            this.props.onMovePrevRequest(event);
+        } else {
+            this.keyCounter++;
+            this.setState(nextState);
+            this.props.onMoveNextRequest(event);
+        }
+    },
+
+    // Request to transition to the previous image
+    requestMovePrev: function(event) {
+        this.requestMove('prev', event);
     },
 
     // Request to transition to the next image
     requestMoveNext: function(event) {
-        var nextOffsets = this.getOffsetsLimited(Constant.MIN_ZOOM_LEVEL);
-
-        // Reset the zoom level on image move
-        var nextState = {
-            zoomLevel : Constant.MIN_ZOOM_LEVEL,
-            offsetX   : nextOffsets.offsetX,
-            offsetY   : nextOffsets.offsetY,
-        };
-
-        // Enable animated states
-        if (!this.props.animationDisabled && (!this.keyPressed || this.props.animationOnKeyInput)) {
-            nextState.isMovingToNext = true;
-            setTimeout(function() {
-                this.setState({ isMovingToNext: false });
-            }.bind(this), this.props.animationDuration);
-        }
-        this.keyPressed = false;
-
-        this.keyCounter++;
-        this.moveRequested = true;
-        this.setState(nextState);
-        this.props.onMoveNextRequest(event);
+        this.requestMove('next', event);
     },
 
     // Attach key and mouse input events
@@ -565,8 +615,8 @@ var ReactImageLightbox = React.createClass({
 
     // Get sizing for when an image is larger than the window
     getFitSizes: function(width, height, stretch) {
-        var windowHeight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
-        var windowWidth  = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+        var windowHeight = _getWindowHeight();
+        var windowWidth  = _getWindowWidth();
         var maxHeight    = windowHeight - (this.props.imagePadding * 2);
         var maxWidth     = windowWidth - (this.props.imagePadding * 2);
 
@@ -591,7 +641,7 @@ var ReactImageLightbox = React.createClass({
     },
 
     // Get sizing when the image is scaled
-    getZoomRatio: function(zoomLevel) {
+    getZoomMultiplier: function(zoomLevel) {
         zoomLevel = typeof zoomLevel !== 'undefined' ? zoomLevel : this.state.zoomLevel;
         return Math.pow(Constant.ZOOM_RATIO, zoomLevel);
     },
@@ -600,38 +650,40 @@ var ReactImageLightbox = React.createClass({
         zoomLevel = typeof zoomLevel !== 'undefined' ? zoomLevel : this.state.zoomLevel;
         var currentImageInfo = this.getBestImageForType('mainSrc');
         if (currentImageInfo === null) {
-            return { x: 0, y: 0 };
+            return { maxX: 0, minX: 0, maxY: 0, minY: 0 };
         }
 
-        var windowHeight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
-        var windowWidth  = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
-        var zoomRatio    = this.getZoomRatio(zoomLevel);
+        var windowWidth    = _getWindowWidth();
+        var windowHeight   = _getWindowHeight();
+        var zoomMultiplier = this.getZoomMultiplier(zoomLevel);
+
+        var maxX = 0;
+        if (currentImageInfo.width - (windowWidth / zoomMultiplier) < 0) {
+            // if there is still blank space in the X dimension, don't limit except to the opposite edge
+            maxX = ((windowWidth / zoomMultiplier) - currentImageInfo.width) / 2;
+        } else {
+            maxX = (currentImageInfo.width - (windowWidth / zoomMultiplier)) / 2;
+        }
+
+        var maxY = 0;
+        if (currentImageInfo.height - (windowHeight / zoomMultiplier) < 0) {
+            // if there is still blank space in the Y dimension, don't limit except to the opposite edge
+            maxY = ((windowHeight / zoomMultiplier) - currentImageInfo.height) / 2;
+        } else {
+            maxY = (currentImageInfo.height - (windowHeight / zoomMultiplier)) / 2;
+        }
 
         return {
-            x: Math.max(0, (zoomRatio * currentImageInfo.width - windowWidth) / 2),
-            y: Math.max(0, (zoomRatio * currentImageInfo.height - windowHeight) / 2),
-        };
-    },
-
-    getOffsetsLimited: function (zoomLevel, offsetX, offsetY) {
-        zoomLevel = typeof zoomLevel !== 'undefined' ? zoomLevel : this.state.zoomLevel;
-        offsetX   = typeof offsetX !== 'undefined' ? offsetX : this.state.offsetX;
-        offsetY   = typeof offsetY !== 'undefined' ? offsetY : this.state.offsetY;
-
-        var maxOffsets = this.getMaxOffsets(zoomLevel);
-
-        var absX = Math.abs(offsetX);
-        var absY = Math.abs(offsetY);
-
-        return {
-            offsetX: absX === 0 ? 0 : offsetX / absX * Math.min(absX, maxOffsets.x),
-            offsetY: absY === 0 ? 0 : offsetY / absY * Math.min(absY, maxOffsets.y),
+            maxX: maxX,
+            minX: -1 * maxX,
+            maxY: maxY,
+            minY: -1 * maxY,
         };
     },
 
     // Detach key and mouse input events
     isAnimating: function() {
-        return this.state.isMovingToNext || this.state.isMovingToPrev || this.state.isClosing;
+        return this.state.shouldAnimate || this.state.isClosing;
     },
 
     // Load image from src and call callback with image width and height on load
@@ -777,6 +829,7 @@ var ReactImageLightbox = React.createClass({
                     <div
                         className={imageClass}
                         onDoubleClick={this.handleImageDoubleClick}
+                        onWheel={this.handleImageMouseWheel}
                         style={imageStyle}
                         key={imageSrc + keyEndings[srcType]}
                     >
@@ -788,6 +841,7 @@ var ReactImageLightbox = React.createClass({
                     <img
                         className={imageClass}
                         onDoubleClick={this.handleImageDoubleClick}
+                        onWheel={this.handleImageMouseWheel}
                         style={imageStyle}
                         src={imageSrc}
                         key={imageSrc + keyEndings[srcType]}
@@ -796,6 +850,7 @@ var ReactImageLightbox = React.createClass({
             }
         }.bind(this);
 
+        var zoomMultiplier = this.getZoomMultiplier();
         // Next Image (displayed on the right)
         addImage('nextSrc', 'image-next', Styles.imageNext);
         // Main Image
@@ -803,9 +858,9 @@ var ReactImageLightbox = React.createClass({
             'mainSrc',
             'image-current',
             Styles.imageCurrent(
-                this.getZoomRatio(),
-                this.state.offsetX,
-                this.state.offsetY
+                zoomMultiplier,
+                zoomMultiplier * this.state.offsetX,
+                zoomMultiplier * this.state.offsetY
             )
         );
         // Previous Image (displayed on the left)
@@ -878,7 +933,7 @@ var ReactImageLightbox = React.createClass({
                                         key="zoom-in"
                                         className="zoom-in"
                                         style={[Styles.toolbarItemChild, Styles.builtinButton, Styles.zoomInButton]}
-                                        onClick={!this.isAnimating() ? this.zoomIn : noop} // Ignore clicks during animation
+                                        onClick={!this.isAnimating() ? this.handleZoomInButtonClick : noop} // Ignore clicks during animation
                                     />
                                 </li>
 
@@ -888,7 +943,7 @@ var ReactImageLightbox = React.createClass({
                                         key="zoom-out"
                                         className="zoom-out"
                                         style={[Styles.toolbarItemChild, Styles.builtinButton, Styles.zoomOutButton]}
-                                        onClick={!this.isAnimating() ? this.zoomOut : noop} // Ignore clicks during animation
+                                        onClick={!this.isAnimating() ? this.handleZoomOutButtonClick : noop} // Ignore clicks during animation
                                     />
                                 </li>
 

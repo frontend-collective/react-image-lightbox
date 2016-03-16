@@ -7,16 +7,19 @@ var constants = {
     MIN_ZOOM_LEVEL: 0,
 
     // Max image zoom level
-    MAX_ZOOM_LEVEL: 4,
+    MAX_ZOOM_LEVEL: 400,
+
+    // Size ratio between previous and next zoom levels
+    ZOOM_RATIO: 1.007,
+
+    // How much to increase/decrease the zoom level when the zoom buttons are clicked
+    ZOOM_BUTTON_INCREMENT_SIZE: 100,
 
     // Used to judge the amount of horizontal scroll needed to initiate a image move
     WHEEL_MOVE_X_THRESHOLD: 200,
 
     // Used to judge the amount of vertical scroll needed to initiate a zoom action
-    WHEEL_MOVE_Y_THRESHOLD: 50,
-
-    // Size ratio between previous and next zoom levels
-    ZOOM_RATIO: 2,
+    WHEEL_MOVE_Y_THRESHOLD: 1,
 };
 
 module.exports = Object.freeze(constants);
