@@ -893,6 +893,30 @@ var ReactImageLightbox = React.createClass({
 
         var noop = function(){};
 
+        // Prepare styles and handlers for the zoom in/out buttons
+        var zoomInButtonStyle    = [Styles.toolbarItemChild, Styles.builtinButton, Styles.zoomInButton];
+        var zoomOutButtonStyle   = [Styles.toolbarItemChild, Styles.builtinButton, Styles.zoomOutButton];
+        var zoomInButtonHandler  = this.handleZoomInButtonClick;
+        var zoomOutButtonHandler = this.handleZoomOutButtonClick;
+
+        // Disable zooming in when zoomed all the way in
+        if (this.state.zoomLevel === Constant.MAX_ZOOM_LEVEL) {
+            zoomInButtonStyle.push(Styles.builtinButtonDisabled);
+            zoomInButtonHandler = noop;
+        }
+
+        // Disable zooming out when zoomed all the way out
+        if (this.state.zoomLevel === Constant.MIN_ZOOM_LEVEL) {
+            zoomOutButtonStyle.push(Styles.builtinButtonDisabled);
+            zoomOutButtonHandler = noop;
+        }
+
+        // Ignore clicks during animation
+        if (this.isAnimating()) {
+            zoomInButtonHandler  = noop;
+            zoomOutButtonHandler = noop;
+        }
+
         return (
             <Portal>
                 <StyleRoot>
@@ -956,8 +980,8 @@ var ReactImageLightbox = React.createClass({
                                         type="button"
                                         key="zoom-in"
                                         className="zoom-in"
-                                        style={[Styles.toolbarItemChild, Styles.builtinButton, Styles.zoomInButton]}
-                                        onClick={!this.isAnimating() ? this.handleZoomInButtonClick : noop} // Ignore clicks during animation
+                                        style={zoomInButtonStyle}
+                                        onClick={zoomInButtonHandler}
                                     />
                                 </li>
 
@@ -966,8 +990,8 @@ var ReactImageLightbox = React.createClass({
                                         type="button"
                                         key="zoom-out"
                                         className="zoom-out"
-                                        style={[Styles.toolbarItemChild, Styles.builtinButton, Styles.zoomOutButton]}
-                                        onClick={!this.isAnimating() ? this.handleZoomOutButtonClick : noop} // Ignore clicks during animation
+                                        style={zoomOutButtonStyle}
+                                        onClick={zoomOutButtonHandler}
                                     />
                                 </li>
 
