@@ -20,6 +20,15 @@ function _getWindowHeight () {
     return window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
 }
 
+// Returns true if this window is rendered as an iframe inside another window
+function _isInIframe () {
+    try {
+        return window.self !== window.top;
+    } catch (e) {
+        return true;
+    }
+}
+
 var ReactImageLightbox = React.createClass({
     propTypes: {
         ///////////////////////////////
@@ -590,6 +599,13 @@ var ReactImageLightbox = React.createClass({
             document.addEventListener('keyup', this.handleKeyInput);
             window.addEventListener('resize', this.handleWindowResize);
             window.addEventListener('mouseup', this.handleMouseUp);
+
+            // Have to add an extra mouseup handler to catch mouseup events outside of the window
+            //  if the page containing the lightbox is displayed in an iframe
+            if (_isInIframe()) {
+                window.top.addEventListener('mouseup', this.handleMouseUp);
+            }
+
             this.listenersAttached = true;
         }
     },
@@ -601,6 +617,11 @@ var ReactImageLightbox = React.createClass({
             document.removeEventListener('keyup', this.handleKeyInput);
             window.removeEventListener('resize', this.handleWindowResize);
             window.removeEventListener('mouseup', this.handleMouseUp);
+
+            if (_isInIframe()) {
+                window.top.removeEventListener('mouseup', this.handleMouseUp);
+            }
+
             this.listenersAttached = false;
         }
     },
