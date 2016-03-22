@@ -151,7 +151,7 @@ var styles = {
     toolbarItem: {
         display       : 'inline-block',
         lineHeight    : toolbarHeight,
-        padding       : '0 6px',
+        padding       : '0',
         color         : '#FFFFFF',
         fontSize      : '120%',
         maxWidth      : '100%',
@@ -165,17 +165,27 @@ var styles = {
     },
 
     builtinButton: {
-        width      : '25px',
-        height     : '25px',
+        width      : '40px',
+        height     : '35px',
         cursor     : 'pointer',
         border     : 'none',
+        opacity    : 0.7,
 
         ':hover': {
-            opacity: 0.7,
+            opacity: 1,
         },
 
         ':active': {
             outline: 'none',
+        },
+    },
+
+    builtinButtonDisabled: {
+        cursor  : 'default',
+        opacity : 0.5,
+
+        ':hover': {
+            opacity: 0.5,
         },
     },
 
