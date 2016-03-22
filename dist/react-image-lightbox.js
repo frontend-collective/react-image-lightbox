@@ -101,6 +101,15 @@ function _getWindowHeight() {
     return window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
 }
 
+// Returns true if this window is rendered as an iframe inside another window
+function _isInIframe() {
+    try {
+        return window.self !== window.top;
+    } catch (e) {
+        return true;
+    }
+}
+
 var ReactImageLightbox = React.createClass({
     displayName: 'ReactImageLightbox',
 
@@ -659,6 +668,13 @@ var ReactImageLightbox = React.createClass({
             document.addEventListener('keyup', this.handleKeyInput);
             window.addEventListener('resize', this.handleWindowResize);
             window.addEventListener('mouseup', this.handleMouseUp);
+
+            // Have to add an extra mouseup handler to catch mouseup events outside of the window
+            //  if the page containing the lightbox is displayed in an iframe
+            if (_isInIframe()) {
+                window.top.addEventListener('mouseup', this.handleMouseUp);
+            }
+
             this.listenersAttached = true;
         }
     },
@@ -670,6 +686,11 @@ var ReactImageLightbox = React.createClass({
             document.removeEventListener('keyup', this.handleKeyInput);
             window.removeEventListener('resize', this.handleWindowResize);
             window.removeEventListener('mouseup', this.handleMouseUp);
+
+            if (_isInIframe()) {
+                window.top.removeEventListener('mouseup', this.handleMouseUp);
+            }
+
             this.listenersAttached = false;
         }
     },
@@ -944,6 +965,30 @@ var ReactImageLightbox = React.createClass({
 
         var noop = function noop() {};
 
+        // Prepare styles and handlers for the zoom in/out buttons
+        var zoomInButtonStyle = [Styles.toolbarItemChild, Styles.builtinButton, Styles.zoomInButton];
+        var zoomOutButtonStyle = [Styles.toolbarItemChild, Styles.builtinButton, Styles.zoomOutButton];
+        var zoomInButtonHandler = this.handleZoomInButtonClick;
+        var zoomOutButtonHandler = this.handleZoomOutButtonClick;
+
+        // Disable zooming in when zoomed all the way in
+        if (this.state.zoomLevel === Constant.MAX_ZOOM_LEVEL) {
+            zoomInButtonStyle.push(Styles.builtinButtonDisabled);
+            zoomInButtonHandler = noop;
+        }
+
+        // Disable zooming out when zoomed all the way out
+        if (this.state.zoomLevel === Constant.MIN_ZOOM_LEVEL) {
+            zoomOutButtonStyle.push(Styles.builtinButtonDisabled);
+            zoomOutButtonHandler = noop;
+        }
+
+        // Ignore clicks during animation
+        if (this.isAnimating()) {
+            zoomInButtonHandler = noop;
+            zoomOutButtonHandler = noop;
+        }
+
         return React.createElement(
             Portal,
             null,
@@ -1018,8 +1063,8 @@ var ReactImageLightbox = React.createClass({
                                     type: 'button',
                                     key: 'zoom-in',
                                     className: 'zoom-in',
-                                    style: [Styles.toolbarItemChild, Styles.builtinButton, Styles.zoomInButton],
-                                    onClick: !this.isAnimating() ? this.handleZoomInButtonClick : noop // Ignore clicks during animation
+                                    style: zoomInButtonStyle,
+                                    onClick: zoomInButtonHandler
                                 })
                             ),
                             React.createElement(
@@ -1029,8 +1074,8 @@ var ReactImageLightbox = React.createClass({
                                     type: 'button',
                                     key: 'zoom-out',
                                     className: 'zoom-out',
-                                    style: [Styles.toolbarItemChild, Styles.builtinButton, Styles.zoomOutButton],
-                                    onClick: !this.isAnimating() ? this.handleZoomOutButtonClick : noop // Ignore clicks during animation
+                                    style: zoomOutButtonStyle,
+                                    onClick: zoomOutButtonHandler
                                 })
                             ),
                             React.createElement(
@@ -1204,7 +1249,7 @@ var styles = {
     toolbarItem: {
         display: 'inline-block',
         lineHeight: toolbarHeight,
-        padding: '0 6px',
+        padding: '0',
         color: '#FFFFFF',
         fontSize: '120%',
         maxWidth: '100%',
@@ -1218,17 +1263,27 @@ var styles = {
     },
 
     builtinButton: {
-        width: '25px',
-        height: '25px',
+        width: '40px',
+        height: '35px',
         cursor: 'pointer',
         border: 'none',
+        opacity: 0.7,
 
         ':hover': {
-            opacity: 0.7
+            opacity: 1
         },
 
         ':active': {
             outline: 'none'
+        }
+    },
+
+    builtinButtonDisabled: {
+        cursor: 'default',
+        opacity: 0.5,
+
+        ':hover': {
+            opacity: 0.5
         }
     },
 
