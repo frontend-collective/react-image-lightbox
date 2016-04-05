@@ -790,14 +790,17 @@ a {
   border-radius: 5px;
   background-color: #303030;
   border: none;
-  color: #FFFFFF;
+  color: #FFF;
   outline: none;
   padding: 8px 15px;
 }
+.demo-button:hover {
+  background-color: #000;
+  text-shadow: 0 0 6px #FFF;
+}
 .demo-button:active {
-  background-color: #000000;
-  text-shadow: 0 0 6px #FFFFFF, 0 0 6px #FFFFFF, 0 0 6px #FFFFFF;
+  text-shadow: 0 0 6px #FFF, 0 0 6px #FFF, 0 0 6px #FFF;
 }
 .demo-button:focus {
-  box-shadow: 0 0 3px 2px #999999;
+  box-shadow: 0 0 3px 2px #999;
 }
