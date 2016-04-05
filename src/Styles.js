@@ -57,7 +57,7 @@ var styles = {
     },
     imageCurrent: function (zoomRatio, offsetX, offsetY) {
         return {
-            transform: 'scale(' + zoomRatio + ') ',
+            transform: 'scale3d(' + zoomRatio + ',' + zoomRatio + ',1) ',
             left: -1 * offsetX,
             right: offsetX,
             top: -1 * offsetY,
