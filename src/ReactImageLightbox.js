@@ -842,8 +842,7 @@ var ReactImageLightbox = React.createClass({
                 return;
             }
 
-            var imageStyle = [Styles.image(this.props.animationDuration), baseStyle, transitionStyle];
-            var fitSizes = {};
+            var imageStyle = [Styles.image, baseStyle, transitionStyle];
             if (this.state.zoomLevel > Constant.MIN_ZOOM_LEVEL) {
                 imageStyle.push({ cursor: 'move' });
             }
@@ -942,7 +941,7 @@ var ReactImageLightbox = React.createClass({
             <Portal>
                 <StyleRoot>
                     <div // Floating modal with closing animations
-                        className={"outer" + (this.state.isClosing ? ' closing' : '')}
+                        className={'outer' + (this.state.isClosing ? ' closing' : '')}
                         onWheel={this.handleOuterMousewheel}
                         onMouseMove={this.handleOuterMouseMove}
                         onMouseDown={this.handleOuterMouseDown}

@@ -39,15 +39,13 @@ var styles = {
         bottom   : 0,
     },
 
-    image: function(duration) {
-        return {
-            position   : 'absolute',
-            top        : 0,
-            bottom     : 0,
-            margin     : 'auto',
-            maxWidth   : '100%',
-            maxHeight  : '100%',
-        };
+    image: {
+        position   : 'absolute',
+        top        : 0,
+        bottom     : 0,
+        margin     : 'auto',
+        maxWidth   : '100%',
+        maxHeight  : '100%',
     },
     imagePrev: {
         left: '-100%',
