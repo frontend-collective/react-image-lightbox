@@ -7,10 +7,12 @@ A flexible lightbox component for displaying images in a React project.
 [DEMO](https://fritz-c.github.io/react-image-lightbox/)
 
 Features
-- Few dependencies
 - Keyboard shortcuts (with rate limiting)
-- Image preloading for smoother viewing
+- Image Zoom
 - Flexible rendering using src values assigned on the fly
+- Image preloading for smoother viewing
+- Few dependencies
+- No external CSS
 
 ## Example
 
