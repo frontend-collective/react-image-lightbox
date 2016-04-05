@@ -3,7 +3,7 @@
   "version": "1.1.1",
   "description": "A lightbox component for React.js",
   "scripts": {
-    "start": "scripts/dev-examples"
+    "start": "node_modules/.bin/gulp dev"
   },
   "main": "lib/ReactImageLightbox.js",
   "repository": {
@@ -17,7 +17,7 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "radium": "^0.16.6"
+    "radium": "^0.17.1"
   },
   "peerDependencies": {
     "react": "^0.14.0"
