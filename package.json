@@ -1,6 +1,6 @@
 {
   "name": "react-image-lightbox",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "A lightbox component for React.js",
   "scripts": {
     "start": "node_modules/.bin/gulp dev"
