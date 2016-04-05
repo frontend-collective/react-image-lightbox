@@ -117,15 +117,13 @@ var styles = {
         bottom: 0
     },
 
-    image: function image(duration) {
-        return {
-            position: 'absolute',
-            top: 0,
-            bottom: 0,
-            margin: 'auto',
-            maxWidth: '100%',
-            maxHeight: '100%'
-        };
+    image: {
+        position: 'absolute',
+        top: 0,
+        bottom: 0,
+        margin: 'auto',
+        maxWidth: '100%',
+        maxHeight: '100%'
     },
     imagePrev: {
         left: '-100%',
@@ -137,7 +135,7 @@ var styles = {
     },
     imageCurrent: function imageCurrent(zoomRatio, offsetX, offsetY) {
         return {
-            transform: 'scale(' + zoomRatio + ') ',
+            transform: 'scale3d(' + zoomRatio + ',' + zoomRatio + ',1) ',
             left: -1 * offsetX,
             right: offsetX,
             top: -1 * offsetY,
@@ -1103,8 +1101,7 @@ var ReactImageLightbox = React.createClass({
                 return;
             }
 
-            var imageStyle = [Styles.image(this.props.animationDuration), baseStyle, transitionStyle];
-            var fitSizes = {};
+            var imageStyle = [Styles.image, baseStyle, transitionStyle];
             if (this.state.zoomLevel > Constant.MIN_ZOOM_LEVEL) {
                 imageStyle.push({ cursor: 'move' });
             }
@@ -1196,7 +1193,7 @@ var ReactImageLightbox = React.createClass({
                 React.createElement(
                     'div',
                     { // Floating modal with closing animations
-                        className: "outer" + (this.state.isClosing ? ' closing' : ''),
+                        className: 'outer' + (this.state.isClosing ? ' closing' : ''),
                         onWheel: this.handleOuterMousewheel,
                         onMouseMove: this.handleOuterMouseMove,
                         onMouseDown: this.handleOuterMouseDown,

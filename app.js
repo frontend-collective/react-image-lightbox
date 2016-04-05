@@ -9,7 +9,7 @@ var images = ['images/1.jpg', 'images/2.jpg', 'images/3.jpg', 'images/4.jpg'];
 
 var thumbs = ['images/1_thumb.jpg', 'images/2_thumb.jpg', 'images/3_thumb.jpg', 'images/4_thumb.jpg'];
 
-var titles = ["", React.createElement(
+var titles = ['', React.createElement(
     'span',
     null,
     'by ',
