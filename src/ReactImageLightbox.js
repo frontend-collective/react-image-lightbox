@@ -123,6 +123,9 @@ const ReactImageLightbox = React.createClass({
 
         // Padding (px) between the edge of the window and the lightbox
         imagePadding: PropTypes.number,
+
+        // When true, clicks outside of the image close the lightbox
+        clickOutsideToClose: PropTypes.bool,
     },
 
     getDefaultProps() {
@@ -140,6 +143,7 @@ const ReactImageLightbox = React.createClass({
             keyRepeatKeyupBonus : 40,
 
             imagePadding: 10,
+            clickOutsideToClose: true,
         };
     },
 
@@ -531,12 +535,12 @@ const ReactImageLightbox = React.createClass({
 
     // Request that the lightbox be closed
     requestClose(event) {
-        const closeLightbox = () => {
-            // Call the parent close request
-            return this.props.onCloseRequest(event);
-        };
+        // Call the parent close request
+        const closeLightbox = () => this.props.onCloseRequest(event);
 
-        if (this.props.animationDisabled || (event.type === 'keydown' && !this.props.animationOnKeyInput)) {
+        if (this.props.animationDisabled ||
+            (event.type === 'keydown' && !this.props.animationOnKeyInput)
+        ) {
             // No animation
             return closeLightbox();
         } else {
@@ -589,6 +593,12 @@ const ReactImageLightbox = React.createClass({
     // Request to transition to the next image
     requestMoveNext(event) {
         this.requestMove('next', event);
+    },
+
+    closeIfClickInner(event) {
+        if (event.target.className.search(/\binner\b/) > -1) {
+            this.requestClose(event);
+        }
     },
 
     // Attach key and mouse input events
@@ -954,6 +964,7 @@ const ReactImageLightbox = React.createClass({
 
                         <div // Image holder
                             className="inner"
+                            onClick={this.props.clickOutsideToClose ? this.closeIfClickInner : noop}
                             style={[Styles.inner]}
                         >
                             {images}
