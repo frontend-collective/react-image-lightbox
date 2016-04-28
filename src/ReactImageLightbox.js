@@ -1,16 +1,14 @@
 /*
- * react-image-lightbox 1.0.0
+ * react-image-lightbox 2.0.0
  * Copyright 2016 Chris Fritz All rights reserved.
  * @license Open source under the MIT License
  */
-'use strict';
 
-var React     = require('react');
-var Radium    = require('radium');
-var StyleRoot = Radium.StyleRoot;
-var Styles    = require('./Styles');
-var Portal    = require('./Portal');
-var Constant  = require('./Constant');
+import React, { PropTypes } from 'react';
+import Radium, { StyleRoot } from 'radium';
+import Styles from './Styles';
+import Portal from './Portal';
+import Constant from './Constant';
 
 function _getWindowWidth () {
     return window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
@@ -29,35 +27,35 @@ function _isInIframe () {
     }
 }
 
-var ReactImageLightbox = React.createClass({
+const ReactImageLightbox = React.createClass({
     propTypes: {
         ///////////////////////////////
         // Image sources
         ///////////////////////////////
 
         // Main display image url
-        mainSrc: React.PropTypes.string.isRequired,
+        mainSrc: PropTypes.string.isRequired,
 
         // Previous display image url (displayed to the left)
         // If left undefined, movePrev actions will not be performed, and the button not displayed
-        prevSrc: React.PropTypes.string,
+        prevSrc: PropTypes.string,
 
         // Next display image url (displayed to the right)
         // If left undefined, moveNext actions will not be performed, and the button not displayed
-        nextSrc: React.PropTypes.string,
+        nextSrc: PropTypes.string,
 
         ///////////////////////////////
         // Image thumbnail sources
         ///////////////////////////////
 
         // Thumbnail image url corresponding to props.mainSrc
-        mainSrcThumbnail: React.PropTypes.string,
+        mainSrcThumbnail: PropTypes.string,
 
         // Thumbnail image url corresponding to props.prevSrc
-        prevSrcThumbnail: React.PropTypes.string,
+        prevSrcThumbnail: PropTypes.string,
 
         // Thumbnail image url corresponding to props.nextSrc
-        nextSrcThumbnail: React.PropTypes.string,
+        nextSrcThumbnail: PropTypes.string,
 
         ///////////////////////////////
         // Event Handlers
@@ -65,37 +63,37 @@ var ReactImageLightbox = React.createClass({
 
         // Close window event
         // Should change the parent state such that the lightbox is not rendered
-        onCloseRequest: React.PropTypes.func.isRequired,
+        onCloseRequest: PropTypes.func.isRequired,
 
         // Move to previous image event
         // Should change the parent state such that props.prevSrc becomes props.mainSrc,
         //  props.mainSrc becomes props.nextSrc, etc.
-        onMovePrevRequest: React.PropTypes.func,
+        onMovePrevRequest: PropTypes.func,
 
         // Move to next image event
         // Should change the parent state such that props.nextSrc becomes props.mainSrc,
         //  props.mainSrc becomes props.prevSrc, etc.
-        onMoveNextRequest: React.PropTypes.func,
+        onMoveNextRequest: PropTypes.func,
 
         ///////////////////////////////
         // Download discouragement settings
         ///////////////////////////////
 
         // Enable download discouragement (prevents [right-click -> Save Image As...])
-        discourageDownloads: React.PropTypes.bool,
+        discourageDownloads: PropTypes.bool,
 
         ///////////////////////////////
         // Animation settings
         ///////////////////////////////
 
         // Disable all animation
-        animationDisabled: React.PropTypes.bool,
+        animationDisabled: PropTypes.bool,
 
         // Disable animation on actions performed with keyboard shortcuts
-        animationOnKeyInput: React.PropTypes.bool,
+        animationOnKeyInput: PropTypes.bool,
 
         // Animation duration (ms)
-        animationDuration: React.PropTypes.number,
+        animationDuration: PropTypes.number,
 
         ///////////////////////////////
         // Keyboard shortcut settings
@@ -103,34 +101,37 @@ var ReactImageLightbox = React.createClass({
 
         // Required interval of time (ms) between key actions
         // (prevents excessively fast navigation of images)
-        keyRepeatLimit: React.PropTypes.number,
+        keyRepeatLimit: PropTypes.number,
 
         // Amount of time (ms) restored after each keyup
         // (makes rapid key presses slightly faster than holding down the key to navigate images)
-        keyRepeatKeyupBonus: React.PropTypes.number,
+        keyRepeatKeyupBonus: PropTypes.number,
 
         ///////////////////////////////
         // Image info
         ///////////////////////////////
 
         // Image title
-        imageTitle: React.PropTypes.node,
+        imageTitle: PropTypes.node,
 
         ///////////////////////////////
         // Other
         ///////////////////////////////
 
         // Array of custom toolbar buttons
-        toolbarButtons: React.PropTypes.arrayOf(React.PropTypes.node),
+        toolbarButtons: PropTypes.arrayOf(PropTypes.node),
 
         // Padding (px) between the edge of the window and the lightbox
-        imagePadding: React.PropTypes.number,
+        imagePadding: PropTypes.number,
+
+        // When true, clicks outside of the image close the lightbox
+        clickOutsideToClose: PropTypes.bool,
     },
 
-    getDefaultProps: function() {
+    getDefaultProps() {
         return {
-            onMovePrevRequest: function(){},
-            onMoveNextRequest: function(){},
+            onMovePrevRequest(){},
+            onMoveNextRequest(){},
 
             discourageDownloads: false,
 
@@ -142,10 +143,11 @@ var ReactImageLightbox = React.createClass({
             keyRepeatKeyupBonus : 40,
 
             imagePadding: 10,
+            clickOutsideToClose: true,
         };
     },
 
-    getInitialState: function() {
+    getInitialState() {
         return {
             ///////////////////////////////
             // Animation
@@ -175,7 +177,7 @@ var ReactImageLightbox = React.createClass({
         };
     },
 
-    componentWillMount: function() {
+    componentWillMount() {
         // Whether event listeners for keyboard and mouse input have been attached or not
         this.listenersAttached = false;
 
@@ -211,7 +213,7 @@ var ReactImageLightbox = React.createClass({
         this.moveRequested = false;
     },
 
-    componentDidMount: function() {
+    componentDidMount() {
         this.attachListeners();
 
         if (!this.props.animationDisabled) {
@@ -222,10 +224,10 @@ var ReactImageLightbox = React.createClass({
         this.loadAllImages();
     },
 
-    componentWillReceiveProps: function(nextProps) {
-        var sourcesChanged = this.getSrcTypes().some(function(srcType) {
+    componentWillReceiveProps(nextProps) {
+        const sourcesChanged = this.getSrcTypes().some(srcType => {
             return this.props[srcType.name] != nextProps[srcType.name];
-        }.bind(this));
+        });
 
         if (sourcesChanged || this.moveRequested) {
             this.moveRequested = false;
@@ -235,12 +237,12 @@ var ReactImageLightbox = React.createClass({
         }
     },
 
-    componentWillUnmount: function() {
+    componentWillUnmount() {
         this.detachListeners();
     },
 
     // Handle user keyboard actions
-    handleKeyInput: function(event) {
+    handleKeyInput(event) {
         event.stopPropagation();
 
         // Ignore key input during animations
@@ -254,8 +256,8 @@ var ReactImageLightbox = React.createClass({
             return;
         }
 
-        var keyCode = event.which || event.keyCode;
-        var key = {
+        const keyCode = event.which || event.keyCode;
+        const key = {
             esc        : 27,
             leftArrow  : 37,
             rightArrow : 39,
@@ -263,7 +265,7 @@ var ReactImageLightbox = React.createClass({
 
         // Ignore key presses that happen too close to each other (when rapid fire key pressing or holding down the key)
         // But allow it if it's a lightbox closing action
-        var currentTime = new Date();
+        const currentTime = new Date();
         if ((currentTime.getTime() - this.lastKeyDownTime) < this.props.keyRepeatLimit &&
             keyCode != key.esc
         ) {
@@ -272,59 +274,59 @@ var ReactImageLightbox = React.createClass({
         this.lastKeyDownTime = currentTime.getTime();
 
         switch (keyCode) {
-            // ESC key closes the lightbox
-            case key.esc:
-                event.preventDefault();
-                this.requestClose(event);
-                break;
+        // ESC key closes the lightbox
+        case key.esc:
+            event.preventDefault();
+            this.requestClose(event);
+            break;
 
-            // Left arrow key moves to previous image
-            case key.leftArrow:
-                if (!this.props.prevSrc) {
-                    return;
-                }
+        // Left arrow key moves to previous image
+        case key.leftArrow:
+            if (!this.props.prevSrc) {
+                return;
+            }
 
-                event.preventDefault();
-                this.keyPressed = true;
-                this.requestMovePrev(event);
-                break;
+            event.preventDefault();
+            this.keyPressed = true;
+            this.requestMovePrev(event);
+            break;
 
-            // Right arrow key moves to next image
-            case key.rightArrow:
-                if (!this.props.nextSrc) {
-                    return;
-                }
+        // Right arrow key moves to next image
+        case key.rightArrow:
+            if (!this.props.nextSrc) {
+                return;
+            }
 
-                event.preventDefault();
-                this.keyPressed = true;
-                this.requestMoveNext(event);
-                break;
+            event.preventDefault();
+            this.keyPressed = true;
+            this.requestMoveNext(event);
+            break;
 
-            default:
+        default:
         }
     },
 
     // Handle the window resize event
-    handleWindowResize: function(event) {
+    handleWindowResize() {
         clearTimeout(this.resizeTimeout);
         this.resizeTimeout = setTimeout(this.forceUpdate.bind(this), 100);
     },
 
     // Handle a mouse wheel event over the lightbox container
-    handleOuterMousewheel: function(event) {
+    handleOuterMousewheel(event) {
         // Prevent scrolling of the background
         event.preventDefault();
         event.stopPropagation();
 
-        var xThreshold = Constant.WHEEL_MOVE_X_THRESHOLD;
-        var actionDelay = 0;
-        var imageMoveDelay = 500;
+        const xThreshold = Constant.WHEEL_MOVE_X_THRESHOLD;
+        let actionDelay = 0;
+        const imageMoveDelay = 500;
 
         clearTimeout(this.resetScrollTimeout);
-        this.resetScrollTimeout = setTimeout(function() {
+        this.resetScrollTimeout = setTimeout(() => {
             this.scrollX = 0;
             this.scrollY = 0;
-        }.bind(this), 300);
+        }, 300);
 
         // Prevent rapid-fire zoom behavior
         if (this.wheelActionTimeout !== null || this.isAnimating()) {
@@ -336,7 +338,7 @@ var ReactImageLightbox = React.createClass({
             this.scrollY = 0;
             this.scrollX += event.deltaX;
 
-            var bigLeapX = xThreshold / 2;
+            const bigLeapX = xThreshold / 2;
             // If the scroll amount has accumulated sufficiently, or a large leap was taken
             if (this.scrollX >= xThreshold || event.deltaX >= bigLeapX) {
                 // Scroll right moves to next
@@ -353,15 +355,15 @@ var ReactImageLightbox = React.createClass({
 
         // Allow successive actions after the set delay
         if (actionDelay !== 0) {
-            this.wheelActionTimeout = setTimeout(function() {
+            this.wheelActionTimeout = setTimeout(() => {
                 this.wheelActionTimeout = null;
-            }.bind(this), actionDelay);
+            }, actionDelay);
         }
     },
 
-    handleImageMouseWheel: function (event) {
+    handleImageMouseWheel (event) {
         event.preventDefault();
-        var yThreshold = Constant.WHEEL_MOVE_Y_THRESHOLD;
+        const yThreshold = Constant.WHEEL_MOVE_Y_THRESHOLD;
 
         if (Math.abs(event.deltaY) >= Math.abs(event.deltaX)) {
             event.stopPropagation();
@@ -381,17 +383,17 @@ var ReactImageLightbox = React.createClass({
         }
     },
 
-    getOffsetXFromWindowCenter: function (x) {
-        var windowWidth  = _getWindowWidth();
+    getOffsetXFromWindowCenter (x) {
+        const windowWidth  = _getWindowWidth();
         return windowWidth / 2 - x;
     },
-    getOffsetYFromWindowCenter: function (y) {
-        var windowHeight = _getWindowHeight();
+    getOffsetYFromWindowCenter (y) {
+        const windowHeight = _getWindowHeight();
         return windowHeight / 2 - y;
     },
 
     // Handle a double click on the current image
-    handleImageDoubleClick: function(event) {
+    handleImageDoubleClick(event) {
         if (this.state.zoomLevel > Constant.MIN_ZOOM_LEVEL) {
             // A double click when zoomed in zooms all the way out
             this.changeZoom(
@@ -410,7 +412,7 @@ var ReactImageLightbox = React.createClass({
     },
 
     // Handle the mouse clicking down in the lightbox container
-    handleOuterMouseDown: function(event) {
+    handleOuterMouseDown(event) {
         event.preventDefault();
 
         // Allow dragging when zoomed
@@ -425,15 +427,15 @@ var ReactImageLightbox = React.createClass({
 
     // Handle the mouse dragging over the lightbox container
     // (after a mouseDown and before a mouseUp event)
-    handleOuterMouseMove: function(event) {
+    handleOuterMouseMove(event) {
         if (!this.isDragging) {
             return;
         }
 
-        var zoomMultiplier = this.getZoomMultiplier();
+        const zoomMultiplier = this.getZoomMultiplier();
 
-        var newOffsetX = (this.dragStartX - event.clientX) / zoomMultiplier + this.dragStartOffsetX;
-        var newOffsetY = (this.dragStartY - event.clientY) / zoomMultiplier + this.dragStartOffsetY;
+        const newOffsetX = (this.dragStartX - event.clientX) / zoomMultiplier + this.dragStartOffsetX;
+        const newOffsetY = (this.dragStartY - event.clientY) / zoomMultiplier + this.dragStartOffsetY;
         if (this.state.offsetX !== newOffsetX || this.state.offsetY !== newOffsetY) {
             this.setState({
                 offsetX: newOffsetX,
@@ -443,7 +445,7 @@ var ReactImageLightbox = React.createClass({
     },
 
     // Handle a mouse click ending in the lightbox container
-    handleMouseUp: function(event) {
+    handleMouseUp() {
         if (!this.isDragging) {
             return;
         }
@@ -451,9 +453,9 @@ var ReactImageLightbox = React.createClass({
         this.isDragging = false;
 
         // Snap image back into frame if outside max offset range
-        var maxOffsets = this.getMaxOffsets();
-        var nextOffsetX = Math.max(maxOffsets.minX, Math.min(maxOffsets.maxX, this.state.offsetX));
-        var nextOffsetY = Math.max(maxOffsets.minY, Math.min(maxOffsets.maxY, this.state.offsetY));
+        const maxOffsets = this.getMaxOffsets();
+        const nextOffsetX = Math.max(maxOffsets.minX, Math.min(maxOffsets.maxX, this.state.offsetX));
+        const nextOffsetY = Math.max(maxOffsets.minY, Math.min(maxOffsets.maxY, this.state.offsetY));
         if (nextOffsetX !== this.state.offsetX || nextOffsetY !== this.state.offsetY) {
             this.setState({
                 offsetX       : nextOffsetX,
@@ -461,31 +463,31 @@ var ReactImageLightbox = React.createClass({
                 shouldAnimate : true,
             });
 
-            setTimeout(function() {
+            setTimeout(() => {
                 this.setState({ shouldAnimate: false });
-            }.bind(this), this.props.animationDuration);
+            }, this.props.animationDuration);
         }
     },
 
-    handleZoomInButtonClick: function (event) {
+    handleZoomInButtonClick () {
         this.changeZoom(this.state.zoomLevel + Constant.ZOOM_BUTTON_INCREMENT_SIZE);
     },
 
-    handleZoomOutButtonClick: function (event) {
+    handleZoomOutButtonClick () {
         this.changeZoom(this.state.zoomLevel - Constant.ZOOM_BUTTON_INCREMENT_SIZE);
     },
 
     // Change zoom level
-    changeZoom: function(zoomLevel, clientX, clientY) {
-        var windowWidth  = _getWindowWidth();
-        var windowHeight = _getWindowHeight();
+    changeZoom(zoomLevel, clientX, clientY) {
+        const windowWidth  = _getWindowWidth();
+        const windowHeight = _getWindowHeight();
 
         // Default to the center of the screen to zoom when no mouse position specified
         clientX = typeof clientX !== 'undefined' ? clientX : windowWidth / 2;
         clientY = typeof clientY !== 'undefined' ? clientY : windowHeight / 2;
 
         // Constrain zoom level to the set bounds
-        var nextZoomLevel = Math.max(Constant.MIN_ZOOM_LEVEL, Math.min(Constant.MAX_ZOOM_LEVEL, zoomLevel));
+        const nextZoomLevel = Math.max(Constant.MIN_ZOOM_LEVEL, Math.min(Constant.MAX_ZOOM_LEVEL, zoomLevel));
 
         // Ignore requests that don't change the zoom level
         if (nextZoomLevel === this.state.zoomLevel) {
@@ -499,26 +501,26 @@ var ReactImageLightbox = React.createClass({
             });
         }
 
-        var currentZoomMultiplier = this.getZoomMultiplier();
-        var nextZoomMultiplier    = this.getZoomMultiplier(nextZoomLevel);
+        const currentZoomMultiplier = this.getZoomMultiplier();
+        const nextZoomMultiplier    = this.getZoomMultiplier(nextZoomLevel);
 
-        var percentXInCurrentBox = clientX / windowWidth;
-        var percentYInCurrentBox = clientY / windowHeight;
+        const percentXInCurrentBox = clientX / windowWidth;
+        const percentYInCurrentBox = clientY / windowHeight;
 
-        var currentBoxWidth  = windowWidth / currentZoomMultiplier;
-        var currentBoxHeight = windowHeight / currentZoomMultiplier;
+        const currentBoxWidth  = windowWidth / currentZoomMultiplier;
+        const currentBoxHeight = windowHeight / currentZoomMultiplier;
 
-        var nextBoxWidth  = windowWidth / nextZoomMultiplier;
-        var nextBoxHeight = windowHeight / nextZoomMultiplier;
+        const nextBoxWidth  = windowWidth / nextZoomMultiplier;
+        const nextBoxHeight = windowHeight / nextZoomMultiplier;
 
-        var deltaX = (nextBoxWidth - currentBoxWidth) * (percentXInCurrentBox - 0.5);
-        var deltaY = (nextBoxHeight - currentBoxHeight) * (percentYInCurrentBox - 0.5);
+        const deltaX = (nextBoxWidth - currentBoxWidth) * (percentXInCurrentBox - 0.5);
+        const deltaY = (nextBoxHeight - currentBoxHeight) * (percentYInCurrentBox - 0.5);
 
-        var nextOffsetX = this.state.offsetX - deltaX;
-        var nextOffsetY = this.state.offsetY - deltaY;
+        let nextOffsetX = this.state.offsetX - deltaX;
+        let nextOffsetY = this.state.offsetY - deltaY;
 
         // When zooming out, limit the offset so things don't get left askew
-        var maxOffsets = this.getMaxOffsets();
+        const maxOffsets = this.getMaxOffsets();
         if (this.state.zoomLevel > nextZoomLevel) {
             nextOffsetX = Math.max(maxOffsets.minX, Math.min(maxOffsets.maxX, nextOffsetX));
             nextOffsetY = Math.max(maxOffsets.minY, Math.min(maxOffsets.maxY, nextOffsetY));
@@ -532,13 +534,13 @@ var ReactImageLightbox = React.createClass({
     },
 
     // Request that the lightbox be closed
-    requestClose: function(event) {
-        var closeLightbox = function closeLightbox() {
-            // Call the parent close request
-            return this.props.onCloseRequest(event);
-        }.bind(this);
+    requestClose(event) {
+        // Call the parent close request
+        const closeLightbox = () => this.props.onCloseRequest(event);
 
-        if (this.props.animationDisabled || (event.type === 'keydown' && !this.props.animationOnKeyInput)) {
+        if (this.props.animationDisabled ||
+            (event.type === 'keydown' && !this.props.animationOnKeyInput)
+        ) {
             // No animation
             return closeLightbox();
         } else {
@@ -552,9 +554,9 @@ var ReactImageLightbox = React.createClass({
         }
     },
 
-    requestMove: function (direction, event) {
+    requestMove (direction, event) {
         // Reset the zoom level on image move
-        var nextState = {
+        let nextState = {
             zoomLevel : Constant.MIN_ZOOM_LEVEL,
             offsetX   : 0,
             offsetY   : 0,
@@ -563,9 +565,10 @@ var ReactImageLightbox = React.createClass({
         // Enable animated states
         if (!this.props.animationDisabled && (!this.keyPressed || this.props.animationOnKeyInput)) {
             nextState.shouldAnimate = true;
-            setTimeout(function() {
-                this.setState({ shouldAnimate: false });
-            }.bind(this), this.props.animationDuration);
+            setTimeout(
+                () => this.setState({ shouldAnimate: false }),
+                this.props.animationDuration
+            );
         }
         this.keyPressed = false;
 
@@ -583,17 +586,23 @@ var ReactImageLightbox = React.createClass({
     },
 
     // Request to transition to the previous image
-    requestMovePrev: function(event) {
+    requestMovePrev(event) {
         this.requestMove('prev', event);
     },
 
     // Request to transition to the next image
-    requestMoveNext: function(event) {
+    requestMoveNext(event) {
         this.requestMove('next', event);
     },
 
+    closeIfClickInner(event) {
+        if (event.target.className.search(/\binner\b/) > -1) {
+            this.requestClose(event);
+        }
+    },
+
     // Attach key and mouse input events
-    attachListeners: function() {
+    attachListeners() {
         if (!this.listenersAttached) {
             document.addEventListener('keydown', this.handleKeyInput);
             document.addEventListener('keyup', this.handleKeyInput);
@@ -611,7 +620,7 @@ var ReactImageLightbox = React.createClass({
     },
 
     // Detach key and mouse input events
-    detachListeners: function() {
+    detachListeners() {
         if (this.listenersAttached) {
             document.removeEventListener('keydown', this.handleKeyInput);
             document.removeEventListener('keyup', this.handleKeyInput);
@@ -627,7 +636,7 @@ var ReactImageLightbox = React.createClass({
     },
 
     // Get image src types
-    getSrcTypes: function() {
+    getSrcTypes() {
         return [
             {
                 name      : 'mainSrc',
@@ -657,21 +666,21 @@ var ReactImageLightbox = React.createClass({
     },
 
     // Get sizing for when an image is larger than the window
-    getFitSizes: function(width, height, stretch) {
-        var windowHeight = _getWindowHeight();
-        var windowWidth  = _getWindowWidth();
-        var maxHeight    = windowHeight - (this.props.imagePadding * 2);
-        var maxWidth     = windowWidth - (this.props.imagePadding * 2);
+    getFitSizes(width, height, stretch) {
+        const windowHeight = _getWindowHeight();
+        const windowWidth  = _getWindowWidth();
+        let maxHeight    = windowHeight - (this.props.imagePadding * 2);
+        let maxWidth     = windowWidth - (this.props.imagePadding * 2);
 
         if (!stretch) {
             maxHeight = Math.min(maxHeight, height);
             maxWidth  = Math.min(maxWidth, width);
         }
 
-        var maxRatio = maxWidth / maxHeight;
-        var srcRatio = width / height;
+        const maxRatio = maxWidth / maxHeight;
+        const srcRatio = width / height;
 
-        var fitSizes = {};
+        let fitSizes = {};
         if (maxRatio > srcRatio) { // height is the constraining dimension of the photo
             fitSizes.width  = width * maxHeight / height;
             fitSizes.height = maxHeight;
@@ -684,23 +693,23 @@ var ReactImageLightbox = React.createClass({
     },
 
     // Get sizing when the image is scaled
-    getZoomMultiplier: function(zoomLevel) {
+    getZoomMultiplier(zoomLevel) {
         zoomLevel = typeof zoomLevel !== 'undefined' ? zoomLevel : this.state.zoomLevel;
         return Math.pow(Constant.ZOOM_RATIO, zoomLevel);
     },
 
-    getMaxOffsets: function(zoomLevel) {
+    getMaxOffsets(zoomLevel) {
         zoomLevel = typeof zoomLevel !== 'undefined' ? zoomLevel : this.state.zoomLevel;
-        var currentImageInfo = this.getBestImageForType('mainSrc');
+        const currentImageInfo = this.getBestImageForType('mainSrc');
         if (currentImageInfo === null) {
             return { maxX: 0, minX: 0, maxY: 0, minY: 0 };
         }
 
-        var windowWidth    = _getWindowWidth();
-        var windowHeight   = _getWindowHeight();
-        var zoomMultiplier = this.getZoomMultiplier(zoomLevel);
+        const windowWidth    = _getWindowWidth();
+        const windowHeight   = _getWindowHeight();
+        const zoomMultiplier = this.getZoomMultiplier(zoomLevel);
 
-        var maxX = 0;
+        let maxX = 0;
         if (currentImageInfo.width - (windowWidth / zoomMultiplier) < 0) {
             // if there is still blank space in the X dimension, don't limit except to the opposite edge
             maxX = ((windowWidth / zoomMultiplier) - currentImageInfo.width) / 2;
@@ -708,7 +717,7 @@ var ReactImageLightbox = React.createClass({
             maxX = (currentImageInfo.width - (windowWidth / zoomMultiplier)) / 2;
         }
 
-        var maxY = 0;
+        let maxY = 0;
         if (currentImageInfo.height - (windowHeight / zoomMultiplier) < 0) {
             // if there is still blank space in the Y dimension, don't limit except to the opposite edge
             maxY = ((windowHeight / zoomMultiplier) - currentImageInfo.height) / 2;
@@ -725,22 +734,22 @@ var ReactImageLightbox = React.createClass({
     },
 
     // Detach key and mouse input events
-    isAnimating: function() {
+    isAnimating() {
         return this.state.shouldAnimate || this.state.isClosing;
     },
 
     // Load image from src and call callback with image width and height on load
-    loadImage: function(imageSrc, callback) {
+    loadImage(imageSrc, callback) {
         // Return the image info if it is already cached
         if (this.isImageLoaded(imageSrc)) {
-            setTimeout(function() {
+            setTimeout(() => {
                 callback(null, this.imageCache[imageSrc].width, this.imageCache[imageSrc].height);
             }, 1);
             return;
         }
 
-        var that = this;
-        var inMemoryImage = new Image();
+        const that = this;
+        let inMemoryImage = new Image();
 
         inMemoryImage.onerror = function() {
             callback('image load error');
@@ -760,10 +769,10 @@ var ReactImageLightbox = React.createClass({
     },
 
     // Load all images and their thumbnails
-    loadAllImages: function(props) {
+    loadAllImages(props) {
         props = props || this.props;
-        var generateImageLoadedCallback = function(srcType, imageSrc) {
-            return function(err) {
+        const generateImageLoadedCallback = (srcType, imageSrc) => {
+            return err => {
                 // Give up showing image on error
                 if (err) {
                     if (window.console) {
@@ -779,29 +788,29 @@ var ReactImageLightbox = React.createClass({
 
                 // Force rerender with the new image
                 this.forceUpdate();
-            }.bind(this);
-        }.bind(this);
+            };
+        };
 
         // Load the images
-        this.getSrcTypes().forEach(function(srcType) {
-            var type = srcType.name;
+        this.getSrcTypes().forEach(srcType => {
+            const type = srcType.name;
 
             // Load unloaded images
             if (props[type] && !this.isImageLoaded(props[type])) {
                 this.loadImage(props[type], generateImageLoadedCallback(type, props[type]));
             }
-        }.bind(this));
+        });
     },
 
     // Load image from src and call callback with image width and height on load
-    isImageLoaded: function(imageSrc) {
+    isImageLoaded(imageSrc) {
         return imageSrc && (imageSrc in this.imageCache) && this.imageCache[imageSrc].loaded;
     },
 
     // Get info for the best suited image to display with the given srcType
-    getBestImageForType: function(srcType) {
-        var imageSrc = this.props[srcType];
-        var fitSizes = {};
+    getBestImageForType(srcType) {
+        let imageSrc = this.props[srcType];
+        let fitSizes = {};
 
         if (this.isImageLoaded(imageSrc)) {
             // Use full-size image if available
@@ -821,33 +830,33 @@ var ReactImageLightbox = React.createClass({
         };
     },
 
-    render: function() {
+    render() {
         // Transition settings for sliding animations
-        var transitionStyle = {};
+        let transitionStyle = {};
         if (!this.props.animationDisabled && this.isAnimating()) {
             transitionStyle = Styles.imageAnimating(this.props.animationDuration);
         }
 
         // Key endings to differentiate between images with the same src
-        var keyEndings = {};
+        let keyEndings = {};
         this.getSrcTypes().forEach(function(srcType) {
             keyEndings[srcType.name] = srcType.keyEnding;
         });
 
         // Images to be displayed
-        var images = [];
-        var addImage = function(srcType, imageClass, baseStyle) {
+        let images = [];
+        const addImage = (srcType, imageClass, baseStyle) => {
             // Ignore types that have no source defined for their full size image
             if (!this.props[srcType]) {
                 return;
             }
 
-            var imageStyle = [Styles.image, baseStyle, transitionStyle];
+            let imageStyle = [Styles.image, baseStyle, transitionStyle];
             if (this.state.zoomLevel > Constant.MIN_ZOOM_LEVEL) {
                 imageStyle.push({ cursor: 'move' });
             }
 
-            var bestImageInfo = this.getBestImageForType(srcType);
+            const bestImageInfo = this.getBestImageForType(srcType);
             if (bestImageInfo === null) {
                 // Fall back to loading icon if the thumbnail has not been loaded
                 images.push(
@@ -866,7 +875,7 @@ var ReactImageLightbox = React.createClass({
                 height : bestImageInfo.height,
             });
 
-            var imageSrc = bestImageInfo.src;
+            const imageSrc = bestImageInfo.src;
             if (this.props.discourageDownloads) {
                 imageStyle.push({ backgroundImage: 'url(\'' + imageSrc + '\')' });
                 imageStyle.push(Styles.imageDiscourager);
@@ -893,9 +902,9 @@ var ReactImageLightbox = React.createClass({
                     />
                 );
             }
-        }.bind(this);
+        };
 
-        var zoomMultiplier = this.getZoomMultiplier();
+        const zoomMultiplier = this.getZoomMultiplier();
         // Next Image (displayed on the right)
         addImage('nextSrc', 'image-next', Styles.imageNext);
         // Main Image
@@ -911,13 +920,13 @@ var ReactImageLightbox = React.createClass({
         // Previous Image (displayed on the left)
         addImage('prevSrc', 'image-prev', Styles.imagePrev);
 
-        var noop = function(){};
+        const noop = function(){};
 
         // Prepare styles and handlers for the zoom in/out buttons
-        var zoomInButtonStyle    = [Styles.toolbarItemChild, Styles.builtinButton, Styles.zoomInButton];
-        var zoomOutButtonStyle   = [Styles.toolbarItemChild, Styles.builtinButton, Styles.zoomOutButton];
-        var zoomInButtonHandler  = this.handleZoomInButtonClick;
-        var zoomOutButtonHandler = this.handleZoomOutButtonClick;
+        let zoomInButtonStyle    = [Styles.toolbarItemChild, Styles.builtinButton, Styles.zoomInButton];
+        let zoomOutButtonStyle   = [Styles.toolbarItemChild, Styles.builtinButton, Styles.zoomOutButton];
+        let zoomInButtonHandler  = this.handleZoomInButtonClick;
+        let zoomOutButtonHandler = this.handleZoomOutButtonClick;
 
         // Disable zooming in when zoomed all the way in
         if (this.state.zoomLevel === Constant.MAX_ZOOM_LEVEL) {
@@ -955,6 +964,7 @@ var ReactImageLightbox = React.createClass({
 
                         <div // Image holder
                             className="inner"
+                            onClick={this.props.clickOutsideToClose ? this.closeIfClickInner : noop}
                             style={[Styles.inner]}
                         >
                             {images}

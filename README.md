@@ -95,3 +95,4 @@ keyRepeatKeyupBonus | number | `40`           |          | Amount of time (ms) r
 imageTitle          | string |                |          | Image title
 toolbarButtons      | node[] |                |          | Array of custom toolbar buttons
 imagePadding        | number | `10`           |          | Padding (px) between the edge of the window and the lightbox
+clickOutsideToClose | bool   | `true`         |          | When true, clicks outside of the image close the lightbox

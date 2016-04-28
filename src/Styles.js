@@ -1,14 +1,12 @@
-'use strict';
+const Radium = require('radium');
+const toolbarHeight = '50px';
 
-var Radium = require('radium');
-var toolbarHeight = '50px';
-
-var closeWindowKeyframes = Radium.keyframes({
-    '0%': {opacity: '1'},
-    '100%': {opacity: '0'},
+const closeWindowKeyframes = Radium.keyframes({
+    '0%': {opacity: 1},
+    '100%': {opacity: 0},
 }, 'closeWindow');
 
-var styles = {
+const styles = {
     outer: {
         backgroundColor : 'rgba(0, 0, 0, 0.85)',
         position        : 'fixed',
@@ -20,7 +18,7 @@ var styles = {
         width           : '100%',
         height          : '100%',
     },
-    outerAnimating: function(duration, isClosing) {
+    outerAnimating(duration, isClosing) {
         return {
             transition         : 'opacity ' + String(duration) + 'ms',
             animationDuration  : String(duration) + 'ms',
@@ -55,7 +53,7 @@ var styles = {
         left: '100%',
         right: '-100%',
     },
-    imageCurrent: function (zoomRatio, offsetX, offsetY) {
+    imageCurrent(zoomRatio, offsetX, offsetY) {
         return {
             transform: 'scale3d(' + zoomRatio + ',' + zoomRatio + ',1) ',
             left: -1 * offsetX,
@@ -69,7 +67,7 @@ var styles = {
         backgroundPosition : 'center',
         backgroundSize     : 'contain',
     },
-    imageAnimating: function(duration) {
+    imageAnimating(duration) {
         return {
             transition: [
                 'transform ' + String(duration) + 'ms',
@@ -149,7 +147,7 @@ var styles = {
     toolbarItem: {
         display       : 'inline-block',
         lineHeight    : toolbarHeight,
-        padding       : '0',
+        padding       : 0,
         color         : '#FFFFFF',
         fontSize      : '120%',
         maxWidth      : '100%',
