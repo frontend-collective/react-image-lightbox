@@ -130,8 +130,7 @@ const styles = {
     },
     toolbarSide: {
         height : toolbarHeight,
-        margin: 0,
-        padding: 0,
+        margin : 0,
     },
     toolbarLeftSide: {
         paddingLeft  : '20px',
