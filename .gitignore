@@ -13,3 +13,7 @@ example/dist
 *.sublime-*
 .idea/
 *.DS_Store
+
+# Build directories (Will be preserved by npm)
+dist
+lib
