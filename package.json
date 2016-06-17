@@ -3,7 +3,8 @@
   "version": "2.2.0",
   "description": "A lightbox component for React.js",
   "scripts": {
-    "start": "node_modules/.bin/gulp dev"
+    "start": "node_modules/.bin/gulp dev",
+    "prepublish": "node_modules/.bin/gulp clean && node_modules/.bin/gulp build"
   },
   "main": "lib/ReactImageLightbox.js",
   "repository": {
