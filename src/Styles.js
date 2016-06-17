@@ -199,8 +199,8 @@ const styles = {
     },
 };
 
-// Use fallback styles for IE users
-if (Util.isIE()) {
+// Use fallback styles for browsers without flexbox support
+if (Util.getIEVersion() < 10) {
     styles.toolbar = {
         backgroundColor : 'rgba(0, 0, 0, 0.5)',
         position        : 'absolute',

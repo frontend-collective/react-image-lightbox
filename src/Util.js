@@ -1,13 +1,13 @@
 /**
- * Checks if the user is using Internet Explorer
+ * Get the version of Internet Explorer in use, or undefined
  *
- * @return {boolean} isIE - True if the user is on IE
+ * @return {?number} ieVersion - IE version as an integer, or undefined if not IE
  */
-function isIE() {
-    var ua = window.navigator.userAgent;
-    return ua.indexOf('MSIE ') > -1 || ua.indexOf('Trident/') > -1;
+function getIEVersion() {
+    var match = navigator.userAgent.match(/(?:MSIE |Trident\/.*; rv:)(\d+)/);
+    return match ? parseInt(match[1]) : undefined;
 }
 
 module.exports = {
-    isIE: isIE,
+    getIEVersion: getIEVersion,
 };
