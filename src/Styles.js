@@ -1,4 +1,5 @@
 const Radium = require('radium');
+const Util = require('./Util');
 const toolbarHeight = '50px';
 
 const closeWindowKeyframes = Radium.keyframes({
@@ -197,5 +198,38 @@ const styles = {
         background: 'url(\'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCI+PGcgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCI+PHBhdGggZD0iTTEgMTlsNi02Ii8+PHBhdGggZD0iTTkgOGg2Ii8+PC9nPjxjaXJjbGUgY3g9IjEyIiBjeT0iOCIgcj0iNyIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjIiLz48L3N2Zz4=\') no-repeat center',
     },
 };
+
+// Use fallback styles for browsers without flexbox support
+if (Util.getIEVersion() < 10) {
+    styles.toolbar = {
+        backgroundColor : 'rgba(0, 0, 0, 0.5)',
+        position        : 'absolute',
+        left            : 0,
+        top             : 0,
+        right           : 0,
+        height          : toolbarHeight,
+    };
+
+    styles.toolbarSide = {
+        lineHeight : toolbarHeight,
+        position   : 'absolute',
+        top        : 0,
+        bottom     : 0,
+        margin     : 0,
+        maxWidth   : '48%',
+    };
+
+    styles.toolbarLeftSide = {
+        paddingLeft  : '20px',
+        paddingRight : 0,
+        left         : 0,
+    };
+
+    styles.toolbarRightSide = {
+        paddingLeft  : 0,
+        paddingRight : '20px',
+        right        : 0,
+    };
+}
 
 module.exports = styles;

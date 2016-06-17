@@ -1147,6 +1147,7 @@ module.exports = _radium2['default'].call(undefined, ReactImageLightbox);
 'use strict';
 
 var Radium = (typeof window !== "undefined" ? window['Radium'] : typeof global !== "undefined" ? global['Radium'] : null);
+var Util = require('./Util');
 var toolbarHeight = '50px';
 
 var closeWindowKeyframes = Radium.keyframes({
@@ -1266,25 +1267,25 @@ var styles = {
         left: 0,
         top: 0,
         right: 0,
-        height: toolbarHeight
+        height: toolbarHeight,
+        display: 'flex',
+        justifyContent: 'space-between'
     },
     toolbarSide: {
-        lineHeight: toolbarHeight,
-        position: 'absolute',
-        top: 0,
-        bottom: 0,
-        margin: 0,
-        maxWidth: '48%'
+        height: toolbarHeight,
+        margin: 0
     },
     toolbarLeftSide: {
         paddingLeft: '20px',
         paddingRight: 0,
-        left: 0
+        flex: '0 1 auto',
+        overflow: 'hidden',
+        textOverflow: 'ellipsis'
     },
     toolbarRightSide: {
         paddingLeft: 0,
         paddingRight: '20px',
-        right: 0
+        flex: '0 0 auto'
     },
     toolbarItem: {
         display: 'inline-block',
@@ -1340,8 +1341,58 @@ var styles = {
     }
 };
 
+// Use fallback styles for IE users
+if (Util.isIE()) {
+    styles.toolbar = {
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        position: 'absolute',
+        left: 0,
+        top: 0,
+        right: 0,
+        height: toolbarHeight
+    };
+
+    styles.toolbarSide = {
+        lineHeight: toolbarHeight,
+        position: 'absolute',
+        top: 0,
+        bottom: 0,
+        margin: 0,
+        maxWidth: '48%'
+    };
+
+    styles.toolbarLeftSide = {
+        paddingLeft: '20px',
+        paddingRight: 0,
+        left: 0
+    };
+
+    styles.toolbarRightSide = {
+        paddingLeft: 0,
+        paddingRight: '20px',
+        right: 0
+    };
+}
+
 module.exports = styles;
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"./Util":5}],5:[function(require,module,exports){
+/**
+ * Checks if the user is using Internet Explorer
+ *
+ * @return {boolean} isIE - True if the user is on IE
+ */
+'use strict';
+
+function isIE() {
+    var ua = window.navigator.userAgent;
+    return ua.indexOf('MSIE ') > -1 || ua.indexOf('Trident/') > -1;
+}
+
+module.exports = {
+    isIE: isIE
+};
+
 },{}]},{},[3])(3)
 });
