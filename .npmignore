@@ -1,2 +1,4 @@
 bower.json
-examples/dist
+dist
+example
+svg
