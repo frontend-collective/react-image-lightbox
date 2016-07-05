@@ -18,10 +18,11 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "radium": "^0.17.1"
+    "radium": "^0.17.1",
+    "react-modal": "^1.4.0"
   },
   "peerDependencies": {
-    "react": "^15.2.0"
+    "react": "^15.0.0"
   },
   "devDependencies": {
     "gulp": "^3.9.1",

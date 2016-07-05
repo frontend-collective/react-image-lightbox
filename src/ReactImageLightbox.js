@@ -7,7 +7,7 @@
 import React, { PropTypes } from 'react';
 import Radium, { StyleRoot } from 'radium';
 import Styles from './Styles';
-import Portal from './Portal';
+import Modal from 'react-modal';
 import Constant from './Constant';
 
 function _getWindowWidth () {
@@ -946,8 +946,23 @@ const ReactImageLightbox = React.createClass({
             zoomOutButtonHandler = noop;
         }
 
+        // Clear default modal appearance
+        const modalStyle = {
+            overlay: {
+                backgroundColor: 'transparent',
+            },
+            content: {
+                backgroundColor: 'transparent',
+                border:          'none',
+            },
+        };
+
         return (
-            <Portal>
+            <Modal
+                isOpen={true}
+                onRequestClose={noop}
+                style={modalStyle}
+            >
                 <StyleRoot>
                     <div // Floating modal with closing animations
                         className={'outer' + (this.state.isClosing ? ' closing' : '')}
@@ -1039,7 +1054,7 @@ const ReactImageLightbox = React.createClass({
                         </div>
                     </div>
                 </StyleRoot>
-            </Portal>
+            </Modal>
         );
     }
 });
