@@ -21,14 +21,13 @@
     "radium": "^0.17.1"
   },
   "peerDependencies": {
-    "react": "^15.0.1"
+    "react": "^15.2.0"
   },
   "devDependencies": {
     "gulp": "^3.9.1",
-    "react": "^15.0.1",
+    "react": "^15.2.0",
     "react-component-gulp-tasks": "^0.7.7",
-    "react-dom": "^15.0.1",
-    "rf-release": "^0.4.0"
+    "react-dom": "^15.2.0"
   },
   "keywords": [
     "react",
