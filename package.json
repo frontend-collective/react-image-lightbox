@@ -1,12 +1,16 @@
 {
   "name": "react-image-lightbox",
-  "version": "2.2.0",
+  "version": "3.0.0",
   "description": "A lightbox component for React.js",
   "scripts": {
-    "start": "gulp dev",
-    "prepublish": "gulp clean && gulp build"
+    "start": "webpack-dev-server",
+    "test": "webpack",
+    "clean": "rm -rf dist",
+    "build": "npm run clean && webpack",
+    "deploy": "npm run build && gh-pages -d dist",
+    "prepublish": "npm run build"
   },
-  "main": "lib/ReactImageLightbox.js",
+  "main": "lib/react-image-lightbox.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/fritz-c/react-image-lightbox.git"
@@ -18,27 +22,40 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "radium": "^0.17.1",
     "react-modal": "^1.4.0"
   },
   "peerDependencies": {
     "react": "^15.0.0"
   },
   "devDependencies": {
-    "gulp": "^3.9.1",
+    "autoprefixer": "^6.3.7",
+    "babel-core": "^6.10.4",
+    "babel-eslint": "^6.1.2",
+    "babel-loader": "^6.2.4",
+    "babel-plugin-transform-object-rest-spread": "^6.8.0",
+    "babel-preset-es2015": "^6.9.0",
+    "babel-preset-react": "^6.11.1",
+    "css-loader": "^0.23.1",
+    "eslint": "^2.9.0",
+    "eslint-config-airbnb": "^9.0.1",
+    "eslint-plugin-import": "^1.10.2",
+    "eslint-plugin-jsx-a11y": "^1.5.5",
+    "eslint-plugin-react": "^5.2.2",
+    "gh-pages": "^0.11.0",
+    "node-sass": "^3.8.0",
+    "postcss-loader": "^0.9.1",
     "react": "^15.2.0",
-    "react-component-gulp-tasks": "^0.7.7",
-    "react-dom": "^15.2.0"
+    "react-dom": "^15.2.0",
+    "react-hot-loader": "^1.3.0",
+    "sass-loader": "^4.0.0",
+    "style-loader": "^0.13.1",
+    "webpack": "^1.13.1",
+    "webpack-dev-server": "^1.14.1"
   },
   "keywords": [
     "react",
     "react-component",
     "image",
     "lightbox"
-  ],
-  "browserify-shim": {
-    "react": "global:React",
-    "react-dom": "global:ReactDOM",
-    "radium": "global:Radium"
-  }
+  ]
 }
