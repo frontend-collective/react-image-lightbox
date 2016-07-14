@@ -1,22 +1,23 @@
-var React    = require('react');
-var ReactDOM = require('react-dom');
-var Lightbox = require('react-image-lightbox');
+import React from 'react';
+import ReactDOM from 'react-dom';
+import Lightbox from '../../react-image-lightbox';
+import './stylesheets/app.scss';
 
-var images = [
+const images = [
     'images/1.jpg',
     'images/2.jpg',
     'images/3.jpg',
     'images/4.jpg',
 ];
 
-var thumbs = [
+const thumbs = [
     'images/1_thumb.jpg',
     'images/2_thumb.jpg',
     'images/3_thumb.jpg',
     'images/4_thumb.jpg',
 ];
 
-var titles = [
+const titles = [
     '',
     (<span>
         by&nbsp;
@@ -44,27 +45,28 @@ var titles = [
         </a>)
     </span>),
 ];
-var App = React.createClass({
-    getInitialState: function() {
+
+const App = React.createClass({
+    getInitialState() {
         return {
             index: 0,
             isOpen: false
         };
     },
-    openLightbox: function() {
+    openLightbox() {
         this.setState({ isOpen: true });
     },
-    closeLightbox: function() {
+    closeLightbox() {
         this.setState({ isOpen: false });
     },
-    moveNext: function() {
+    moveNext() {
         this.setState({ index: (this.state.index + 1) % images.length });
     },
-    movePrev: function() {
+    movePrev() {
         this.setState({ index: (this.state.index + images.length - 1) % images.length });
     },
-    render: function() {
-        var lightbox = '';
+    render() {
+        let lightbox;
         if (this.state.isOpen) {
             lightbox = (
                 <Lightbox
@@ -101,4 +103,4 @@ var App = React.createClass({
     }
 });
 
-ReactDOM.render(<App/>, document.getElementById('app'));
+ReactDOM.render(<App />, document.getElementById('app'));

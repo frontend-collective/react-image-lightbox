@@ -1,23 +1,23 @@
-var path = require('path');
-var webpack = require('webpack');
-var autoprefixer = require('autoprefixer');
+import HtmlWebpackPlugin from 'html-webpack-plugin';
+import path from 'path';
+import webpack from 'webpack';
+import autoprefixer from 'autoprefixer';
 
 module.exports = {
-    entry: [
-        'webpack-dev-server/client?http://localhost:5000',
-        'webpack/hot/only-dev-server',
-        './src/index'
-    ],
+    devtool: 'eval',
+    entry: {
+        demo: './src/examples/cats/app',
+    },
     output: {
-        path: __dirname,
-        filename: 'bundle.js',
-        publicPath: '/static/'
+        path: 'build',
+        filename: 'static/[name].js'
     },
-    resolve: {
-        extensions: ['', '.js']
-    },
-    devtool: 'eval-source-map',
     plugins: [
+        new HtmlWebpackPlugin({
+            filename: 'index.html',
+            inject: true,
+            template: './src/examples/cats/index.html'
+        }),
         new webpack.HotModuleReplacementPlugin(),
         new webpack.NoErrorsPlugin(),
     ],
@@ -35,12 +35,16 @@ module.exports = {
                 test: /\.scss$/,
                 loaders: [
                     'style-loader',
-                    'css-loader?modules&importLoaders=1&localIdentName=[name]__[local]___[hash:base64:5]',
+                    'css-loader?-modules&importLoaders=1&localIdentName=[name]__[local]___[hash:base64:5]',
                     'postcss-loader',
                     'sass-loader',
                 ],
                 include: path.join(__dirname, 'src')
             },
         ],
-    }
+    },
+    devServer: {
+        contentBase: 'build',
+        port: 3001
+    },
 };

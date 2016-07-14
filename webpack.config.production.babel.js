@@ -1,6 +1,6 @@
-var path = require('path');
-var webpack = require('webpack');
-var autoprefixer = require('autoprefixer');
+import path from 'path';
+import webpack from 'webpack';
+import autoprefixer from 'autoprefixer';
 
 module.exports = {
     entry: './src/index',
@@ -17,7 +17,8 @@ module.exports = {
         new webpack.optimize.OccurenceOrderPlugin(),
         new webpack.DefinePlugin({
             'process.env': {
-                'NODE_ENV': JSON.stringify('production')
+                'NODE_ENV': JSON.stringify('production'),
+                'BABEL_ENV': JSON.stringify('production')
             },
         }),
         new webpack.optimize.UglifyJsPlugin({

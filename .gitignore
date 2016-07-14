@@ -16,4 +16,4 @@ example/dist
 
 # Build directories (Will be preserved by npm)
 dist
-lib
+build

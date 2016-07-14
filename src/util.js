@@ -4,8 +4,8 @@
  * @return {?number} ieVersion - IE version as an integer, or undefined if not IE
  */
 export function getIEVersion() {
-    var match = navigator.userAgent.match(/(?:MSIE |Trident\/.*; rv:)(\d+)/);
-    return match ? parseInt(match[1]) : undefined;
+    const match = navigator.userAgent.match(/(?:MSIE |Trident\/.*; rv:)(\d+)/);
+    return match ? parseInt(match[1], 10) : undefined;
 }
 
 /**
@@ -16,26 +16,31 @@ export function translate(str, replaceStrings = null) {
         return '';
     }
 
+    let translated = str;
     if (replaceStrings) {
-        for (let placeholder in replaceStrings) {
-            str = str.replace(placeholder, replaceStrings[placeholder]);
-        }
+        Object.keys(replaceStrings).forEach(placeholder => {
+            translated = translated.replace(placeholder, replaceStrings[placeholder]);
+        });
     }
 
-    return str;
+    return translated;
 }
 
 
-export function getWindowWidth () {
-    return window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+export function getWindowWidth() {
+    return window.innerWidth ||
+        document.documentElement.clientWidth ||
+        document.body.clientWidth;
 }
 
-export function getWindowHeight () {
-    return window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
+export function getWindowHeight() {
+    return window.innerHeight ||
+        document.documentElement.clientHeight ||
+        document.body.clientHeight;
 }
 
 // Returns true if this window is rendered as an iframe inside another window
-export function isInIframe () {
+export function isInIframe() {
     try {
         return window.self !== window.top;
     } catch (e) {

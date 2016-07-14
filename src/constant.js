@@ -1,8 +1,4 @@
-// Constants file
-
-'use strict';
-
-var constants = {
+export default {
     // Min image zoom level
     MIN_ZOOM_LEVEL: 0,
 
@@ -20,6 +16,10 @@ var constants = {
 
     // Used to judge the amount of vertical scroll needed to initiate a zoom action
     WHEEL_MOVE_Y_THRESHOLD: 1,
-};
 
-module.exports = Object.freeze(constants);
+    KEYS: {
+        ESC:         27,
+        LEFT_ARROW:  37,
+        RIGHT_ARROW: 39,
+    },
+};
