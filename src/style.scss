@@ -178,6 +178,10 @@ $toolbarHeight: 50px;
     background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCI+PGcgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCI+PHBhdGggZD0iTTEgMTlsNi02Ii8+PHBhdGggZD0iTTkgOGg2Ii8+PC9nPjxjaXJjbGUgY3g9IjEyIiBjeT0iOCIgcj0iNyIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjIiLz48L3N2Zz4=') no-repeat center;
 }
 
+.outerAnimating {
+    animation-name: closeWindow;
+}
+
 // // Use fallback styles for browsers without flexbox support
 // if (Util.getIEVersion() < 10) {
 //     styles.toolbar = {
@@ -210,35 +214,3 @@ $toolbarHeight: 50px;
 //         right: 0;
 //     };
 // }
-
-// outerAnimating(duration, isClosing) {
-//     return {
-//         transition: 'opacity ' + String(duration) + 'ms;
-//         animationDuration: String(duration) + 'ms;
-//         animationDirection: isClosing ? 'normal': 'reverse;
-//         animationName: closeWindow;
-//     };
-// }
-
-// imageCurrent(zoomRatio, offsetX, offsetY) {
-//     return {
-//         transform: 'scale3d(' + zoomRatio + ',' + zoomRatio + ',1) ;
-//         left: -1 * offsetX;
-//         right: offsetX;
-//         top: -1 * offsetY;
-//         bottom: offsetY;
-//     };
-// }
-
-// imageAnimating(duration) {
-//     return {
-//         transition: [
-//             'transform ' + String(duration) + 'ms;
-//             'left '      + String(duration) + 'ms;
-//             'top '       + String(duration) + 'ms;
-//             'right '     + String(duration) + 'ms;
-//             'bottom '    + String(duration) + 'ms;
-//         ].join(', ');
-//     };
-// }
-

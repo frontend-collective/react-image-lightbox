@@ -53,6 +53,19 @@ class ReactImageLightbox extends Component {
             // Vertical offset from center
             offsetY: 0,
         };
+
+        this.requestClose             = this.requestClose.bind(this);
+        this.requestMovePrev          = this.requestMovePrev.bind(this);
+        this.requestMoveNext          = this.requestMoveNext.bind(this);
+        this.closeIfClickInner        = this.closeIfClickInner.bind(this);
+        this.handleZoomInButtonClick  = this.handleZoomInButtonClick.bind(this);
+        this.handleZoomOutButtonClick = this.handleZoomOutButtonClick.bind(this);
+        this.handleImageDoubleClick   = this.handleImageDoubleClick.bind(this);
+        this.handleImageMouseWheel    = this.handleImageMouseWheel.bind(this);
+        this.handleOuterMousewheel    = this.handleOuterMousewheel.bind(this);
+        this.handleOuterMouseMove     = this.handleOuterMouseMove.bind(this);
+        this.handleOuterMouseDown     = this.handleOuterMouseDown.bind(this);
+        this.handleOuterMouseUp       = this.handleOuterMouseUp.bind(this);
     }
 
     componentWillMount() {
@@ -710,29 +723,35 @@ class ReactImageLightbox extends Component {
     }
 
     render() {
-        // Transition settings for sliding animations
         let transitionStyle = {};
+
+        // Transition settings for sliding animations
         if (!this.props.animationDisabled && this.isAnimating()) {
-            transitionStyle = styles.imageAnimating(this.props.animationDuration);
+            transitionStyle = {
+                ...transitionStyle,
+                transition: ['transform', 'left', 'top', 'right', 'bottom']
+                    .map(x => `${x} ${this.props.animationDuration}ms`)
+                    .join(', '),
+            };
         }
 
         // Key endings to differentiate between images with the same src
         let keyEndings = {};
-        this.getSrcTypes().forEach(srcType => {
-            keyEndings[srcType.name] = srcType.keyEnding;
+        this.getSrcTypes().forEach(({ name, keyEnding }) => {
+            keyEndings[name] = keyEnding;
         });
 
         // Images to be displayed
         let images = [];
-        const addImage = (srcType, imageClass, baseStyle) => {
+        const addImage = (srcType, imageClass, baseStyle = {}) => {
             // Ignore types that have no source defined for their full size image
             if (!this.props[srcType]) {
                 return;
             }
 
-            let imageStyle = [styles.image, baseStyle, transitionStyle];
+            let imageStyle = { ...baseStyle, ...transitionStyle };
             if (this.state.zoomLevel > MIN_ZOOM_LEVEL) {
-                imageStyle.push({ cursor: 'move' });
+                imageStyle['cursor'] = 'move';
             }
 
             const bestImageInfo = this.getBestImageForType(srcType);
@@ -740,7 +759,7 @@ class ReactImageLightbox extends Component {
                 // Fall back to loading icon if the thumbnail has not been loaded
                 images.push(
                     <div
-                        className={imageClass + ' not-loaded'}
+                        className={`${imageClass} ${styles.image} not-loaded`}
                         style={imageStyle}
                         key={this.props[srcType] + keyEndings[srcType]}
                     />
@@ -749,36 +768,33 @@ class ReactImageLightbox extends Component {
                 return;
             }
 
-            imageStyle.push({
-                width  : bestImageInfo.width,
-                height : bestImageInfo.height,
-            });
+            imageStyle['width']  = bestImageInfo.width;
+            imageStyle['height'] = bestImageInfo.height;
 
             const imageSrc = bestImageInfo.src;
             if (this.props.discourageDownloads) {
-                imageStyle.push({ backgroundImage: 'url(\'' + imageSrc + '\')' });
-                imageStyle.push(styles.imageDiscourager);
+                imageStyle['backgroundImage'] = `url('${imageSrc}')`;
                 images.push(
                     <div
-                        className={imageClass}
+                        className={`${imageClass} ${styles.image} ${styles.imageDiscourager}`}
                         onDoubleClick={this.handleImageDoubleClick}
                         onWheel={this.handleImageMouseWheel}
                         style={imageStyle}
                         key={imageSrc + keyEndings[srcType]}
                     >
-                        <div className="download-blocker" style={[styles.downloadBlocker]} />
+                        <div className="download-blocker ${styles.downloadBlocker}" />
                     </div>
                 );
             } else {
                 images.push(
                     <img
-                        className={imageClass}
+                        className={`${imageClass} ${styles.image}`}
                         onDoubleClick={this.handleImageDoubleClick}
                         onWheel={this.handleImageMouseWheel}
                         style={imageStyle}
                         src={imageSrc}
                         key={imageSrc + keyEndings[srcType]}
-                        alt={translate('Image')}
+                        alt={this.props.imageTitle || translate('Image')}
                     />
                 );
             }
@@ -786,37 +802,39 @@ class ReactImageLightbox extends Component {
 
         const zoomMultiplier = this.getZoomMultiplier();
         // Next Image (displayed on the right)
-        addImage('nextSrc', 'image-next', styles.imageNext);
+        addImage('nextSrc', `image-next ${styles.imageNext}`);
         // Main Image
         addImage(
             'mainSrc',
             'image-current',
-            styles.imageCurrent(
-                zoomMultiplier,
-                zoomMultiplier * this.state.offsetX,
-                zoomMultiplier * this.state.offsetY
-            )
+            {
+                transform: `scale3d(${zoomMultiplier}, ${zoomMultiplier}, 1)`,
+                left:  -1 * zoomMultiplier * this.state.offsetX,
+                right: zoomMultiplier * this.state.offsetX,
+                top: -1 * zoomMultiplier * this.state.offsetY,
+                bottom: zoomMultiplier * this.state.offsetY,
+            }
         );
         // Previous Image (displayed on the left)
-        addImage('prevSrc', 'image-prev', styles.imagePrev);
+        addImage('prevSrc', `image-prev ${styles.imagePrev}`);
 
         const noop = function(){};
 
         // Prepare styles and handlers for the zoom in/out buttons
-        let zoomInButtonStyle    = [styles.toolbarItemChild, styles.builtinButton, styles.zoomInButton];
-        let zoomOutButtonStyle   = [styles.toolbarItemChild, styles.builtinButton, styles.zoomOutButton];
+        let zoomInButtonClasses  = [styles.toolbarItemChild, styles.builtinButton, styles.zoomInButton];
+        let zoomOutButtonClasses = [styles.toolbarItemChild, styles.builtinButton, styles.zoomOutButton];
         let zoomInButtonHandler  = this.handleZoomInButtonClick;
         let zoomOutButtonHandler = this.handleZoomOutButtonClick;
 
         // Disable zooming in when zoomed all the way in
         if (this.state.zoomLevel === MAX_ZOOM_LEVEL) {
-            zoomInButtonStyle.push(styles.builtinButtonDisabled);
+            zoomInButtonClasses.push(styles.builtinButtonDisabled);
             zoomInButtonHandler = noop;
         }
 
         // Disable zooming out when zoomed all the way out
         if (this.state.zoomLevel === MIN_ZOOM_LEVEL) {
-            zoomOutButtonStyle.push(styles.builtinButtonDisabled);
+            zoomOutButtonClasses.push(styles.builtinButtonDisabled);
             zoomOutButtonHandler = noop;
         }
 
@@ -844,22 +862,23 @@ class ReactImageLightbox extends Component {
                 style={modalStyle}
             >
                 <div // Floating modal with closing animations
-                    className={'outer' + (this.state.isClosing ? ' closing' : '')}
                     onWheel={this.handleOuterMousewheel}
                     onMouseMove={this.handleOuterMouseMove}
                     onMouseDown={this.handleOuterMouseDown}
                     onMouseUp={this.handleOuterMouseUp}
-                    style={[
-                        styles.outer,
-                        styles.outerAnimating(this.props.animationDuration, this.state.isClosing),
-                        this.state.isClosing ? styles.outerClosing : {},
-                    ]}
+                    className={`outer ${styles.outer} ${styles.outerAnimating}` +
+                        (this.state.isClosing ? ` closing ${styles.outerClosing}` : '')
+                    }
+                    style={{
+                        transition:        `opacity ${this.props.animationDuration}ms`,
+                        animationDuration: `${this.props.animationDuration}ms`,
+                        animationDirection: this.state.isClosing ? 'normal' : 'reverse',
+                    }}
                 >
 
                     <div // Image holder
-                        className="inner"
+                        className={`inner ${styles.inner}`}
                         onClick={this.props.clickOutsideToClose ? this.closeIfClickInner : noop}
-                        style={[styles.inner]}
                     >
                         {images}
                     </div>
@@ -876,59 +895,53 @@ class ReactImageLightbox extends Component {
                     {!this.props.nextSrc ? '' :
                         <button // Move to next image button
                             type="button"
-                            className="next-button"
+                            className={`next-button ${styles.navButtons} ${styles.navButtonNext}`}
                             key="next"
-                            style={[styles.navButtons, styles.navButtonNext]}
                             onClick={!this.isAnimating() ? this.requestMoveNext : noop} // Ignore clicks during animation
                         />
                     }
 
                     <div // Lightbox toolbar
-                        className="toolbar"
-                        style={[styles.toolbar]}
+                        className={`toolbar ${styles.toolbar}`}
                     >
-                        <ul className="toolbar-left" style={[styles.toolbarSide, styles.toolbarLeftSide]}>
-                            <li style={[styles.toolbarItem]}>
-                                <span style={[styles.toolbarItemChild]}>{this.props.imageTitle}</span>
+                        <ul className={`toolbar-left ${styles.toolbarSide} ${styles.toolbarLeftSide}`}>
+                            <li className={styles.toolbarItem}>
+                                <span className={styles.toolbarItemChild}>{this.props.imageTitle}</span>
                             </li>
                         </ul>
 
-                        <ul className="toolbar-right" style={[styles.toolbarSide, styles.toolbarRightSide]}>
+                        <ul className={`toolbar-right ${styles.toolbarSide} ${styles.toolbarRightSide}`}>
                             {!this.props.toolbarButtons ? '' : this.props.toolbarButtons.map(function(button, i) {
-                                return (<li key={i} style={[styles.toolbarItem]}>{button}</li>);
+                                return (<li key={i} className={styles.toolbarItem}>{button}</li>);
                             })}
 
-                            <li style={[styles.toolbarItem]}>
+                            <li className={styles.toolbarItem}>
                                 <button // Lightbox zoom in button
                                     type="button"
                                     key="zoom-in"
-                                    className="zoom-in"
-                                    style={zoomInButtonStyle}
+                                    className={`zoom-in ${zoomInButtonClasses.join(' ')}`}
                                     onClick={zoomInButtonHandler}
                                 />
                             </li>
 
-                            <li style={[styles.toolbarItem]}>
+                            <li className={styles.toolbarItem}>
                                 <button // Lightbox zoom out button
                                     type="button"
                                     key="zoom-out"
-                                    className="zoom-out"
-                                    style={zoomOutButtonStyle}
+                                    className={`zoom-out ${zoomOutButtonClasses.join(' ')}`}
                                     onClick={zoomOutButtonHandler}
                                 />
                             </li>
 
-                            <li style={[styles.toolbarItem]}>
+                            <li className={styles.toolbarItem}>
                                 <button // Lightbox close button
                                     type="button"
                                     key="close"
-                                    className="close"
-                                    style={[styles.toolbarItemChild, styles.builtinButton, styles.closeButton]}
+                                    className={`close ${styles.toolbarItemChild} ${styles.builtinButton} ${styles.closeButton}`}
                                     onClick={!this.isAnimating() ? this.requestClose : noop} // Ignore clicks during animation
                                 />
                             </li>
                         </ul>
-
                     </div>
                 </div>
             </Modal>
@@ -1053,4 +1066,4 @@ ReactImageLightbox.defaultProps = {
     clickOutsideToClose: true,
 };
 
-module.exports = ReactImageLightbox;
+export default ReactImageLightbox;

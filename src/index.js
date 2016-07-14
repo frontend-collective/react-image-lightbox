@@ -1,1 +1,1 @@
-module.exports = require('./react-image-lightbox');
+module.exports = require('./react-image-lightbox').default;
