@@ -55,17 +55,19 @@ class ReactImageLightbox extends Component {
             offsetY: 0,
         };
 
-        this.requestClose             = this.requestClose.bind(this);
-        this.requestMovePrev          = this.requestMovePrev.bind(this);
-        this.requestMoveNext          = this.requestMoveNext.bind(this);
         this.closeIfClickInner        = this.closeIfClickInner.bind(this);
-        this.handleZoomInButtonClick  = this.handleZoomInButtonClick.bind(this);
-        this.handleZoomOutButtonClick = this.handleZoomOutButtonClick.bind(this);
         this.handleImageDoubleClick   = this.handleImageDoubleClick.bind(this);
         this.handleImageMouseWheel    = this.handleImageMouseWheel.bind(this);
-        this.handleOuterMousewheel    = this.handleOuterMousewheel.bind(this);
-        this.handleOuterMouseMove     = this.handleOuterMouseMove.bind(this);
+        this.handleKeyInput           = this.handleKeyInput.bind(this);
+        this.handleMouseUp            = this.handleMouseUp.bind(this);
         this.handleOuterMouseDown     = this.handleOuterMouseDown.bind(this);
+        this.handleOuterMouseMove     = this.handleOuterMouseMove.bind(this);
+        this.handleOuterMousewheel    = this.handleOuterMousewheel.bind(this);
+        this.handleZoomInButtonClick  = this.handleZoomInButtonClick.bind(this);
+        this.handleZoomOutButtonClick = this.handleZoomOutButtonClick.bind(this);
+        this.requestClose             = this.requestClose.bind(this);
+        this.requestMoveNext          = this.requestMoveNext.bind(this);
+        this.requestMovePrev          = this.requestMovePrev.bind(this);
     }
 
     componentWillMount() {
@@ -252,8 +254,8 @@ class ReactImageLightbox extends Component {
     getFitSizes(width, height, stretch) {
         const windowHeight = getWindowHeight();
         const windowWidth  = getWindowWidth();
-        let maxHeight    = windowHeight - (this.props.imagePadding * 2);
-        let maxWidth     = windowWidth - (this.props.imagePadding * 2);
+        let maxHeight      = windowHeight - (this.props.imagePadding * 2);
+        let maxWidth       = windowWidth - (this.props.imagePadding * 2);
 
         if (!stretch) {
             maxHeight = Math.min(maxHeight, height);
@@ -599,11 +601,11 @@ class ReactImageLightbox extends Component {
         const that = this;
         const inMemoryImage = new Image();
 
-        inMemoryImage.onerror = () => {
+        inMemoryImage.onerror = function onError() {
             callback('image load error');
         };
 
-        inMemoryImage.onload = () => {
+        inMemoryImage.onload = function onLoad() {
             that.imageCache[imageSrc] = {
                 loaded: true,
                 width:  this.width,
@@ -833,6 +835,7 @@ class ReactImageLightbox extends Component {
         // Clear default modal appearance
         const modalStyle = {
             overlay: {
+                zIndex:          1000,
                 backgroundColor: 'transparent',
             },
             content: {

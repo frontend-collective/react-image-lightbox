@@ -3,17 +3,22 @@
   "version": "3.0.0",
   "description": "A lightbox component for React.js",
   "scripts": {
+    "build": "npm run lint && npm run build:demo && npm run build:umd",
+    "build:demo": "npm run clean:demo && cross-env NODE_ENV=production webpack --config webpack.config.demo.babel.js --bail",
+    "build:umd": "npm run clean:umd && cross-env NODE_ENV=production webpack --config webpack.config.umd.babel.js --bail",
+    "clean": "npm run clean:demo && npm run clean:umd",
+    "clean:demo": "rimraf build",
+    "clean:umd": "rimraf dist/umd",
     "start": "cross-env NODE_ENV=development webpack-dev-server --hot --inline --config webpack.config.dev.babel.js",
     "test": "webpack",
     "lint": "eslint src",
-    "clean": "rimraf dist",
-    "clean:demo": "rimraf build",
-    "build": "npm run lint && npm run clean && webpack --config webpack.config.production.babel.js",
-    "build:demo": "npm run clean:demo && webpack --config webpack.config.demo.babel.js",
-    "deploy": "webpack --config webpack.config.demo.babel.js && gh-pages -d examples",
-    "prepublish": "npm run build"
+    "deploy": "npm run build && gh-pages -d examples",
+    "prepublish": "npm run lint && npm run build:umd"
   },
-  "main": "lib/react-image-lightbox.js",
+  "main": "dist/umd/react-image-lightbox.js",
+  "files": [
+      "dist"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/fritz-c/react-image-lightbox.git"
@@ -28,10 +33,12 @@
     "react-modal": "^1.4.0"
   },
   "peerDependencies": {
-    "react": "^15.0.0"
+    "react": "^15.0.0",
+    "react-dom": "^15.0.0"
   },
   "devDependencies": {
     "autoprefixer": "^6.3.7",
+    "babel-cli": "^6.10.1",
     "babel-core": "^6.10.4",
     "babel-eslint": "^6.1.2",
     "babel-loader": "^6.2.4",
@@ -42,11 +49,11 @@
     "cross-env": "^2.0.0",
     "css-loader": "^0.23.1",
     "eslint": "^2.9.0",
-    "eslint-config-airbnb": "^9.0.1",
-    "eslint-config-blue-hour": "0.0.1",
+    "eslint-config-blue-hour": "0.0.2",
     "eslint-plugin-import": "^1.10.2",
     "eslint-plugin-jsx-a11y": "^1.5.5",
     "eslint-plugin-react": "^5.2.2",
+    "file-loader": "^0.9.0",
     "gh-pages": "^0.11.0",
     "html-webpack-plugin": "^2.22.0",
     "node-sass": "^3.8.0",

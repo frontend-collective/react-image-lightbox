@@ -3,11 +3,14 @@ import webpack from 'webpack';
 import autoprefixer from 'autoprefixer';
 
 module.exports = {
-    entry: './src/index',
+    entry: {
+        'react-image-lightbox': './src/index',
+    },
     output: {
-        path: path.join(__dirname, 'dist'),
-        filename: 'bundle.js',
-        publicPath: '/'
+        path: path.join(__dirname, 'dist', 'umd'),
+        filename: '[name].js',
+        libraryTarget: 'umd',
+        library: 'ReactImageLightbox',
     },
     resolve: {
         extensions: ['', '.js']
@@ -15,12 +18,6 @@ module.exports = {
     devtool: 'source-map',
     plugins: [
         new webpack.optimize.OccurenceOrderPlugin(),
-        new webpack.DefinePlugin({
-            'process.env': {
-                'NODE_ENV': JSON.stringify('production'),
-                'BABEL_ENV': JSON.stringify('production')
-            },
-        }),
         new webpack.optimize.UglifyJsPlugin({
             compress: {
                 warnings: false
@@ -30,6 +27,11 @@ module.exports = {
     postcss: [
         autoprefixer,
     ],
+    externals: {
+        react: 'react',
+        'react-dom': 'react-dom',
+        'react-modal': 'react-modal',
+    },
     module: {
         loaders: [
             {

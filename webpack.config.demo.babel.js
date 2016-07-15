@@ -10,18 +10,23 @@ module.exports = {
     },
     output: {
         path: 'build',
-        filename: 'static/[name].js'
+        filename: 'static/[name].js',
     },
     plugins: [
         new HtmlWebpackPlugin({
             filename: 'index.html',
             inject: true,
-            template: './src/examples/cats/index.html'
+            template: './src/examples/cats/index.html',
         }),
         new webpack.DefinePlugin({
             'process.env': {
                 'NODE_ENV': JSON.stringify('production'),
                 'BABEL_ENV': JSON.stringify('production')
+            },
+        }),
+        new webpack.optimize.UglifyJsPlugin({
+            compress: {
+                warnings: false
             },
         }),
     ],
@@ -39,9 +44,16 @@ module.exports = {
                 test: /\.scss$/,
                 loaders: [
                     'style-loader',
-                    'css-loader?-modules&importLoaders=1&localIdentName=[name]__[local]___[hash:base64:5]',
+                    'css-loader?modules&importLoaders=1&localIdentName=[name]__[local]___[hash:base64:5]',
                     'postcss-loader',
                     'sass-loader',
+                ],
+                include: path.join(__dirname, 'src')
+            },
+            {
+                test: /\.(jpe?g|png|gif)$/,
+                loaders: [
+                    'file-loader?name=static/[name]-[hash:6].[ext]',
                 ],
                 include: path.join(__dirname, 'src')
             },

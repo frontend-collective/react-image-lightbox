@@ -1,7 +1,4 @@
 {
     "parser": "babel-eslint",
-    "extends": "blue-hour",
-    "rules": {
-        "react/prefer-es6-class": 0
-    }
+    "extends": "blue-hour"
 }

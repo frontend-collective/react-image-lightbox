@@ -1,9 +1,6 @@
 node_modules
 npm-debug.log
 
-# Example build directory
-example/dist
-
 # Editor and other tmp files
 *.swp
 *.un~
