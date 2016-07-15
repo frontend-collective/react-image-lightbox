@@ -66,11 +66,11 @@ $toolbarHeight: 50px;
     cursor: pointer;
     opacity: 0.7;
 
-    :hover {
+    &:hover {
         opacity: 1;
     }
 
-    :active {
+    &:active {
         opacity: 0.7;
     }
 }
@@ -166,11 +166,11 @@ $toolbarHeight: 50px;
     border: none;
     opacity: 0.7;
 
-    :hover {
+    &:hover {
         opacity: 1;
     }
 
-    :active {
+    &:active {
         outline: none;
     }
 }
@@ -179,7 +179,7 @@ $toolbarHeight: 50px;
     cursor: default;
     opacity: 0.5;
 
-    :hover {
+    &:hover {
         opacity: 0.5;
     }
 }
