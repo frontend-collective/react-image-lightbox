@@ -111,6 +111,15 @@ $toolbarHeight: 50px;
     margin: 0;
 }
 
+.toolbarSideNoFlex {
+    height: auto;
+    line-height: $toolbarHeight;
+    max-width: 48%;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+}
+
 .toolbarLeftSide {
     padding-left: 20px;
     padding-right: 0;
@@ -119,10 +128,19 @@ $toolbarHeight: 50px;
     text-overflow: ellipsis;
 }
 
+.toolbarLeftSideNoFlex {
+    left: 0;
+    overflow: visible;
+}
+
 .toolbarRightSide {
     padding-left: 0;
     padding-right: 20px;
     flex: 0 0 auto;
+}
+
+.toolbarRightSideNoFlex {
+    right: 0;
 }
 
 .toolbarItem {
@@ -181,36 +199,3 @@ $toolbarHeight: 50px;
 .outerAnimating {
     animation-name: closeWindow;
 }
-
-// // Use fallback styles for browsers without flexbox support
-// if (Util.getIEVersion() < 10) {
-//     styles.toolbar = {
-//         background-color: rgba(0, 0, 0, 0.5);
-//         position       : absolute;
-//         left           : 0;
-//         top            : 0;
-//         right          : 0;
-//         height         : $toolbarHeight;
-//     };
-
-//     styles.toolbarSide = {
-//         line-height: $toolbarHeight;
-//         position  : absolute;
-//         top       : 0;
-//         bottom    : 0;
-//         margin    : 0;
-//         max-width  : 48%;
-//     };
-
-//     styles.toolbarLeftSide = {
-//         padding-left: 20px;
-//         padding-right: 0;
-//         left: 0;
-//     };
-
-//     styles.toolbarRightSide = {
-//         padding-left: 0;
-//         padding-right: 20px;
-//         right: 0;
-//     };
-// }

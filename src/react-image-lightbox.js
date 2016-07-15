@@ -11,6 +11,7 @@ import {
     getWindowWidth,
     getWindowHeight,
     isInIframe,
+    getIEVersion,
 } from './util';
 import {
     KEYS,
@@ -21,7 +22,18 @@ import {
     WHEEL_MOVE_Y_THRESHOLD,
     ZOOM_BUTTON_INCREMENT_SIZE,
 } from './constant';
-import styles from './style.scss';
+import baseStyles from './style.scss';
+
+// Add fallback classes for browsers without flexbox support
+let styles = baseStyles;
+if (getIEVersion() < 10) {
+    styles = {
+        ...styles,
+        toolbarSide:      `${styles.toolbarSide} ${styles.toolbarSideNoFlex}`,
+        toolbarLeftSide:  `${styles.toolbarLeftSide} ${styles.toolbarLeftSideNoFlex}`,
+        toolbarRightSide: `${styles.toolbarRightSide} ${styles.toolbarRightSideNoFlex}`,
+    };
+}
 
 class ReactImageLightbox extends Component {
     constructor(props) {
