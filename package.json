@@ -23,7 +23,7 @@
     "type": "git",
     "url": "https://github.com/fritz-c/react-image-lightbox.git"
   },
-  "homepage": "https://github.com/fritz-c/react-image-lightbox",
+  "homepage": "https://fritz-c.github.io/react-image-lightbox",
   "bugs": "https://github.com/fritz-c/react-image-lightbox/issues",
   "authors": [
     "Chris Fritz"
