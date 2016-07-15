@@ -63,6 +63,7 @@ class ReactImageLightbox extends Component {
         this.handleOuterMouseDown     = this.handleOuterMouseDown.bind(this);
         this.handleOuterMouseMove     = this.handleOuterMouseMove.bind(this);
         this.handleOuterMousewheel    = this.handleOuterMousewheel.bind(this);
+        this.handleWindowResize       = this.handleWindowResize.bind(this);
         this.handleZoomInButtonClick  = this.handleZoomInButtonClick.bind(this);
         this.handleZoomOutButtonClick = this.handleZoomOutButtonClick.bind(this);
         this.requestClose             = this.requestClose.bind(this);
