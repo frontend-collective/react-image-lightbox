@@ -1,4 +1,3 @@
 bower.json
-dist
-example
+src/examples
 svg

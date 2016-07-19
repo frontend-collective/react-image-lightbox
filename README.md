@@ -11,7 +11,6 @@ Features
 - Image Zoom
 - Flexible rendering using src values assigned on the fly
 - Image preloading for smoother viewing
-- Few dependencies
 - No external CSS
 
 ## Example
@@ -96,3 +95,27 @@ imageTitle          | string |                |          | Image title
 toolbarButtons      | node[] |                |          | Array of custom toolbar buttons
 imagePadding        | number | `10`           |          | Padding (px) between the edge of the window and the lightbox
 clickOutsideToClose | bool   | `true`         |          | When true, clicks outside of the image close the lightbox
+
+## Contributing
+
+After cloning the repository and running `npm install` inside, you can use the following commands to develop and build the project.
+
+```sh
+# Starts a webpack dev server that hosts a demo page with the lightbox.
+# It uses react-hot-loader so changes are reflected on save.
+npm start
+
+# Lints the code with eslint and my custom rules.
+npm run lint
+
+# Lints and builds the code, placing the result in the dist directory.
+# This build is necessary to reflect changes if you're 
+#  `npm link`-ed to this repository from another local project.
+npm run build
+```
+
+Pull requests are welcome!
+
+## License
+
+MIT

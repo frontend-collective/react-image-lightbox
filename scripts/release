@@ -1,7 +1,0 @@
-#!/bin/bash
-
-# Run build scripts
-node_modules/.bin/gulp clean:lib build:lib clean:dist build:dist
-
-# Run release scripts
-node_modules/.bin/release
