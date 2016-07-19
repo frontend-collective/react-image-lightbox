@@ -46,7 +46,7 @@ class ReactImageLightbox extends Component {
 
             // Lightbox is closing
             // When Lightbox is mounted, if animation is enabled it will open with the reverse of the closing animation
-            isClosing: !this.props.animationDisabled,
+            isClosing: !props.animationDisabled,
 
             // Component parts should animate (e.g., when images are moving, or image is being zoomed)
             shouldAnimate: false,
@@ -854,6 +854,7 @@ class ReactImageLightbox extends Component {
             content: {
                 backgroundColor: 'transparent',
                 border:          'none',
+                borderRadius:    0,
             },
         };
 
