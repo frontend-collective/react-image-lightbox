@@ -120,15 +120,6 @@ const App = React.createClass({
 
                 <section className={styles['main-content']}>
                     <h1>
-                        <a
-                            id="react-image-lightbox"
-                            className={styles.anchor}
-                            href="#react-image-lightbox"
-                            aria-hidden="true"
-                        >
-                            <span aria-hidden="true" className={`${styles.octicon} ${styles['octicon-link']}`}></span>
-                        </a>
-
                         React Image Lightbox
                     </h1>
 

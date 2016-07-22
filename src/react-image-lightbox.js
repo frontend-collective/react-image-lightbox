@@ -1,5 +1,5 @@
 /*
- * react-image-lightbox 2.2.0
+ * react-image-lightbox
  * Copyright 2016 Chris Fritz All rights reserved.
  * @license Open source under the MIT License
  */
