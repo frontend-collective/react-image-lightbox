@@ -75,6 +75,8 @@ class ReactImageLightbox extends Component {
         this.handleOuterMouseDown     = this.handleOuterMouseDown.bind(this);
         this.handleOuterMouseMove     = this.handleOuterMouseMove.bind(this);
         this.handleOuterMousewheel    = this.handleOuterMousewheel.bind(this);
+        this.handleOuterTouchStart    = this.handleOuterTouchStart.bind(this);
+        this.handleOuterTouchMove     = this.handleOuterTouchMove.bind(this);
         this.handleWindowResize       = this.handleWindowResize.bind(this);
         this.handleZoomInButtonClick  = this.handleZoomInButtonClick.bind(this);
         this.handleZoomOutButtonClick = this.handleZoomOutButtonClick.bind(this);
@@ -154,17 +156,21 @@ class ReactImageLightbox extends Component {
             document.addEventListener('keyup', this.handleKeyInput);
             window.addEventListener('resize', this.handleWindowResize);
             window.addEventListener('mouseup', this.handleMouseUp);
+            window.addEventListener('touchend', this.handleMouseUp);
+            document.addEventListener('touchstart', this.handleOuterTouchStart);
+            window.addEventListener('touchmove', this.handleOuterTouchMove);
 
             // Have to add an extra mouseup handler to catch mouseup events outside of the window
             //  if the page containing the lightbox is displayed in an iframe
             if (isInIframe()) {
                 window.top.addEventListener('mouseup', this.handleMouseUp);
+                window.top.addEventListener('touchend', this.handleMouseUp);
             }
 
             this.listenersAttached = true;
         }
     }
-
+    
     // Change zoom level
     changeZoom(zoomLevel, clientX, clientY) {
         const windowWidth  = getWindowWidth();
@@ -231,9 +237,13 @@ class ReactImageLightbox extends Component {
             document.removeEventListener('keyup', this.handleKeyInput);
             window.removeEventListener('resize', this.handleWindowResize);
             window.removeEventListener('mouseup', this.handleMouseUp);
+            window.removeEventListener('touchend', this.handleMouseUp);
+            document.removeEventListener('touchstart', this.handleOuterTouchStart);
+            window.removeEventListener('touchmove', this.handleOuterTouchMove);
 
             if (isInIframe()) {
                 window.top.removeEventListener('mouseup', this.handleMouseUp);
+                window.top.removeEventListener('touchend', this.handleMouseUp);
             }
 
             this.listenersAttached = false;
@@ -569,6 +579,39 @@ class ReactImageLightbox extends Component {
 
         const newOffsetX = (this.dragStartX - event.clientX) / zoomMultiplier + this.dragStartOffsetX;
         const newOffsetY = (this.dragStartY - event.clientY) / zoomMultiplier + this.dragStartOffsetY;
+        if (this.state.offsetX !== newOffsetX || this.state.offsetY !== newOffsetY) {
+            this.setState({
+                offsetX: newOffsetX,
+                offsetY: newOffsetY,
+            });
+        }
+    }
+
+    // Touch screen version of handleOuterMouseDown()
+    handleOuterTouchStart(event) {
+        // Allow dragging when zoomed
+        if (this.state.zoomLevel > MIN_ZOOM_LEVEL) {
+            this.isDragging       = true;
+            let touchObj    = event.changedTouches[0];
+            this.dragStartX = parseInt(touchObj.clientX);
+            this.dragStartY = parseInt(touchObj.clientY);                
+            this.dragStartOffsetX = this.state.offsetX;
+            this.dragStartOffsetY = this.state.offsetY;
+        }        
+    }
+
+    // Touch screen version of handleOuterMouseMove()
+    handleOuterTouchMove(event) {
+        event.preventDefault();
+
+        if(this.state.zoomLevel <= MIN_ZOOM_LEVEL) // We shouldn't go any further if we're not zoomed
+            return;
+
+        const zoomMultiplier = this.getZoomMultiplier();
+
+        const touchObj    = event.changedTouches[0];
+        const newOffsetX = (this.dragStartX - parseInt(touchObj.clientX)) / zoomMultiplier + this.dragStartOffsetX;
+        const newOffsetY = (this.dragStartY - parseInt(touchObj.clientY)) / zoomMultiplier + this.dragStartOffsetY;
         if (this.state.offsetX !== newOffsetX || this.state.offsetY !== newOffsetY) {
             this.setState({
                 offsetX: newOffsetX,
