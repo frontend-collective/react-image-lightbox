@@ -157,8 +157,6 @@ class ReactImageLightbox extends Component {
             window.addEventListener('resize', this.handleWindowResize);
             window.addEventListener('mouseup', this.handleMouseUp);
             window.addEventListener('touchend', this.handleMouseUp);
-            document.addEventListener('touchstart', this.handleOuterTouchStart);
-            window.addEventListener('touchmove', this.handleOuterTouchMove);
 
             // Have to add an extra mouseup handler to catch mouseup events outside of the window
             //  if the page containing the lightbox is displayed in an iframe
@@ -238,8 +236,6 @@ class ReactImageLightbox extends Component {
             window.removeEventListener('resize', this.handleWindowResize);
             window.removeEventListener('mouseup', this.handleMouseUp);
             window.removeEventListener('touchend', this.handleMouseUp);
-            document.removeEventListener('touchstart', this.handleOuterTouchStart);
-            window.removeEventListener('touchmove', this.handleOuterTouchMove);
 
             if (isInIframe()) {
                 window.top.removeEventListener('mouseup', this.handleMouseUp);
@@ -918,6 +914,8 @@ class ReactImageLightbox extends Component {
                     onWheel={this.handleOuterMousewheel}
                     onMouseMove={this.handleOuterMouseMove}
                     onMouseDown={this.handleOuterMouseDown}
+                    onTouchStart={this.handleOuterTouchStart}
+                    onTouchMove={this.handleOuterTouchMove}
                     className={`outer ${styles.outer} ${styles.outerAnimating}` +
                         (this.state.isClosing ? ` closing ${styles.outerClosing}` : '')
                     }
