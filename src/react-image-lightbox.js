@@ -170,7 +170,7 @@ class ReactImageLightbox extends Component {
             this.listenersAttached = true;
         }
     }
-    
+
     // Change zoom level
     changeZoom(zoomLevel, clientX, clientY) {
         const windowWidth  = getWindowWidth();
@@ -554,31 +554,48 @@ class ReactImageLightbox extends Component {
         }
     }
 
+    // Handle move start over the lightbox container
+    // This happens:
+    // - On a mouseDown event
+    // - On a touchstart event
+    handleMoveStart(clientX, clientY) {
+        // Only allow dragging when zoomed
+        if (this.state.zoomLevel <= MIN_ZOOM_LEVEL) {
+            return;
+        }
+
+        this.isDragging       = true;
+        this.dragStartX       = clientX;
+        this.dragStartY       = clientY;
+        this.dragStartOffsetX = this.state.offsetX;
+        this.dragStartOffsetY = this.state.offsetY;
+    }
+
     // Handle the mouse clicking down in the lightbox container
     handleOuterMouseDown(event) {
         event.preventDefault();
-
-        // Allow dragging when zoomed
-        if (this.state.zoomLevel > MIN_ZOOM_LEVEL) {
-            this.isDragging       = true;
-            this.dragStartX       = event.clientX;
-            this.dragStartY       = event.clientY;
-            this.dragStartOffsetX = this.state.offsetX;
-            this.dragStartOffsetY = this.state.offsetY;
-        }
+        this.handleMoveStart(event.clientX, event.clientY);
     }
 
-    // Handle the mouse dragging over the lightbox container
-    // (after a mouseDown and before a mouseUp event)
-    handleOuterMouseMove(event) {
+    // Touch screen version of handleOuterMouseDown()
+    handleOuterTouchStart(event) {
+        const touchObj = event.changedTouches[0];
+        this.handleMoveStart(parseInt(touchObj.clientX, 10), parseInt(touchObj.clientY, 10));
+    }
+
+    // Handle dragging over the lightbox container
+    // This happens:
+    // - After a mouseDown and before a mouseUp event
+    // - After a touchstart and before a touchend event
+    handleMove(clientX, clientY) {
         if (!this.isDragging) {
             return;
         }
 
         const zoomMultiplier = this.getZoomMultiplier();
 
-        const newOffsetX = (this.dragStartX - event.clientX) / zoomMultiplier + this.dragStartOffsetX;
-        const newOffsetY = (this.dragStartY - event.clientY) / zoomMultiplier + this.dragStartOffsetY;
+        const newOffsetX = (this.dragStartX - clientX) / zoomMultiplier + this.dragStartOffsetX;
+        const newOffsetY = (this.dragStartY - clientY) / zoomMultiplier + this.dragStartOffsetY;
         if (this.state.offsetX !== newOffsetX || this.state.offsetY !== newOffsetY) {
             this.setState({
                 offsetX: newOffsetX,
@@ -587,37 +604,23 @@ class ReactImageLightbox extends Component {
         }
     }
 
-    // Touch screen version of handleOuterMouseDown()
-    handleOuterTouchStart(event) {
-        // Allow dragging when zoomed
-        if (this.state.zoomLevel > MIN_ZOOM_LEVEL) {
-            this.isDragging       = true;
-            let touchObj    = event.changedTouches[0];
-            this.dragStartX = parseInt(touchObj.clientX);
-            this.dragStartY = parseInt(touchObj.clientY);                
-            this.dragStartOffsetX = this.state.offsetX;
-            this.dragStartOffsetY = this.state.offsetY;
-        }        
+    // Handle the mouse dragging over the lightbox container
+    // (after a mouseDown and before a mouseUp event)
+    handleOuterMouseMove(event) {
+        this.handleMove(event.clientX, event.clientY);
     }
 
     // Touch screen version of handleOuterMouseMove()
     handleOuterTouchMove(event) {
         event.preventDefault();
 
-        if(this.state.zoomLevel <= MIN_ZOOM_LEVEL) // We shouldn't go any further if we're not zoomed
+        // We shouldn't go any further if we're not zoomed
+        if (this.state.zoomLevel <= MIN_ZOOM_LEVEL) {
             return;
-
-        const zoomMultiplier = this.getZoomMultiplier();
-
-        const touchObj    = event.changedTouches[0];
-        const newOffsetX = (this.dragStartX - parseInt(touchObj.clientX)) / zoomMultiplier + this.dragStartOffsetX;
-        const newOffsetY = (this.dragStartY - parseInt(touchObj.clientY)) / zoomMultiplier + this.dragStartOffsetY;
-        if (this.state.offsetX !== newOffsetX || this.state.offsetY !== newOffsetY) {
-            this.setState({
-                offsetX: newOffsetX,
-                offsetY: newOffsetY,
-            });
         }
+
+        const touchObj = event.changedTouches[0];
+        this.handleMove(parseInt(touchObj.clientX, 10), parseInt(touchObj.clientY, 10));
     }
 
     // Handle the window resize event
