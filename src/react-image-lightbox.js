@@ -819,8 +819,8 @@ class ReactImageLightbox extends Component {
                 let loadingIcon;
                 if (_ieVersion < 10) {
                     loadingIcon = (
-                        <div className={styles.loadingContainer__icon} >
-                            Loading...
+                        <div className={styles.loadingContainer__icon}>
+                            {translate('Loading...')}
                         </div>
                     );
                 } else {
