@@ -72,6 +72,11 @@ module.exports = React.createClass({
 
 ```
 
+## Deprecation Notice
+
+All unprefixed classes (listed below) will be removed in v4.0.0. Use their `ril-` prefixed alternatives instead.
+`close`, `closing`, `download-blocker`, `image-current`, `image-next`, `image-prev`, `inner`, `next-button`, `not-loaded`, `outer`, `prev-button`, `toolbar`, `toolbar-left`, `toolbar-right`, `zoom-in`, `zoom-out`
+
 ## Options
 
 Property            | Type   | Default        | Required | Description
