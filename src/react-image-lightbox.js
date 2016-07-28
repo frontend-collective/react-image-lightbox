@@ -128,17 +128,35 @@ class ReactImageLightbox extends Component {
     }
 
     componentDidMount() {
+        this.mounted = true;
         this.attachListeners();
 
         this.loadAllImages();
     }
 
     componentWillReceiveProps(nextProps) {
-        const sourcesChanged = this.getSrcTypes().some(srcType =>
-            this.props[srcType.name] !== nextProps[srcType.name]
-        );
+        // Iterate through the source types for prevProps and nextProps to
+        //  determine if any of the sources changed
+        let sourcesChanged = false;
+        const prevSrcDict = {};
+        const nextSrcDict = {};
+        this.getSrcTypes().forEach(srcType => {
+            if (this.props[srcType.name] !== nextProps[srcType.name]) {
+                sourcesChanged = true;
+
+                prevSrcDict[this.props[srcType.name]] = true;
+                nextSrcDict[nextProps[srcType.name]] = true;
+            }
+        });
 
         if (sourcesChanged || this.moveRequested) {
+            // Reset the loaded state for images not rendered next
+            Object.keys(prevSrcDict).forEach(prevSrc => {
+                if (!(prevSrc in nextSrcDict) && (prevSrc in this.imageCache)) {
+                    this.imageCache[prevSrc].loaded = false;
+                }
+            });
+
             this.moveRequested = false;
 
             // Load any new images
@@ -147,14 +165,13 @@ class ReactImageLightbox extends Component {
     }
 
     componentWillUnmount() {
+        this.mounted = false;
         this.detachListeners();
     }
 
     // Attach key and mouse input events
     attachListeners() {
         if (!this.listenersAttached) {
-            document.addEventListener('keydown', this.handleKeyInput);
-            document.addEventListener('keyup', this.handleKeyInput);
             window.addEventListener('resize', this.handleWindowResize);
             window.addEventListener('mouseup', this.handleMouseUp);
             window.addEventListener('touchend', this.handleMouseUp);
@@ -232,8 +249,6 @@ class ReactImageLightbox extends Component {
     // Detach key and mouse input events
     detachListeners() {
         if (this.listenersAttached) {
-            document.removeEventListener('keydown', this.handleKeyInput);
-            document.removeEventListener('keyup', this.handleKeyInput);
             window.removeEventListener('resize', this.handleWindowResize);
             window.removeEventListener('mouseup', this.handleMouseUp);
             window.removeEventListener('touchend', this.handleMouseUp);
@@ -639,7 +654,7 @@ class ReactImageLightbox extends Component {
         return this.state.shouldAnimate || this.state.isClosing;
     }
 
-    // Load image from src and call callback with image width and height on load
+    // Check if image is loaded
     isImageLoaded(imageSrc) {
         return imageSrc && (imageSrc in this.imageCache) && this.imageCache[imageSrc].loaded;
     }
@@ -686,7 +701,8 @@ class ReactImageLightbox extends Component {
             }
 
             // Don't rerender if the src is not the same as when the load started
-            if (this.props[srcType] !== imageSrc) {
+            // or if the component has unmounted
+            if (this.props[srcType] !== imageSrc || !this.mounted) {
                 return;
             }
 
@@ -940,13 +956,9 @@ class ReactImageLightbox extends Component {
                 isOpen
                 onRequestClose={noop}
                 style={modalStyle}
+                onAfterOpen={() => this.outerEl && this.outerEl.focus()} // Focus on the div with key handlers
             >
                 <div // Floating modal with closing animations
-                    onWheel={this.handleOuterMousewheel}
-                    onMouseMove={this.handleOuterMouseMove}
-                    onMouseDown={this.handleOuterMouseDown}
-                    onTouchStart={this.handleOuterTouchStart}
-                    onTouchMove={this.handleOuterTouchMove}
                     className={`outer ${styles.outer} ${styles.outerAnimating}` +
                         (this.state.isClosing ? ` closing ${styles.outerClosing}` : '')
                     }
@@ -955,6 +967,15 @@ class ReactImageLightbox extends Component {
                         animationDuration:  `${this.props.animationDuration}ms`,
                         animationDirection: this.state.isClosing ? 'normal' : 'reverse',
                     }}
+                    ref={el => { this.outerEl = el; }}
+                    onWheel={this.handleOuterMousewheel}
+                    onMouseMove={this.handleOuterMouseMove}
+                    onMouseDown={this.handleOuterMouseDown}
+                    onTouchStart={this.handleOuterTouchStart}
+                    onTouchMove={this.handleOuterTouchMove}
+                    tabIndex="-1" // Enables key handlers on div
+                    onKeyDown={this.handleKeyInput}
+                    onKeyUp={this.handleKeyInput}
                 >
 
                     <div // Image holder
