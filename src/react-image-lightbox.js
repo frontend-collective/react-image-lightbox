@@ -26,7 +26,8 @@ import baseStyles from './style.scss';
 
 // Add fallback classes for browsers without flexbox support
 let styles = baseStyles;
-if (getIEVersion() < 10) {
+const _ieVersion = getIEVersion();
+if (_ieVersion < 10) {
     styles = {
         ...styles,
         toolbarSide:      `${styles.toolbarSide} ${styles.toolbarSideNoFlex}`,
@@ -799,13 +800,43 @@ class ReactImageLightbox extends Component {
 
             const bestImageInfo = this.getBestImageForType(srcType);
             if (bestImageInfo === null) {
+                let loadingIcon;
+                if (_ieVersion < 10) {
+                    loadingIcon = (
+                        <div className={styles.loadingContainer__icon} >
+                            Loading...
+                        </div>
+                    );
+                } else {
+                    loadingIcon = (
+                        <div className={`${styles.loadingCircle} ${styles.loadingContainer__icon}`}>
+                            <div className={styles.loadingCirclePoint}></div>
+                            <div className={styles.loadingCirclePoint}></div>
+                            <div className={styles.loadingCirclePoint}></div>
+                            <div className={styles.loadingCirclePoint}></div>
+                            <div className={styles.loadingCirclePoint}></div>
+                            <div className={styles.loadingCirclePoint}></div>
+                            <div className={styles.loadingCirclePoint}></div>
+                            <div className={styles.loadingCirclePoint}></div>
+                            <div className={styles.loadingCirclePoint}></div>
+                            <div className={styles.loadingCirclePoint}></div>
+                            <div className={styles.loadingCirclePoint}></div>
+                            <div className={styles.loadingCirclePoint}></div>
+                        </div>
+                    );
+                }
+
                 // Fall back to loading icon if the thumbnail has not been loaded
                 images.push(
                     <div
                         className={`${imageClass} ${styles.image} not-loaded`}
                         style={imageStyle}
                         key={this.props[srcType] + keyEndings[srcType]}
-                    />
+                    >
+                        <div className={styles.loadingContainer} >
+                            {loadingIcon}
+                        </div>
+                    </div>
                 );
 
                 return;
