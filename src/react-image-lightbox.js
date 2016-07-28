@@ -825,7 +825,7 @@ class ReactImageLightbox extends Component {
                         style={imageStyle}
                         key={imageSrc + keyEndings[srcType]}
                     >
-                        <div className="download-blocker ${styles.downloadBlocker}" />
+                        <div className={`download-blocker ${styles.downloadBlocker}`} />
                     </div>
                 );
             } else {
