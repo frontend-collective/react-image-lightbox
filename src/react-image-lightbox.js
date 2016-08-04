@@ -1021,7 +1021,14 @@ class ReactImageLightbox extends Component {
                             </li>
                         </ul>
 
-                        <ul className={`toolbar-right ril-toolbar-right ${styles.toolbarSide} ${styles.toolbarRightSide}`}>
+                        <ul
+                            className={[
+                                'toolbar-right',
+                                'ril-toolbar-right',
+                                styles.toolbarSide,
+                                styles.toolbarRightSide,
+                            ].join(' ')}
+                        >
                             {!this.props.toolbarButtons ? '' : this.props.toolbarButtons.map((button, i) => (
                                 <li key={i} className={styles.toolbarItem}>{button}</li>
                             ))}
