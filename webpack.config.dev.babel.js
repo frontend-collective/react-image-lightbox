@@ -18,7 +18,6 @@ module.exports = {
             inject: true,
             template: './src/examples/cats/index.html'
         }),
-        new webpack.HotModuleReplacementPlugin(),
         new webpack.NoErrorsPlugin(),
     ],
     postcss: [
