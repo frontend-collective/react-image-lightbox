@@ -87,6 +87,11 @@ class ReactImageLightbox extends Component {
     }
 
     componentWillMount() {
+        // Prevent scrolling of the background - store value and restore it on unmount
+        var defaultOverflow = document.body.style.overflow;
+        this.setState({ defaultOverflow: defaultOverflow });
+        document.body.style.overflow = "hidden";
+
         // Whether event listeners for keyboard and mouse input have been attached or not
         this.listenersAttached = false;
 
@@ -165,6 +170,9 @@ class ReactImageLightbox extends Component {
     }
 
     componentWillUnmount() {
+        // Reset scrolling of the background
+        document.body.style.overflow = this.state.defaultOverflow;
+
         this.mounted = false;
         this.detachListeners();
     }
@@ -453,10 +461,6 @@ class ReactImageLightbox extends Component {
 
     // Handle a mouse wheel event over the lightbox container
     handleOuterMousewheel(event) {
-        // Prevent scrolling of the background
-        event.preventDefault();
-        event.stopPropagation();
-
         const xThreshold = WHEEL_MOVE_X_THRESHOLD;
         let actionDelay = 0;
         const imageMoveDelay = 500;
