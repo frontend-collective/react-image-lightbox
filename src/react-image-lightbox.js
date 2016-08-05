@@ -36,6 +36,14 @@ if (_ieVersion < 10) {
     };
 }
 
+function handleCaptionMousewheel(event) {
+    event.stopPropagation();
+}
+
+function handleCaptionMouseDown(event) {
+    event.stopPropagation();
+}
+
 class ReactImageLightbox extends Component {
     constructor(props) {
         super(props);
@@ -84,6 +92,8 @@ class ReactImageLightbox extends Component {
         this.requestClose             = this.requestClose.bind(this);
         this.requestMoveNext          = this.requestMoveNext.bind(this);
         this.requestMovePrev          = this.requestMovePrev.bind(this);
+        this.handleCaptionMousewheel  = handleCaptionMousewheel;
+        this.handleCaptionMouseDown   = handleCaptionMouseDown;
     }
 
     componentWillMount() {
@@ -1147,6 +1157,21 @@ class ReactImageLightbox extends Component {
                             </li>
                         </ul>
                     </div>
+
+                    {!this.props.imageCaption ? '' :
+                    <div // Image caption
+                        onWheel={this.handleCaptionMousewheel}
+                        onMouseDown={this.handleCaptionMouseDown}
+                        className={`ril-caption ${styles.caption}`}
+                    >
+                        <div
+                            className={`ril-caption-content ${styles.captionContent}`}
+                        >
+                            {this.props.imageCaption}
+                        </div>
+                    </div>
+                    }
+
                 </div>
             </Modal>
         );
@@ -1238,6 +1263,9 @@ ReactImageLightbox.propTypes = {
 
     // Image title
     imageTitle: PropTypes.node,
+
+    // Image caption
+    imageCaption: PropTypes.node,
 
     //-----------------------------
     // Lightbox style

@@ -1,4 +1,5 @@
 $toolbarHeight: 50px;
+$maxCaptionHeight: 150px;
 
 @keyframes closeWindow {
     0%   { opacity: 1; }
@@ -94,15 +95,30 @@ $toolbarHeight: 50px;
     background-size: cover;
 }
 
+.caption,
 .toolbar {
     background-color: rgba(0, 0, 0, 0.5);
     position: absolute;
     left: 0;
-    top: 0;
     right: 0;
-    height: $toolbarHeight;
     display: flex;
     justify-content: space-between;
+}
+
+.caption {
+    bottom: 0;
+    max-height: $maxCaptionHeight;
+    overflow: auto;
+
+    .captionContent {
+        padding: 10px 20px;
+        color: #FFF;
+    }
+}
+
+.toolbar {
+    top: 0;
+    height: $toolbarHeight;
 }
 
 .toolbarSide {
