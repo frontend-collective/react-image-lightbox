@@ -348,12 +348,12 @@ class ReactImageLightbox extends Component {
 
     getOffsetXFromWindowCenter(x) {
         const windowWidth  = getWindowWidth();
-        return windowWidth / 2 - x;
+        return (windowWidth / 2) - x;
     }
 
     getOffsetYFromWindowCenter(y) {
         const windowHeight = getWindowHeight();
-        return windowHeight / 2 - y;
+        return (windowHeight / 2) - y;
     }
 
     // Get image src types
@@ -606,8 +606,8 @@ class ReactImageLightbox extends Component {
 
         const zoomMultiplier = this.getZoomMultiplier();
 
-        const newOffsetX = (this.dragStartX - clientX) / zoomMultiplier + this.dragStartOffsetX;
-        const newOffsetY = (this.dragStartY - clientY) / zoomMultiplier + this.dragStartOffsetY;
+        const newOffsetX = ((this.dragStartX - clientX) / zoomMultiplier) + this.dragStartOffsetX;
+        const newOffsetY = ((this.dragStartY - clientY) / zoomMultiplier) + this.dragStartOffsetY;
         if (this.state.offsetX !== newOffsetX || this.state.offsetY !== newOffsetY) {
             this.setState({
                 offsetX: newOffsetX,
@@ -826,18 +826,18 @@ class ReactImageLightbox extends Component {
                 } else {
                     loadingIcon = (
                         <div className={`ril-loading-circle ${styles.loadingCircle} ${styles.loadingContainer__icon}`}>
-                            <div className={`ril-loading-circle-point ${styles.loadingCirclePoint}`}></div>
-                            <div className={`ril-loading-circle-point ${styles.loadingCirclePoint}`}></div>
-                            <div className={`ril-loading-circle-point ${styles.loadingCirclePoint}`}></div>
-                            <div className={`ril-loading-circle-point ${styles.loadingCirclePoint}`}></div>
-                            <div className={`ril-loading-circle-point ${styles.loadingCirclePoint}`}></div>
-                            <div className={`ril-loading-circle-point ${styles.loadingCirclePoint}`}></div>
-                            <div className={`ril-loading-circle-point ${styles.loadingCirclePoint}`}></div>
-                            <div className={`ril-loading-circle-point ${styles.loadingCirclePoint}`}></div>
-                            <div className={`ril-loading-circle-point ${styles.loadingCirclePoint}`}></div>
-                            <div className={`ril-loading-circle-point ${styles.loadingCirclePoint}`}></div>
-                            <div className={`ril-loading-circle-point ${styles.loadingCirclePoint}`}></div>
-                            <div className={`ril-loading-circle-point ${styles.loadingCirclePoint}`}></div>
+                            <div className={`ril-loading-circle-point ${styles.loadingCirclePoint}`} />
+                            <div className={`ril-loading-circle-point ${styles.loadingCirclePoint}`} />
+                            <div className={`ril-loading-circle-point ${styles.loadingCirclePoint}`} />
+                            <div className={`ril-loading-circle-point ${styles.loadingCirclePoint}`} />
+                            <div className={`ril-loading-circle-point ${styles.loadingCirclePoint}`} />
+                            <div className={`ril-loading-circle-point ${styles.loadingCirclePoint}`} />
+                            <div className={`ril-loading-circle-point ${styles.loadingCirclePoint}`} />
+                            <div className={`ril-loading-circle-point ${styles.loadingCirclePoint}`} />
+                            <div className={`ril-loading-circle-point ${styles.loadingCirclePoint}`} />
+                            <div className={`ril-loading-circle-point ${styles.loadingCirclePoint}`} />
+                            <div className={`ril-loading-circle-point ${styles.loadingCirclePoint}`} />
+                            <div className={`ril-loading-circle-point ${styles.loadingCirclePoint}`} />
                         </div>
                     );
                 }
