@@ -898,7 +898,9 @@ class ReactImageLightbox extends Component {
             'mainSrc',
             'image-current ril-image-current',
             {
-                transform: `scale3d(${zoomMultiplier}, ${zoomMultiplier}, 1)`,
+                transform: _ieVersion < 10 ?
+                    `scale(${zoomMultiplier})` :
+                    `scale3d(${zoomMultiplier}, ${zoomMultiplier}, 1)`,
                 left:  -1 * zoomMultiplier * this.state.offsetX,
                 right: zoomMultiplier * this.state.offsetX,
                 top: -1 * zoomMultiplier * this.state.offsetY,
