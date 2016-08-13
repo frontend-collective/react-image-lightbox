@@ -28,7 +28,7 @@ module.exports = {
         }),
     ],
     postcss: [
-        autoprefixer,
+        autoprefixer({ browsers: ['IE >= 9', '> 1%'] }),
     ],
     externals: {
         react: 'react',
