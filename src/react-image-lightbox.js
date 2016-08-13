@@ -891,6 +891,10 @@ class ReactImageLightbox extends Component {
         };
 
         const zoomMultiplier = this.getZoomMultiplier();
+        const zoomStyle = _ieVersion < 10 ?
+            { msTransform: `scale(${zoomMultiplier})`} :
+            { transform: `scale3d(${zoomMultiplier}, ${zoomMultiplier}, 1)` };
+
         // Next Image (displayed on the right)
         addImage('nextSrc', `image-next ril-image-next ${styles.imageNext}`);
         // Main Image
@@ -898,9 +902,7 @@ class ReactImageLightbox extends Component {
             'mainSrc',
             'image-current ril-image-current',
             {
-                transform: _ieVersion < 10 ?
-                    `scale(${zoomMultiplier})` :
-                    `scale3d(${zoomMultiplier}, ${zoomMultiplier}, 1)`,
+                ...zoomStyle,
                 left:  -1 * zoomMultiplier * this.state.offsetX,
                 right: zoomMultiplier * this.state.offsetX,
                 top: -1 * zoomMultiplier * this.state.offsetY,
