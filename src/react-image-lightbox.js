@@ -189,9 +189,6 @@ class ReactImageLightbox extends Component {
 
     // Change zoom level
     changeZoom(zoomLevel, clientX, clientY) {
-        const windowWidth  = getWindowWidth();
-        const windowHeight = getWindowHeight();
-
         // Constrain zoom level to the set bounds
         const nextZoomLevel = Math.max(MIN_ZOOM_LEVEL, Math.min(MAX_ZOOM_LEVEL, zoomLevel));
 
@@ -207,21 +204,31 @@ class ReactImageLightbox extends Component {
             });
         }
 
+        const imageBaseSize = this.getBestImageForType('mainSrc');
+        if (imageBaseSize === null) {
+            return;
+        }
+
         const currentZoomMultiplier = this.getZoomMultiplier();
         const nextZoomMultiplier    = this.getZoomMultiplier(nextZoomLevel);
 
-        // Default to the center of the screen to zoom when no mouse position specified
-        const percentXInCurrentBox = (typeof clientX !== 'undefined' ? clientX : windowWidth / 2) / windowWidth;
-        const percentYInCurrentBox = (typeof clientY !== 'undefined' ? clientY : windowHeight / 2) / windowHeight;
+        // Default to the center of the image to zoom when no mouse position specified
+        const boxRect = this.getLightboxRect();
+        const percentXInCurrentBox = typeof clientX !== 'undefined' ?
+            ((clientX - boxRect.left - ((boxRect.width - imageBaseSize.width) / 2)) / imageBaseSize.width) :
+            0.5;
+        const percentYInCurrentBox = typeof clientY !== 'undefined' ?
+            ((clientY - boxRect.top - ((boxRect.height - imageBaseSize.height) / 2)) / imageBaseSize.height) :
+            0.5;
 
-        const currentBoxWidth  = windowWidth / currentZoomMultiplier;
-        const currentBoxHeight = windowHeight / currentZoomMultiplier;
+        const currentImageWidth  = imageBaseSize.width * currentZoomMultiplier;
+        const currentImageHeight = imageBaseSize.height * currentZoomMultiplier;
 
-        const nextBoxWidth  = windowWidth / nextZoomMultiplier;
-        const nextBoxHeight = windowHeight / nextZoomMultiplier;
+        const nextImageWidth  = imageBaseSize.width * nextZoomMultiplier;
+        const nextImageHeight = imageBaseSize.height * nextZoomMultiplier;
 
-        const deltaX = (nextBoxWidth - currentBoxWidth) * (percentXInCurrentBox - 0.5);
-        const deltaY = (nextBoxHeight - currentBoxHeight) * (percentYInCurrentBox - 0.5);
+        const deltaX = (currentImageWidth - nextImageWidth) * (percentXInCurrentBox - 0.5);
+        const deltaY = (currentImageHeight - nextImageHeight) * (percentYInCurrentBox - 0.5);
 
         let nextOffsetX = this.state.offsetX - deltaX;
         let nextOffsetY = this.state.offsetY - deltaY;
@@ -287,10 +294,9 @@ class ReactImageLightbox extends Component {
 
     // Get sizing for when an image is larger than the window
     getFitSizes(width, height, stretch) {
-        const windowHeight = getWindowHeight();
-        const windowWidth  = getWindowWidth();
-        let maxHeight      = windowHeight - (this.props.imagePadding * 2);
-        let maxWidth       = windowWidth - (this.props.imagePadding * 2);
+        const boxSize = this.getLightboxRect();
+        let maxHeight = boxSize.height - (this.props.imagePadding * 2);
+        let maxWidth  = boxSize.width - (this.props.imagePadding * 2);
 
         if (!stretch) {
             maxHeight = Math.min(maxHeight, height);
@@ -300,16 +306,17 @@ class ReactImageLightbox extends Component {
         const maxRatio = maxWidth / maxHeight;
         const srcRatio = width / height;
 
-        const fitSizes = {};
         if (maxRatio > srcRatio) { // height is the constraining dimension of the photo
-            fitSizes.width  = width * maxHeight / height;
-            fitSizes.height = maxHeight;
-        } else {
-            fitSizes.width  = maxWidth;
-            fitSizes.height = height * maxWidth / width;
+            return {
+                width:  width * maxHeight / height,
+                height: maxHeight,
+            };
         }
 
-        return fitSizes;
+        return {
+            width:  maxWidth,
+            height: height * maxWidth / width,
+        };
     }
 
     getMaxOffsets(zoomLevel = this.state.zoomLevel) {
@@ -318,24 +325,23 @@ class ReactImageLightbox extends Component {
             return { maxX: 0, minX: 0, maxY: 0, minY: 0 };
         }
 
-        const windowWidth    = getWindowWidth();
-        const windowHeight   = getWindowHeight();
+        const boxSize        = this.getLightboxRect();
         const zoomMultiplier = this.getZoomMultiplier(zoomLevel);
 
         let maxX = 0;
-        if (currentImageInfo.width - (windowWidth / zoomMultiplier) < 0) {
+        if ((zoomMultiplier * currentImageInfo.width) - boxSize.width < 0) {
             // if there is still blank space in the X dimension, don't limit except to the opposite edge
-            maxX = ((windowWidth / zoomMultiplier) - currentImageInfo.width) / 2;
+            maxX = (boxSize.width - (zoomMultiplier * currentImageInfo.width)) / 2;
         } else {
-            maxX = (currentImageInfo.width - (windowWidth / zoomMultiplier)) / 2;
+            maxX = ((zoomMultiplier * currentImageInfo.width) - boxSize.width) / 2;
         }
 
         let maxY = 0;
-        if (currentImageInfo.height - (windowHeight / zoomMultiplier) < 0) {
+        if ((zoomMultiplier * currentImageInfo.height) - boxSize.height < 0) {
             // if there is still blank space in the Y dimension, don't limit except to the opposite edge
-            maxY = ((windowHeight / zoomMultiplier) - currentImageInfo.height) / 2;
+            maxY = (boxSize.height - (zoomMultiplier * currentImageInfo.height)) / 2;
         } else {
-            maxY = (currentImageInfo.height - (windowHeight / zoomMultiplier)) / 2;
+            maxY = ((zoomMultiplier * currentImageInfo.height) - boxSize.height) / 2;
         }
 
         return {
@@ -344,16 +350,6 @@ class ReactImageLightbox extends Component {
             minX: -1 * maxX,
             minY: -1 * maxY,
         };
-    }
-
-    getOffsetXFromWindowCenter(x) {
-        const windowWidth  = getWindowWidth();
-        return (windowWidth / 2) - x;
-    }
-
-    getOffsetYFromWindowCenter(y) {
-        const windowHeight = getWindowHeight();
-        return (windowHeight / 2) - y;
     }
 
     // Get image src types
@@ -386,12 +382,34 @@ class ReactImageLightbox extends Component {
         ];
     }
 
-    // Get sizing when the image is scaled
+    /**
+     * Get sizing when the image is scaled
+     */
     getZoomMultiplier(zoomLevel = this.state.zoomLevel) {
         return Math.pow(ZOOM_RATIO, zoomLevel);
     }
 
-    // Handle user keyboard actions
+    /**
+     * Get the size of the lightbox in pixels
+     */
+    getLightboxRect() {
+        if (this.outerEl) {
+            return this.outerEl.getBoundingClientRect();
+        }
+
+        return {
+            width:  getWindowWidth(),
+            height: getWindowHeight(),
+            top: 0,
+            right: 0,
+            bottom: 0,
+            left: 0,
+        };
+    }
+
+    /**
+     * Handle user keyboard actions
+     */
     handleKeyInput(event) {
         event.stopPropagation();
 
@@ -451,7 +469,9 @@ class ReactImageLightbox extends Component {
         }
     }
 
-    // Handle a mouse wheel event over the lightbox container
+    /**
+     * Handle a mouse wheel event over the lightbox container
+     */
     handleOuterMousewheel(event) {
         // Prevent scrolling of the background
         event.preventDefault();
@@ -522,7 +542,9 @@ class ReactImageLightbox extends Component {
         }
     }
 
-    // Handle a double click on the current image
+    /**
+     * Handle a double click on the current image
+     */
     handleImageDoubleClick(event) {
         if (this.state.zoomLevel > MIN_ZOOM_LEVEL) {
             // A double click when zoomed in zooms all the way out
@@ -541,7 +563,9 @@ class ReactImageLightbox extends Component {
         }
     }
 
-    // Handle a mouse click ending in the lightbox container
+    /**
+     * Handle a mouse click ending in the lightbox container
+     */
     handleMouseUp() {
         if (!this.isDragging) {
             return;
@@ -604,10 +628,8 @@ class ReactImageLightbox extends Component {
             return;
         }
 
-        const zoomMultiplier = this.getZoomMultiplier();
-
-        const newOffsetX = ((this.dragStartX - clientX) / zoomMultiplier) + this.dragStartOffsetX;
-        const newOffsetY = ((this.dragStartY - clientY) / zoomMultiplier) + this.dragStartOffsetY;
+        const newOffsetX = (this.dragStartX - clientX) + this.dragStartOffsetX;
+        const newOffsetY = (this.dragStartY - clientY) + this.dragStartOffsetY;
         if (this.state.offsetX !== newOffsetX || this.state.offsetY !== newOffsetY) {
             this.setState({
                 offsetX: newOffsetX,
@@ -782,16 +804,39 @@ class ReactImageLightbox extends Component {
         this.requestMove('prev', event);
     }
 
+    // Request to transition to the previous image
+    getTransform({ x = null, y = null, zoom = null }) {
+        const isOldIE = _ieVersion < 10;
+        const transforms = [];
+        if (x !== null || y !== null) {
+            transforms.push(isOldIE ?
+                `translate(${x || 0}px,${y || 0}px)` :
+                `translate3d(${x || 0}px,${y || 0}px,0)`
+            );
+        }
+
+        if (zoom !== null) {
+            transforms.push(isOldIE ?
+                `scale(${zoom})` :
+                `scale3d(${zoom},${zoom},1)`
+            );
+        }
+
+        return {
+            [isOldIE ? 'msTransform' : 'transform']:
+                transforms.length === 0 ? 'none' : transforms.join(' '),
+        };
+    }
+
     render() {
+        const boxSize = this.getLightboxRect();
         let transitionStyle = {};
 
         // Transition settings for sliding animations
         if (!this.props.animationDisabled && this.isAnimating()) {
             transitionStyle = {
                 ...transitionStyle,
-                transition: ['transform', 'left', 'top', 'right', 'bottom']
-                    .map(x => `${x} ${this.props.animationDuration}ms`)
-                    .join(', '),
+                transition: `transform ${this.props.animationDuration}ms`,
             };
         }
 
@@ -891,26 +936,28 @@ class ReactImageLightbox extends Component {
         };
 
         const zoomMultiplier = this.getZoomMultiplier();
-        const zoomStyle = _ieVersion < 10 ?
-            { msTransform: `scale(${zoomMultiplier})`} :
-            { transform: `scale3d(${zoomMultiplier}, ${zoomMultiplier}, 1)` };
-
         // Next Image (displayed on the right)
-        addImage('nextSrc', `image-next ril-image-next ${styles.imageNext}`);
+        addImage(
+            'nextSrc',
+            `image-next ril-image-next ${styles.imageNext}`,
+            this.getTransform({ x: boxSize.width })
+        );
         // Main Image
         addImage(
             'mainSrc',
             'image-current ril-image-current',
-            {
-                ...zoomStyle,
-                left:  -1 * zoomMultiplier * this.state.offsetX,
-                right: zoomMultiplier * this.state.offsetX,
-                top: -1 * zoomMultiplier * this.state.offsetY,
-                bottom: zoomMultiplier * this.state.offsetY,
-            }
+            this.getTransform({
+                x: -1 * this.state.offsetX,
+                y: -1 * this.state.offsetY,
+                zoom: zoomMultiplier,
+            })
         );
         // Previous Image (displayed on the left)
-        addImage('prevSrc', `image-prev ril-image-prev ${styles.imagePrev}`);
+        addImage(
+            'prevSrc',
+            `image-prev ril-image-prev ${styles.imagePrev}`,
+            this.getTransform({ x: -1 * boxSize.width })
+        );
 
         const noop = () => {};
 
@@ -945,13 +992,14 @@ class ReactImageLightbox extends Component {
                 backgroundColor: 'transparent',
             },
             content: {
-                backgroundColor: 'transparent',
-                border:          'none',
-                borderRadius:    0,
-                top:             0,
-                left:            0,
-                right:           0,
-                bottom:          0,
+                overflow:     'hidden', // Needed, otherwise keyboard shortcuts scroll the page
+                border:       'none',
+                borderRadius: 0,
+                padding:      0,
+                top:          0,
+                left:         0,
+                right:        0,
+                bottom:       0,
             },
         };
 
@@ -967,7 +1015,7 @@ class ReactImageLightbox extends Component {
         return (
             <Modal
                 isOpen
-                onRequestClose={noop}
+                onRequestClose={this.props.clickOutsideToClose ? this.requestClose : noop}
                 style={modalStyle}
                 onAfterOpen={() => this.outerEl && this.outerEl.focus()} // Focus on the div with key handlers
             >

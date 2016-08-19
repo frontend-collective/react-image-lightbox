@@ -7,7 +7,6 @@ $toolbarHeight: 50px;
 
 .outer {
     background-color: rgba(0, 0, 0, 0.85);
-    position: fixed;
     top: 0;
     left: 0;
     right: 0;
@@ -32,20 +31,20 @@ $toolbarHeight: 50px;
 .image {
     position: absolute;
     top: 0;
+    right: 0;
     bottom: 0;
+    left: 0;
     margin: auto;
     max-width: 100%;
     max-height: 100%;
 }
 
 .imagePrev {
-    left: -100%;
-    right: 100%;
+    @extends .image;
 }
 
 .imageNext {
-    left: 100%;
-    right: -100%;
+    @extends .image;
 }
 
 .imageDiscourager {
