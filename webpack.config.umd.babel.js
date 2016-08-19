@@ -19,7 +19,7 @@ module.exports = {
     plugins: [
         new webpack.optimize.OccurenceOrderPlugin(),
         new webpack.EnvironmentPlugin([
-            "NODE_ENV",
+            'NODE_ENV',
         ]),
         new webpack.optimize.UglifyJsPlugin({
             compress: {
@@ -45,7 +45,7 @@ module.exports = {
             {
                 test: /\.scss$/,
                 loaders: [
-                    'style-loader',
+                    'style-loader?insertAt=top',
                     'css-loader?modules&importLoaders=1&localIdentName=[local]___[hash:base64:5]',
                     'postcss-loader',
                     'sass-loader',
