@@ -1010,14 +1010,15 @@ class ReactImageLightbox extends Component {
                 ...reactModalStyle.overlay, // Allow style overrides via props
             },
             content: {
-                overflow:     'hidden', // Needed, otherwise keyboard shortcuts scroll the page
-                border:       'none',
-                borderRadius: 0,
-                padding:      0,
-                top:          0,
-                left:         0,
-                right:        0,
-                bottom:       0,
+                backgroundColor: 'transparent',
+                overflow:        'hidden', // Needed, otherwise keyboard shortcuts scroll the page
+                border:          'none',
+                borderRadius:    0,
+                padding:         0,
+                top:             0,
+                left:            0,
+                right:           0,
+                bottom:          0,
                 ...reactModalStyle.content, // Allow style overrides via props
             },
         };
