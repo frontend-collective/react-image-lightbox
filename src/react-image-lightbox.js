@@ -829,14 +829,32 @@ class ReactImageLightbox extends Component {
     }
 
     render() {
+        const {
+            animationDisabled,
+            animationDuration,
+            clickOutsideToClose,
+            discourageDownloads,
+            imageTitle,
+            nextSrc,
+            prevSrc,
+            toolbarButtons,
+            reactModalStyle,
+        } = this.props;
+        const {
+            zoomLevel,
+            offsetX,
+            offsetY,
+            isClosing,
+        } = this.state;
+
         const boxSize = this.getLightboxRect();
         let transitionStyle = {};
 
         // Transition settings for sliding animations
-        if (!this.props.animationDisabled && this.isAnimating()) {
+        if (!animationDisabled && this.isAnimating()) {
             transitionStyle = {
                 ...transitionStyle,
-                transition: `transform ${this.props.animationDuration}ms`,
+                transition: `transform ${animationDuration}ms`,
             };
         }
 
@@ -855,7 +873,7 @@ class ReactImageLightbox extends Component {
             }
 
             let imageStyle = { ...baseStyle, ...transitionStyle };
-            if (this.state.zoomLevel > MIN_ZOOM_LEVEL) {
+            if (zoomLevel > MIN_ZOOM_LEVEL) {
                 imageStyle.cursor = 'move';
             }
 
@@ -907,7 +925,7 @@ class ReactImageLightbox extends Component {
             imageStyle.height = bestImageInfo.height;
 
             const imageSrc = bestImageInfo.src;
-            if (this.props.discourageDownloads) {
+            if (discourageDownloads) {
                 imageStyle.backgroundImage = `url('${imageSrc}')`;
                 images.push(
                     <div
@@ -929,7 +947,7 @@ class ReactImageLightbox extends Component {
                         style={imageStyle}
                         src={imageSrc}
                         key={imageSrc + keyEndings[srcType]}
-                        alt={this.props.imageTitle || translate('Image')}
+                        alt={imageTitle || translate('Image')}
                     />
                 );
             }
@@ -947,8 +965,8 @@ class ReactImageLightbox extends Component {
             'mainSrc',
             'image-current ril-image-current',
             this.getTransform({
-                x: -1 * this.state.offsetX,
-                y: -1 * this.state.offsetY,
+                x: -1 * offsetX,
+                y: -1 * offsetY,
                 zoom: zoomMultiplier,
             })
         );
@@ -968,13 +986,13 @@ class ReactImageLightbox extends Component {
         let zoomOutButtonHandler   = this.handleZoomOutButtonClick;
 
         // Disable zooming in when zoomed all the way in
-        if (this.state.zoomLevel === MAX_ZOOM_LEVEL) {
+        if (zoomLevel === MAX_ZOOM_LEVEL) {
             zoomInButtonClasses.push(styles.builtinButtonDisabled);
             zoomInButtonHandler = noop;
         }
 
         // Disable zooming out when zoomed all the way out
-        if (this.state.zoomLevel === MIN_ZOOM_LEVEL) {
+        if (zoomLevel === MIN_ZOOM_LEVEL) {
             zoomOutButtonClasses.push(styles.builtinButtonDisabled);
             zoomOutButtonHandler = noop;
         }
@@ -985,11 +1003,11 @@ class ReactImageLightbox extends Component {
             zoomOutButtonHandler = noop;
         }
 
-        // Clear default modal appearance
         const modalStyle = {
             overlay: {
                 zIndex:          1000,
                 backgroundColor: 'transparent',
+                ...reactModalStyle.overlay, // Allow style overrides via props
             },
             content: {
                 overflow:     'hidden', // Needed, otherwise keyboard shortcuts scroll the page
@@ -1000,6 +1018,7 @@ class ReactImageLightbox extends Component {
                 left:         0,
                 right:        0,
                 bottom:       0,
+                ...reactModalStyle.content, // Allow style overrides via props
             },
         };
 
@@ -1015,18 +1034,18 @@ class ReactImageLightbox extends Component {
         return (
             <Modal
                 isOpen
-                onRequestClose={this.props.clickOutsideToClose ? this.requestClose : noop}
-                style={modalStyle}
+                onRequestClose={clickOutsideToClose ? this.requestClose : noop}
                 onAfterOpen={() => this.outerEl && this.outerEl.focus()} // Focus on the div with key handlers
+                style={modalStyle}
             >
                 <div // Floating modal with closing animations
                     className={`outer ril-outer ${styles.outer} ${styles.outerAnimating}` +
-                        (this.state.isClosing ? ` closing ril-closing ${styles.outerClosing}` : '')
+                        (isClosing ? ` closing ril-closing ${styles.outerClosing}` : '')
                     }
                     style={{
-                        transition:         `opacity ${this.props.animationDuration}ms`,
-                        animationDuration:  `${this.props.animationDuration}ms`,
-                        animationDirection: this.state.isClosing ? 'normal' : 'reverse',
+                        transition:         `opacity ${animationDuration}ms`,
+                        animationDuration:  `${animationDuration}ms`,
+                        animationDirection: isClosing ? 'normal' : 'reverse',
                     }}
                     ref={el => { this.outerEl = el; }}
                     onWheel={this.handleOuterMousewheel}
@@ -1041,12 +1060,12 @@ class ReactImageLightbox extends Component {
 
                     <div // Image holder
                         className={`inner ril-inner ${styles.inner}`}
-                        onClick={this.props.clickOutsideToClose ? this.closeIfClickInner : noop}
+                        onClick={clickOutsideToClose ? this.closeIfClickInner : noop}
                     >
                         {images}
                     </div>
 
-                    {!this.props.prevSrc ? '' :
+                    {!prevSrc ? '' :
                         <button // Move to previous image button
                             type="button"
                             className={`prev-button ril-prev-button ${styles.navButtons} ${styles.navButtonPrev}`}
@@ -1055,7 +1074,7 @@ class ReactImageLightbox extends Component {
                         />
                     }
 
-                    {!this.props.nextSrc ? '' :
+                    {!nextSrc ? '' :
                         <button // Move to next image button
                             type="button"
                             className={`next-button ril-next-button ${styles.navButtons} ${styles.navButtonNext}`}
@@ -1069,7 +1088,7 @@ class ReactImageLightbox extends Component {
                     >
                         <ul className={`toolbar-left ril-toolbar-left ${styles.toolbarSide} ${styles.toolbarLeftSide}`}>
                             <li className={styles.toolbarItem}>
-                                <span className={styles.toolbarItemChild}>{this.props.imageTitle}</span>
+                                <span className={styles.toolbarItemChild}>{imageTitle}</span>
                             </li>
                         </ul>
 
@@ -1081,7 +1100,7 @@ class ReactImageLightbox extends Component {
                                 styles.toolbarRightSide,
                             ].join(' ')}
                         >
-                            {!this.props.toolbarButtons ? '' : this.props.toolbarButtons.map((button, i) => (
+                            {!toolbarButtons ? '' : toolbarButtons.map((button, i) => (
                                 <li key={i} className={styles.toolbarItem}>{button}</li>
                             ))}
 
@@ -1208,14 +1227,21 @@ ReactImageLightbox.propTypes = {
     imageTitle: PropTypes.node,
 
     //-----------------------------
+    // Lightbox style
+    //-----------------------------
+
+    // Set z-index style, etc., for the parent react-modal (format: https://github.com/reactjs/react-modal#styles )
+    reactModalStyle: PropTypes.object,
+
+    // Padding (px) between the edge of the window and the lightbox
+    imagePadding: PropTypes.number,
+
+    //-----------------------------
     // Other
     //-----------------------------
 
     // Array of custom toolbar buttons
     toolbarButtons: PropTypes.arrayOf(PropTypes.node),
-
-    // Padding (px) between the edge of the window and the lightbox
-    imagePadding: PropTypes.number,
 
     // When true, clicks outside of the image close the lightbox
     clickOutsideToClose: PropTypes.bool,
@@ -1234,6 +1260,7 @@ ReactImageLightbox.defaultProps = {
     keyRepeatLimit:      180,
     keyRepeatKeyupBonus: 40,
 
+    reactModalStyle:     {},
     imagePadding:        10,
     clickOutsideToClose: true,
 };

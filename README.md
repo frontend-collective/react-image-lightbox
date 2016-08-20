@@ -98,6 +98,7 @@ keyRepeatLimit      | number | `180`          |          | Required interval of 
 keyRepeatKeyupBonus | number | `40`           |          | Amount of time (ms) restored after each keyup (makes rapid key presses slightly faster than holding down the key to navigate images)
 imageTitle          | string |                |          | Image title
 toolbarButtons      | node[] |                |          | Array of custom toolbar buttons
+reactModalStyle     | Object | `{}`           |          | Set z-index style, etc., for the parent react-modal (format: https://github.com/reactjs/react-modal#styles )
 imagePadding        | number | `10`           |          | Padding (px) between the edge of the window and the lightbox
 clickOutsideToClose | bool   | `true`         |          | When true, clicks outside of the image close the lightbox
 
