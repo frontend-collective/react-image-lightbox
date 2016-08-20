@@ -1088,8 +1088,10 @@ class ReactImageLightbox extends Component {
                         className={`toolbar ril-toolbar ${styles.toolbar}`}
                     >
                         <ul className={`toolbar-left ril-toolbar-left ${styles.toolbarSide} ${styles.toolbarLeftSide}`}>
-                            <li className={styles.toolbarItem}>
-                                <span className={styles.toolbarItemChild}>{imageTitle}</span>
+                            <li className={`ril-toolbar__item ${styles.toolbarItem}`}>
+                                <span className={`ril-toolbar__item__child ${styles.toolbarItemChild}`}>
+                                    {imageTitle}
+                                </span>
                             </li>
                         </ul>
 
@@ -1102,10 +1104,10 @@ class ReactImageLightbox extends Component {
                             ].join(' ')}
                         >
                             {!toolbarButtons ? '' : toolbarButtons.map((button, i) => (
-                                <li key={i} className={styles.toolbarItem}>{button}</li>
+                                <li key={i} className={`ril-toolbar__item ${styles.toolbarItem}`}>{button}</li>
                             ))}
 
-                            <li className={styles.toolbarItem}>
+                            <li className={`ril-toolbar__item ${styles.toolbarItem}`}>
                                 <button // Lightbox zoom in button
                                     type="button"
                                     key="zoom-in"
@@ -1114,7 +1116,7 @@ class ReactImageLightbox extends Component {
                                 />
                             </li>
 
-                            <li className={styles.toolbarItem}>
+                            <li className={`ril-toolbar__item ${styles.toolbarItem}`}>
                                 <button // Lightbox zoom out button
                                     type="button"
                                     key="zoom-out"
@@ -1123,12 +1125,12 @@ class ReactImageLightbox extends Component {
                                 />
                             </li>
 
-                            <li className={styles.toolbarItem}>
+                            <li className={`ril-toolbar__item ${styles.toolbarItem}`}>
                                 <button // Lightbox close button
                                     type="button"
                                     key="close"
-                                    className={`close ril-close ${styles.toolbarItemChild}` +
-                                        ` ${styles.builtinButton} ${styles.closeButton}`
+                                    className={'close ril-close ril-toolbar__item__child' +
+                                        ` ${styles.toolbarItemChild} ${styles.builtinButton} ${styles.closeButton}`
                                     }
                                     onClick={!this.isAnimating() ? this.requestClose : noop} // Ignore clicks during animation
                                 />
