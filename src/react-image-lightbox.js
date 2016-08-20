@@ -189,6 +189,11 @@ class ReactImageLightbox extends Component {
 
     // Change zoom level
     changeZoom(zoomLevel, clientX, clientY) {
+        // Ignore if zoom disabled
+        if (!this.props.enableZoom) {
+            return;
+        }
+
         // Constrain zoom level to the set bounds
         const nextZoomLevel = Math.max(MIN_ZOOM_LEVEL, Math.min(MAX_ZOOM_LEVEL, zoomLevel));
 
@@ -834,6 +839,7 @@ class ReactImageLightbox extends Component {
             animationDuration,
             clickOutsideToClose,
             discourageDownloads,
+            enableZoom,
             imageTitle,
             nextSrc,
             prevSrc,
@@ -1107,23 +1113,27 @@ class ReactImageLightbox extends Component {
                                 <li key={i} className={`ril-toolbar__item ${styles.toolbarItem}`}>{button}</li>
                             ))}
 
-                            <li className={`ril-toolbar__item ${styles.toolbarItem}`}>
-                                <button // Lightbox zoom in button
-                                    type="button"
-                                    key="zoom-in"
-                                    className={`zoom-in ril-zoom-in ${zoomInButtonClasses.join(' ')}`}
-                                    onClick={zoomInButtonHandler}
-                                />
-                            </li>
+                            {enableZoom &&
+                                <li className={`ril-toolbar__item ${styles.toolbarItem}`}>
+                                    <button // Lightbox zoom in button
+                                        type="button"
+                                        key="zoom-in"
+                                        className={`zoom-in ril-zoom-in ${zoomInButtonClasses.join(' ')}`}
+                                        onClick={zoomInButtonHandler}
+                                    />
+                                </li>
+                            }
 
-                            <li className={`ril-toolbar__item ${styles.toolbarItem}`}>
-                                <button // Lightbox zoom out button
-                                    type="button"
-                                    key="zoom-out"
-                                    className={`zoom-out ril-zoom-out ${zoomOutButtonClasses.join(' ')}`}
-                                    onClick={zoomOutButtonHandler}
-                                />
-                            </li>
+                            {enableZoom &&
+                                <li className={`ril-toolbar__item ${styles.toolbarItem}`}>
+                                    <button // Lightbox zoom out button
+                                        type="button"
+                                        key="zoom-out"
+                                        className={`zoom-out ril-zoom-out ${zoomOutButtonClasses.join(' ')}`}
+                                        onClick={zoomOutButtonHandler}
+                                    />
+                                </li>
+                            }
 
                             <li className={`ril-toolbar__item ${styles.toolbarItem}`}>
                                 <button // Lightbox close button
@@ -1248,6 +1258,9 @@ ReactImageLightbox.propTypes = {
 
     // When true, clicks outside of the image close the lightbox
     clickOutsideToClose: PropTypes.bool,
+
+    // Set to false to disable zoom functionality and hide zoom buttons
+    enableZoom: PropTypes.bool,
 };
 
 ReactImageLightbox.defaultProps = {
@@ -1266,6 +1279,7 @@ ReactImageLightbox.defaultProps = {
     reactModalStyle:     {},
     imagePadding:        10,
     clickOutsideToClose: true,
+    enableZoom:          true,
 };
 
 export default ReactImageLightbox;

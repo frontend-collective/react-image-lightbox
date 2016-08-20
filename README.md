@@ -101,6 +101,7 @@ toolbarButtons      | node[] |                |          | Array of custom toolb
 reactModalStyle     | Object | `{}`           |          | Set z-index style, etc., for the parent react-modal (format: https://github.com/reactjs/react-modal#styles )
 imagePadding        | number | `10`           |          | Padding (px) between the edge of the window and the lightbox
 clickOutsideToClose | bool   | `true`         |          | When true, clicks outside of the image close the lightbox
+enableZoom          | bool   | `true`         |          | Set to false to disable zoom functionality and hide zoom buttons
 
 ## Contributing
 
