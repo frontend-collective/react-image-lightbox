@@ -93,39 +93,12 @@ const App = React.createClass({
                     </h1>
 
                     <h2 className={styles['project-tagline']}>
-                        Lightbox component for React.js
+                        Flexible lightbox component for displaying images with React
                     </h2>
-
-                    <a
-                        href="https://github.com/fritz-c/react-image-lightbox"
-                        className={styles.btn}
-                    >
-                        View on GitHub
-                    </a>
-
-                    <a
-                        href="https://github.com/fritz-c/react-image-lightbox/zipball/master"
-                        className={styles.btn}
-                    >
-                        Download .zip
-                    </a>
-
-                    <a
-                        href="https://github.com/fritz-c/react-image-lightbox/tarball/master"
-                        className={styles.btn}
-                    >
-                        Download .tar.gz
-                    </a>
                 </section>
 
                 <section className={styles['main-content']}>
-                    <h1>
-                        React Image Lightbox
-                    </h1>
-
-                    <p>A flexible lightbox component for displaying images in a React project.</p>
-
-                    <h3>Demo</h3>
+                    <h2>Demo</h2>
 
                     <div>
                         <button
@@ -139,7 +112,7 @@ const App = React.createClass({
                         {lightbox}
                     </div>
 
-                    <p>Features</p>
+                    <h2>Features</h2>
                     <ul>
                         <li>Keyboard shortcuts (with rate limiting)</li>
                         <li>Image Zoom</li>
@@ -161,6 +134,15 @@ const App = React.createClass({
                         </span>
                     </footer>
                 </section>
+
+                <a href="https://github.com/fritz-c/react-image-lightbox">
+                    <img
+                        style={{ position: 'absolute', top: 0, right: 0, border: 0 }}
+                        src="https://camo.githubusercontent.com/38ef81f8aca64bb9a64448d0d70f1308ef5341ab/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6461726b626c75655f3132313632312e706e67"
+                        alt="Fork me on GitHub"
+                        data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png"
+                    />
+                </a>
             </div>
         );
     }
