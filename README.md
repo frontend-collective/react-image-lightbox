@@ -103,6 +103,16 @@ imagePadding        | number | `10`           |          | Padding (px) between 
 clickOutsideToClose | bool   | `true`         |          | When true, clicks outside of the image close the lightbox
 enableZoom          | bool   | `true`         |          | Set to false to disable zoom functionality and hide zoom buttons
 
+## Browser Compatibility
+
+| Browser | Works? |
+|:-----|:-----|
+| Chrome | Yes |
+| Firefox | Yes |
+| Safari | Yes |
+| IE >= 10 | Yes |
+| IE 9 | Everything works, but no animations |
+
 ## Contributing
 
 After cloning the repository and running `npm install` inside, you can use the following commands to develop and build the project.
