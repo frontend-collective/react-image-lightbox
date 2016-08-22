@@ -876,17 +876,21 @@ class ReactImageLightbox extends Component {
                     </div>
                 );
             } else {
-                images.push(
-                    <img
-                        className={`${imageClass} ${styles.image}`}
-                        onDoubleClick={this.handleImageDoubleClick}
-                        onWheel={this.handleImageMouseWheel}
-                        style={imageStyle}
-                        src={imageSrc}
-                        key={imageSrc + keyEndings[srcType]}
-                        alt={this.props.imageTitle || translate('Image')}
-                    />
-                );
+                let image = (<img
+                    className={`${imageClass} ${styles.image}`}
+                    onDoubleClick={this.handleImageDoubleClick}
+                    onWheel={this.handleImageMouseWheel}
+                    style={imageStyle}
+                    src={imageSrc}
+                    key={imageSrc + keyEndings[srcType]}
+                    alt={this.props.imageTitle || translate('Image')}
+                />);
+
+                if (this.props.mainImageWrapper) {
+                    image = this.props.mainImageWrapper(image);
+                }
+
+                images.push(image);
             }
         };
 
@@ -1080,6 +1084,9 @@ ReactImageLightbox.propTypes = {
 
     // Main display image url
     mainSrc: PropTypes.string.isRequired,
+
+    // Main display image's wrapper
+    mainImageWrapper: PropTypes.func,
 
     // Previous display image url (displayed to the left)
     // If left undefined, movePrev actions will not be performed, and the button not displayed
