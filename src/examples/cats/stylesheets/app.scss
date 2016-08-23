@@ -1,9 +1,27 @@
-@import "./vendor/normalize";
 @import "./vendor/stylesheet";
 @import "./vendor/github-light";
 
+.page-header {
+    padding: 1rem 6rem;
+}
+
+.main-content {
+    box-sizing: border-box;
+}
+
+.creditLink {
+    color: #1e6bb8;
+    text-decoration: none;
+
+    &:hover {
+        text-decoration: underline;
+    }
+}
+
 .demoButton {
     border-radius: 5px;
+    font-size: 1.2rem;
+    cursor: pointer;
     background-color: #303030;
     border: none;
     color: #FFF;

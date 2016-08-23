@@ -19,26 +19,43 @@ const titles = [
     '',
     (<span>
         by&nbsp;
-        <a href="http://flickr.com/photos/titrans/">
+        <a className={styles.creditLink} href="http://flickr.com/photos/titrans/">
             quatre mains
         </a>
-        &nbsp;(<a href="http://creativecommons.org/licenses/by/2.0/" title="Attribution License">
+        &nbsp;
+        (<a
+            className={styles.creditLink}
+            href="http://creativecommons.org/licenses/by/2.0/"
+            title="Attribution License"
+        >
             Some rights reserved
         </a>)
     </span>),
     (<span>
         by&nbsp;
-        <a href="http://flickr.com/photos/lachlanrogers/">latch.r</a>
-        &nbsp;(<a href="http://creativecommons.org/licenses/by-sa/2.0/" title="Attribution-ShareAlike License">
+        <a className={styles.creditLink} href="http://flickr.com/photos/lachlanrogers/">
+            latch.r
+        </a>
+        &nbsp;
+        (<a
+            className={styles.creditLink}
+            href="http://creativecommons.org/licenses/by-sa/2.0/"
+            title="Attribution-ShareAlike License"
+        >
             Some rights reserved
         </a>)
     </span>),
     (<span>
         by&nbsp;
-        <a href="http://flickr.com/photos/fazen/">
+        <a className={styles.creditLink} href="http://flickr.com/photos/fazen/">
             fazen
         </a>
-        &nbsp;(<a href="http://creativecommons.org/licenses/by/2.0/" title="Attribution License">
+        &nbsp;
+        (<a
+            className={styles.creditLink}
+            href="http://creativecommons.org/licenses/by/2.0/"
+            title="Attribution License"
+        >
             Some rights reserved
         </a>)
     </span>),
