@@ -25,6 +25,9 @@ module.exports = {
             compress: {
                 warnings: false
             },
+            mangle: false,
+            beautify: true,
+            comments: true,
         }),
     ],
     postcss: [
