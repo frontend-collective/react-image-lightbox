@@ -140,7 +140,7 @@ class ReactImageLightbox extends Component {
         let sourcesChanged = false;
         const prevSrcDict = {};
         const nextSrcDict = {};
-        this.getSrcTypes().forEach(srcType => {
+        this.getSrcTypes().forEach((srcType) => {
             if (this.props[srcType.name] !== nextProps[srcType.name]) {
                 sourcesChanged = true;
 
@@ -151,7 +151,7 @@ class ReactImageLightbox extends Component {
 
         if (sourcesChanged || this.moveRequested) {
             // Reset the loaded state for images not rendered next
-            Object.keys(prevSrcDict).forEach(prevSrc => {
+            Object.keys(prevSrcDict).forEach((prevSrc) => {
                 if (!(prevSrc in nextSrcDict) && (prevSrc in this.imageCache)) {
                     this.imageCache[prevSrc].loaded = false;
                 }
@@ -718,7 +718,7 @@ class ReactImageLightbox extends Component {
 
     // Load all images and their thumbnails
     loadAllImages(props = this.props) {
-        const generateImageLoadedCallback = (srcType, imageSrc) => err => {
+        const generateImageLoadedCallback = (srcType, imageSrc) => (err) => {
             // Give up showing image on error
             if (err) {
                 if (window.console) {
@@ -738,7 +738,7 @@ class ReactImageLightbox extends Component {
         };
 
         // Load the images
-        this.getSrcTypes().forEach(srcType => {
+        this.getSrcTypes().forEach((srcType) => {
             const type = srcType.name;
 
             // Load unloaded images
@@ -810,7 +810,7 @@ class ReactImageLightbox extends Component {
     }
 
     // Request to transition to the previous image
-    getTransform({ x = null, y = null, zoom = null }) {
+    static getTransform({ x = null, y = null, zoom = null }) {
         const isOldIE = _ieVersion < 10;
         const transforms = [];
         if (x !== null || y !== null) {
@@ -871,14 +871,14 @@ class ReactImageLightbox extends Component {
         });
 
         // Images to be displayed
-        let images = [];
+        const images = [];
         const addImage = (srcType, imageClass, baseStyle = {}) => {
             // Ignore types that have no source defined for their full size image
             if (!this.props[srcType]) {
                 return;
             }
 
-            let imageStyle = { ...baseStyle, ...transitionStyle };
+            const imageStyle = { ...baseStyle, ...transitionStyle };
             if (zoomLevel > MIN_ZOOM_LEVEL) {
                 imageStyle.cursor = 'move';
             }
@@ -964,13 +964,13 @@ class ReactImageLightbox extends Component {
         addImage(
             'nextSrc',
             `image-next ril-image-next ${styles.imageNext}`,
-            this.getTransform({ x: boxSize.width })
+            ReactImageLightbox.getTransform({ x: boxSize.width })
         );
         // Main Image
         addImage(
             'mainSrc',
             'image-current ril-image-current',
-            this.getTransform({
+            ReactImageLightbox.getTransform({
                 x: -1 * offsetX,
                 y: -1 * offsetY,
                 zoom: zoomMultiplier,
@@ -980,7 +980,7 @@ class ReactImageLightbox extends Component {
         addImage(
             'prevSrc',
             `image-prev ril-image-prev ${styles.imagePrev}`,
-            this.getTransform({ x: -1 * boxSize.width })
+            ReactImageLightbox.getTransform({ x: -1 * boxSize.width })
         );
 
         const noop = () => {};
@@ -1054,7 +1054,7 @@ class ReactImageLightbox extends Component {
                         animationDuration:  `${animationDuration}ms`,
                         animationDirection: isClosing ? 'normal' : 'reverse',
                     }}
-                    ref={el => { this.outerEl = el; }}
+                    ref={(el) => { this.outerEl = el; }}
                     onWheel={this.handleOuterMousewheel}
                     onMouseMove={this.handleOuterMouseMove}
                     onMouseDown={this.handleOuterMouseDown}
@@ -1159,7 +1159,7 @@ ReactImageLightbox.propTypes = {
     //-----------------------------
 
     // Main display image url
-    mainSrc: PropTypes.string.isRequired,
+    mainSrc: PropTypes.string.isRequired, // eslint-disable-line react/no-unused-prop-types
 
     // Previous display image url (displayed to the left)
     // If left undefined, movePrev actions will not be performed, and the button not displayed
@@ -1174,13 +1174,13 @@ ReactImageLightbox.propTypes = {
     //-----------------------------
 
     // Thumbnail image url corresponding to props.mainSrc
-    mainSrcThumbnail: PropTypes.string,
+    mainSrcThumbnail: PropTypes.string, // eslint-disable-line react/no-unused-prop-types
 
     // Thumbnail image url corresponding to props.prevSrc
-    prevSrcThumbnail: PropTypes.string,
+    prevSrcThumbnail: PropTypes.string, // eslint-disable-line react/no-unused-prop-types
 
     // Thumbnail image url corresponding to props.nextSrc
-    nextSrcThumbnail: PropTypes.string,
+    nextSrcThumbnail: PropTypes.string, // eslint-disable-line react/no-unused-prop-types
 
     //-----------------------------
     // Event Handlers
