@@ -2,6 +2,7 @@ import HtmlWebpackPlugin from 'html-webpack-plugin';
 import path from 'path';
 import webpack from 'webpack';
 import autoprefixer from 'autoprefixer';
+import ExtractTextPlugin from 'extract-text-webpack-plugin';
 
 module.exports = {
     devtool: 'source-map',
@@ -22,6 +23,7 @@ module.exports = {
             "NODE_ENV",
         ]),
         new webpack.NoErrorsPlugin(),
+        new ExtractTextPlugin('../styles.css'),
     ],
     postcss: [
         autoprefixer({ browsers: ['IE >= 9', '> 1%'] }),
@@ -35,12 +37,11 @@ module.exports = {
             },
             {
                 test: /\.scss$/,
-                loaders: [
-                    'style-loader',
+                loader: ExtractTextPlugin.extract([
                     'css-loader?modules&importLoaders=1&localIdentName=[local]___[hash:base64:5]',
                     'postcss-loader',
                     'sass-loader',
-                ],
+                ]),
                 include: path.join(__dirname, 'src')
             },
             {

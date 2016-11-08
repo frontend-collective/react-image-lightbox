@@ -157,7 +157,6 @@ const App = React.createClass({
                         <li>Flexible rendering using src values assigned on the fly</li>
                         <li>Image preloading for smoother viewing</li>
                         <li>Few dependencies</li>
-                        <li>No external CSS</li>
                     </ul>
 
                     <a href="https://github.com/fritz-c/react-image-lightbox">Examples and Documentation on Github</a>

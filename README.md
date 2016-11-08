@@ -11,7 +11,6 @@ Features
 - Image Zoom
 - Flexible rendering using src values assigned on the fly
 - Image preloading for smoother viewing
-- No external CSS
 
 ## Example
 
