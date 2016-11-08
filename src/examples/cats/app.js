@@ -61,6 +61,33 @@ const titles = [
     </span>),
 ];
 
+const captions = [
+    '',
+    'Sad kitten wants a hug',
+    (<p>
+        .. not in the&nbsp;
+        <em>
+            mood
+        </em>
+        &nbsp;for games right now
+    </p>),
+    (<p>
+        Meow!? What do you mean by «Earth is&nbsp;
+        <strong>
+            round
+        </strong>
+        »? Are you&nbsp;
+        <em>
+            absolutely
+        </em>
+        &nbsp;
+        <strong>
+            sure
+        </strong>
+        &nbsp;you know what you&#39;re talking about?
+    </p>),
+];
+
 const App = React.createClass({
     getInitialState() {
         return {
@@ -98,6 +125,7 @@ const App = React.createClass({
                     onMoveNextRequest={this.moveNext}
 
                     imageTitle={titles[this.state.index]}
+                    imageCaption={captions[this.state.index]}
                 />
             );
         }
