@@ -391,7 +391,7 @@ class ReactImageLightbox extends Component {
      * Get sizing when the image is scaled
      */
     getZoomMultiplier(zoomLevel = this.state.zoomLevel) {
-        return Math.pow(ZOOM_RATIO, zoomLevel);
+        return ZOOM_RATIO ** zoomLevel;
     }
 
     /**
@@ -1045,7 +1045,8 @@ class ReactImageLightbox extends Component {
                 onAfterOpen={() => this.outerEl && this.outerEl.focus()} // Focus on the div with key handlers
                 style={modalStyle}
             >
-                <div // Floating modal with closing animations
+                <div // eslint-disable-line jsx-a11y/no-static-element-interactions
+                    // Floating modal with closing animations
                     className={`outer ril-outer ${styles.outer} ${styles.outerAnimating}` +
                         (isClosing ? ` closing ril-closing ${styles.outerClosing}` : '')
                     }
@@ -1065,14 +1066,15 @@ class ReactImageLightbox extends Component {
                     onKeyUp={this.handleKeyInput}
                 >
 
-                    <div // Image holder
+                    <div // eslint-disable-line jsx-a11y/no-static-element-interactions
+                        // Image holder
                         className={`inner ril-inner ${styles.inner}`}
                         onClick={clickOutsideToClose ? this.closeIfClickInner : noop}
                     >
                         {images}
                     </div>
 
-                    {!prevSrc ? '' :
+                    {prevSrc &&
                         <button // Move to previous image button
                             type="button"
                             className={`prev-button ril-prev-button ${styles.navButtons} ${styles.navButtonPrev}`}
@@ -1081,7 +1083,7 @@ class ReactImageLightbox extends Component {
                         />
                     }
 
-                    {!nextSrc ? '' :
+                    {nextSrc &&
                         <button // Move to next image button
                             type="button"
                             className={`next-button ril-next-button ${styles.navButtons} ${styles.navButtonNext}`}
