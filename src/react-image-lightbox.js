@@ -1073,21 +1073,21 @@ class ReactImageLightbox extends Component {
                     </div>
 
                     {!prevSrc ? '' :
-                        <button // Move to previous image button
-                            type="button"
-                            className={`prev-button ril-prev-button ${styles.navButtons} ${styles.navButtonPrev}`}
-                            key="prev"
-                            onClick={!this.isAnimating() ? this.requestMovePrev : noop} // Ignore clicks during animation
-                        />
+                    <button // Move to previous image button
+                        type="button"
+                        className={`prev-button ril-prev-button ${styles.navButtons} ${styles.navButtonPrev}`}
+                        key="prev"
+                        onClick={!this.isAnimating() ? this.requestMovePrev : noop} // Ignore clicks during animation
+                    />
                     }
 
                     {!nextSrc ? '' :
-                        <button // Move to next image button
-                            type="button"
-                            className={`next-button ril-next-button ${styles.navButtons} ${styles.navButtonNext}`}
-                            key="next"
-                            onClick={!this.isAnimating() ? this.requestMoveNext : noop} // Ignore clicks during animation
-                        />
+                    <button // Move to next image button
+                        type="button"
+                        className={`next-button ril-next-button ${styles.navButtons} ${styles.navButtonNext}`}
+                        key="next"
+                        onClick={!this.isAnimating() ? this.requestMoveNext : noop} // Ignore clicks during animation
+                    />
                     }
 
                     <div // Lightbox toolbar

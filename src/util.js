@@ -18,7 +18,7 @@ export function translate(str, replaceStrings = null) {
 
     let translated = str;
     if (replaceStrings) {
-        Object.keys(replaceStrings).forEach(placeholder => {
+        Object.keys(replaceStrings).forEach((placeholder) => {
             translated = translated.replace(placeholder, replaceStrings[placeholder]);
         });
     }
