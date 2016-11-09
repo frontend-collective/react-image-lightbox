@@ -62,30 +62,23 @@ const titles = [
 ];
 
 const captions = [
+    'Cat in the snow',
     '',
-    'Sad kitten wants a hug',
     (<p>
         .. not in the&nbsp;
         <em>
             mood
         </em>
-        &nbsp;for games right now
+        &nbsp;for games right now<br />
+        ...<br />
+        ...<br />
+        ...<br />
+        ...<br />
+        ...<br />
+        ...<br />
+        C&#39;mon. Seriously.
     </p>),
-    (<p>
-        Meow!? What do you mean by «Earth is&nbsp;
-        <strong>
-            round
-        </strong>
-        »? Are you&nbsp;
-        <em>
-            absolutely
-        </em>
-        &nbsp;
-        <strong>
-            sure
-        </strong>
-        &nbsp;you know what you&#39;re talking about?
-    </p>),
+    '',
 ];
 
 const App = React.createClass({
