@@ -36,14 +36,6 @@ if (_ieVersion < 10) {
     };
 }
 
-function handleCaptionMousewheel(event) {
-    event.stopPropagation();
-}
-
-function handleCaptionMouseDown(event) {
-    event.stopPropagation();
-}
-
 class ReactImageLightbox extends Component {
     constructor(props) {
         super(props);
@@ -86,14 +78,13 @@ class ReactImageLightbox extends Component {
         this.handleOuterMousewheel    = this.handleOuterMousewheel.bind(this);
         this.handleOuterTouchStart    = this.handleOuterTouchStart.bind(this);
         this.handleOuterTouchMove     = this.handleOuterTouchMove.bind(this);
+        this.handleCaptionMousewheel  = this.handleCaptionMousewheel.bind(this);
         this.handleWindowResize       = this.handleWindowResize.bind(this);
         this.handleZoomInButtonClick  = this.handleZoomInButtonClick.bind(this);
         this.handleZoomOutButtonClick = this.handleZoomOutButtonClick.bind(this);
         this.requestClose             = this.requestClose.bind(this);
         this.requestMoveNext          = this.requestMoveNext.bind(this);
         this.requestMovePrev          = this.requestMovePrev.bind(this);
-        this.handleCaptionMousewheel  = handleCaptionMousewheel;
-        this.handleCaptionMouseDown   = handleCaptionMouseDown;
     }
 
     componentWillMount() {
@@ -686,6 +677,23 @@ class ReactImageLightbox extends Component {
         this.changeZoom(this.state.zoomLevel - ZOOM_BUTTON_INCREMENT_SIZE);
     }
 
+    handleCaptionMousewheel(event) {
+        event.stopPropagation();
+
+        if (!this.caption) {
+            return;
+        }
+
+        const height       = this.caption.getBoundingClientRect().height;
+        const scrollHeight = this.caption.scrollHeight;
+        const scrollTop    = this.caption.scrollTop;
+        if ((event.deltaY > 0 && (height + scrollTop) >= scrollHeight) ||
+            (event.deltaY < 0 && scrollTop <= 0)
+        ) {
+            event.preventDefault();
+        }
+    }
+
     // Detach key and mouse input events
     isAnimating() {
         return this.state.shouldAnimate || this.state.isClosing;
@@ -1160,18 +1168,19 @@ class ReactImageLightbox extends Component {
                         </ul>
                     </div>
 
-                    {!this.props.imageCaption ? '' :
-                    <div // Image caption
-                        onWheel={this.handleCaptionMousewheel}
-                        onMouseDown={this.handleCaptionMouseDown}
-                        className={`ril-caption ${styles.caption}`}
-                    >
-                        <div
-                            className={`ril-caption-content ${styles.captionContent}`}
+                    {this.props.imageCaption &&
+                        <div // Image caption
+                            onWheel={this.handleCaptionMousewheel}
+                            onMouseDown={event => event.stopPropagation()}
+                            className={`ril-caption ${styles.caption}`}
+                            ref={(el) => { this.caption = el; }}
                         >
-                            {this.props.imageCaption}
+                            <div
+                                className={`ril-caption-content ${styles.captionContent}`}
+                            >
+                                {this.props.imageCaption}
+                            </div>
                         </div>
-                    </div>
                     }
 
                 </div>
