@@ -98,8 +98,8 @@ animationOnKeyInput | bool   | `false`        |          | Disable animation on 
 animationDuration   | number | `300`          |          | Animation duration (ms)
 keyRepeatLimit      | number | `180`          |          | Required interval of time (ms) between key actions (prevents excessively fast navigation of images)
 keyRepeatKeyupBonus | number | `40`           |          | Amount of time (ms) restored after each keyup (makes rapid key presses slightly faster than holding down the key to navigate images)
-imageTitle          | node   |                |          | Image title
-imageCaption        | node   |                |          | Image caption - a small piece of text that describes the image
+imageTitle          | node   |                |          | Image title (Descriptive element above image)
+imageCaption        | node   |                |          | Image caption (Descriptive element below image)
 toolbarButtons      | node[] |                |          | Array of custom toolbar buttons
 reactModalStyle     | Object | `{}`           |          | Set z-index style, etc., for the parent react-modal (format: https://github.com/reactjs/react-modal#styles )
 imagePadding        | number | `10`           |          | Padding (px) between the edge of the window and the lightbox

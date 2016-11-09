@@ -109,11 +109,11 @@ $maxCaptionHeight: 150px;
     bottom: 0;
     max-height: $maxCaptionHeight;
     overflow: auto;
+}
 
-    .captionContent {
-        padding: 10px 20px;
-        color: #FFF;
-    }
+.captionContent {
+    padding: 10px 20px;
+    color: #FFF;
 }
 
 .toolbar {
