@@ -26,7 +26,7 @@ const images = [
     '//placekitten.com/1500/1500'
 ];
 
-export default class Junk extends Component {
+export default class LightboxExample extends Component {
     constructor(props) {
         super(props);
 
