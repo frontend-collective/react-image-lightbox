@@ -172,7 +172,7 @@ class ReactImageLightbox extends Component {
 
     // Attach key and mouse input events
     attachListeners() {
-        if (!this.listenersAttached) {
+        if (!this.listenersAttached && typeof window !== 'undefined') {
             window.addEventListener('resize', this.handleWindowResize);
             window.addEventListener('mouseup', this.handleMouseUp);
             window.addEventListener('touchend', this.handleMouseUp);
