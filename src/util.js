@@ -30,21 +30,21 @@ export function translate(str, replaceStrings = null) {
 export function getWindowWidth() {
     if (typeof window === 'undefined') {
         return 0;
-    } else {
-        return window.innerWidth ||
+    }
+
+    return window.innerWidth ||
         document.documentElement.clientWidth ||
         document.body.clientWidth;
-    }
 }
 
 export function getWindowHeight() {
     if (typeof window === 'undefined') {
         return 0;
-    } else {
-        return window.innerHeight ||
-            document.documentElement.clientHeight ||
-            document.body.clientHeight;
     }
+
+    return window.innerHeight ||
+        document.documentElement.clientHeight ||
+        document.body.clientHeight;
 }
 
 // Returns true if this window is rendered as an iframe inside another window
