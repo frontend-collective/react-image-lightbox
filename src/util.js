@@ -41,9 +41,9 @@ export function getWindowHeight() {
     if (typeof window === 'undefined') {
         return 0;
     } else {
-    return window.innerHeight ||
-        document.documentElement.clientHeight ||
-        document.body.clientHeight;
+        return window.innerHeight ||
+            document.documentElement.clientHeight ||
+            document.body.clientHeight;
     }
 }
 
