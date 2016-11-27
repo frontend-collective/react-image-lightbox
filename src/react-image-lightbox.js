@@ -717,7 +717,8 @@ class ReactImageLightbox extends Component {
         const that = this;
         const inMemoryImage = new Image();
 
-        inMemoryImage.onerror = function onError() {
+        inMemoryImage.onerror = () => {
+            this.props.onLoadError(new Error('image load error'));
             callback('image load error');
         };
 
@@ -1236,6 +1237,9 @@ ReactImageLightbox.propTypes = {
     //  props.mainSrc becomes props.prevSrc, etc.
     onMoveNextRequest: PropTypes.func,
 
+    //Listener if any error occurs while loading the image
+    onLoadError: PropTypes.func,
+
     //-----------------------------
     // Download discouragement settings
     //-----------------------------
@@ -1305,6 +1309,7 @@ ReactImageLightbox.propTypes = {
 ReactImageLightbox.defaultProps = {
     onMovePrevRequest: () => {},
     onMoveNextRequest: () => {},
+    onLoadError: () => {},
 
     discourageDownloads: false,
 
