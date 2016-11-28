@@ -100,6 +100,9 @@ const App = React.createClass({
     movePrev() {
         this.setState({ index: (this.state.index + images.length - 1) % images.length });
     },
+    onImageLoadError(imageSrc, _srcType, errorEvent) {
+        console.error(`Could not load image at ${imageSrc}`, errorEvent);
+    },
     render() {
         let lightbox;
         if (this.state.isOpen) {
@@ -116,6 +119,7 @@ const App = React.createClass({
                     onCloseRequest={this.closeLightbox}
                     onMovePrevRequest={this.movePrev}
                     onMoveNextRequest={this.moveNext}
+                    onImageLoadError={this.onImageLoadError}
 
                     imageTitle={titles[this.state.index]}
                     imageCaption={captions[this.state.index]}

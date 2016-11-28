@@ -705,11 +705,11 @@ class ReactImageLightbox extends Component {
     }
 
     // Load image from src and call callback with image width and height on load
-    loadImage(imageSrc, callback) {
+    loadImage(srcType, imageSrc, done) {
         // Return the image info if it is already cached
         if (this.isImageLoaded(imageSrc)) {
             setTimeout(() => {
-                callback(null, this.imageCache[imageSrc].width, this.imageCache[imageSrc].height);
+                done();
             }, 1);
             return;
         }
@@ -717,9 +717,9 @@ class ReactImageLightbox extends Component {
         const that = this;
         const inMemoryImage = new Image();
 
-        inMemoryImage.onerror = () => {
-            this.props.onLoadError(new Error('image load error'));
-            callback('image load error');
+        inMemoryImage.onerror = (errorEvent) => {
+            this.props.onImageLoadError(imageSrc, srcType, errorEvent);
+            done(errorEvent);
         };
 
         inMemoryImage.onload = function onLoad() {
@@ -729,7 +729,7 @@ class ReactImageLightbox extends Component {
                 height: this.height,
             };
 
-            callback(null, this.width, this.height);
+            done();
         };
 
         inMemoryImage.src = imageSrc;
@@ -737,12 +737,9 @@ class ReactImageLightbox extends Component {
 
     // Load all images and their thumbnails
     loadAllImages(props = this.props) {
-        const generateImageLoadedCallback = (srcType, imageSrc) => (err) => {
+        const generateLoadDoneCallback = (srcType, imageSrc) => (err) => {
             // Give up showing image on error
             if (err) {
-                if (window.console) {
-                    window.console.warn(err);
-                }
                 return;
             }
 
@@ -762,7 +759,7 @@ class ReactImageLightbox extends Component {
 
             // Load unloaded images
             if (props[type] && !this.isImageLoaded(props[type])) {
-                this.loadImage(props[type], generateImageLoadedCallback(type, props[type]));
+                this.loadImage(type, props[type], generateLoadDoneCallback(type, props[type]));
             }
         });
     }
@@ -1237,8 +1234,9 @@ ReactImageLightbox.propTypes = {
     //  props.mainSrc becomes props.prevSrc, etc.
     onMoveNextRequest: PropTypes.func,
 
-    //Listener if any error occurs while loading the image
-    onLoadError: PropTypes.func,
+    // Called when an image fails to load
+    // (imageSrc: string, srcType: string, errorEvent: object): void
+    onImageLoadError: PropTypes.func,
 
     //-----------------------------
     // Download discouragement settings
@@ -1309,7 +1307,7 @@ ReactImageLightbox.propTypes = {
 ReactImageLightbox.defaultProps = {
     onMovePrevRequest: () => {},
     onMoveNextRequest: () => {},
-    onLoadError: () => {},
+    onImageLoadError:  () => {},
 
     discourageDownloads: false,
 
