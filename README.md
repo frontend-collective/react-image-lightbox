@@ -84,14 +84,14 @@ All unprefixed classes (listed below) will be removed in v4.0.0. Use their `ril-
 Property            | Type   | Default        | Required | Description
 :-------------------|:------:|:--------------:|:--------:|:----------------------------------------
 mainSrc             | string |                |    yes   | Main display image url
-prevSrc             | string |                |          | Previous display image url (displayed to the left). If left undefined, movePrev actions will not be performed, and the button not displayed
-nextSrc             | string |                |          | Next display image url (displayed to the right). If left undefined, moveNext actions will not be performed, and the button not displayed
-mainSrcThumbnail    | string |                |          | Thumbnail image url corresponding to props.mainSrc
-prevSrcThumbnail    | string |                |          | Thumbnail image url corresponding to props.prevSrc
-nextSrcThumbnail    | string |                |          | Thumbnail image url corresponding to props.nextSrc
+prevSrc             | string |                |          | Previous display image url (displayed to the left). If left undefined, `onMovePrevRequest` will not be called, and the button not displayed
+nextSrc             | string |                |          | Next display image url (displayed to the right). If left undefined, `onMoveNextRequest` will not be called, and the button not displayed
+mainSrcThumbnail    | string |                |          | Thumbnail image url corresponding to `props.mainSrc`
+prevSrcThumbnail    | string |                |          | Thumbnail image url corresponding to `props.prevSrc`
+nextSrcThumbnail    | string |                |          | Thumbnail image url corresponding to `props.nextSrc`
 onCloseRequest      | func   |                |    yes   | Close window event. Should change the parent state such that the lightbox is not rendered
-onMovePrevRequest   | func   | empty function |          | Move to previous image event. Should change the parent state such that props.prevSrc becomes props.mainSrc, props.mainSrc becomes props.nextSrc, etc.
-onMoveNextRequest   | func   | empty function |          | Move to next image event. Should change the parent state such that props.nextSrc becomes props.mainSrc, props.mainSrc becomes props.prevSrc, etc.
+onMovePrevRequest   | func   | empty function |          | Move to previous image event. Should change the parent state such that `props.prevSrc` becomes `props.mainSrc`, `props.mainSrc` becomes `props.nextSrc`, etc.
+onMoveNextRequest   | func   | empty function |          | Move to next image event. Should change the parent state such that `props.nextSrc` becomes `props.mainSrc`, `props.mainSrc` becomes `props.prevSrc`, etc.
 onImageLoadError    | func   | empty function |          | Called when an image fails to load.<div>`(imageSrc: string, srcType: string, errorEvent: object): void`</div>
 discourageDownloads | bool   | `false`        |          | Enable download discouragement (prevents [right-click -> Save Image As...])
 animationDisabled   | bool   | `false`        |          | Disable all animation
@@ -102,20 +102,20 @@ keyRepeatKeyupBonus | number | `40`           |          | Amount of time (ms) r
 imageTitle          | node   |                |          | Image title (Descriptive element above image)
 imageCaption        | node   |                |          | Image caption (Descriptive element below image)
 toolbarButtons      | node[] |                |          | Array of custom toolbar buttons
-reactModalStyle     | Object | `{}`           |          | Set z-index style, etc., for the parent react-modal (format: https://github.com/reactjs/react-modal#styles )
+reactModalStyle     | Object | `{}`           |          | Set `z-index` style, etc., for the parent react-modal ([react-modal style format](https://github.com/reactjs/react-modal#styles))
 imagePadding        | number | `10`           |          | Padding (px) between the edge of the window and the lightbox
 clickOutsideToClose | bool   | `true`         |          | When true, clicks outside of the image close the lightbox
 enableZoom          | bool   | `true`         |          | Set to false to disable zoom functionality and hide zoom buttons
 
 ## Browser Compatibility
 
-| Browser | Works? |
-|:-----|:-----|
-| Chrome | Yes |
-| Firefox | Yes |
-| Safari | Yes |
-| IE >= 10 | Yes |
-| IE 9 | Everything works, but no animations |
+| Browser  | Works?                              |
+|:---------|:------------------------------------|
+| Chrome   | Yes                                 |
+| Firefox  | Yes                                 |
+| Safari   | Yes                                 |
+| IE >= 10 | Yes                                 |
+| IE 9     | Everything works, but no animations |
 
 ## Contributing
 
