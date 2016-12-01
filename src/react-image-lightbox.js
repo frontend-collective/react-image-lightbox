@@ -220,24 +220,26 @@ class ReactImageLightbox extends Component {
 
         // Default to the center of the image to zoom when no mouse position specified
         const boxRect = this.getLightboxRect();
-        const percentXInCurrentBox = typeof clientX !== 'undefined' ?
-            ((clientX - boxRect.left - ((boxRect.width - imageBaseSize.width) / 2)) / imageBaseSize.width) :
-            0.5;
-        const percentYInCurrentBox = typeof clientY !== 'undefined' ?
-            ((clientY - boxRect.top - ((boxRect.height - imageBaseSize.height) / 2)) / imageBaseSize.height) :
-            0.5;
+        const pointerX = typeof clientX !== 'undefined' ? clientX - boxRect.left : boxRect.width / 2;
+        const pointerY = typeof clientY !== 'undefined' ? clientY - boxRect.top : boxRect.height / 2;
 
-        const currentImageWidth  = imageBaseSize.width * currentZoomMultiplier;
-        const currentImageHeight = imageBaseSize.height * currentZoomMultiplier;
+        const currentImageOffsetX = ((boxRect.width - (imageBaseSize.width * currentZoomMultiplier)) / 2);
+        const currentImageOffsetY = ((boxRect.height - (imageBaseSize.height * currentZoomMultiplier)) / 2);
 
-        const nextImageWidth  = imageBaseSize.width * nextZoomMultiplier;
-        const nextImageHeight = imageBaseSize.height * nextZoomMultiplier;
+        const currentImageRealOffsetX = currentImageOffsetX - this.state.offsetX;
+        const currentImageRealOffsetY = currentImageOffsetY - this.state.offsetY;
 
-        const deltaX = (currentImageWidth - nextImageWidth) * (percentXInCurrentBox - 0.5);
-        const deltaY = (currentImageHeight - nextImageHeight) * (percentYInCurrentBox - 0.5);
+        const currentPointerXRelativeToImage = (pointerX - currentImageRealOffsetX) / currentZoomMultiplier;
+        const currentPointerYRelativeToImage = (pointerY - currentImageRealOffsetY) / currentZoomMultiplier;
 
-        let nextOffsetX = this.state.offsetX - deltaX;
-        let nextOffsetY = this.state.offsetY - deltaY;
+        const nextImageRealOffsetX = pointerX - (currentPointerXRelativeToImage * nextZoomMultiplier);
+        const nextImageRealOffsetY = pointerY - (currentPointerYRelativeToImage * nextZoomMultiplier);
+
+        const nextImageOffsetX = ((boxRect.width - (imageBaseSize.width * nextZoomMultiplier)) / 2);
+        const nextImageOffsetY = ((boxRect.height - (imageBaseSize.height * nextZoomMultiplier)) / 2);
+
+        let nextOffsetX = nextImageOffsetX - nextImageRealOffsetX;
+        let nextOffsetY = nextImageOffsetY - nextImageRealOffsetY;
 
         // When zooming out, limit the offset so things don't get left askew
         const maxOffsets = this.getMaxOffsets();
