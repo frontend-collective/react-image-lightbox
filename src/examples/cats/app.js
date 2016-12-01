@@ -101,7 +101,7 @@ const App = React.createClass({
         this.setState({ index: (this.state.index + images.length - 1) % images.length });
     },
     onImageLoadError(imageSrc, _srcType, errorEvent) {
-        console.error(`Could not load image at ${imageSrc}`, errorEvent);
+        console.error(`Could not load image at ${imageSrc}`, errorEvent); // eslint-disable-line no-console
     },
     render() {
         let lightbox;
