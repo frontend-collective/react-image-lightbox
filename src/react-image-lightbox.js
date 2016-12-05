@@ -114,7 +114,7 @@ class ReactImageLightbox extends Component {
         // Prevent inner close
         this.preventInnerClose = false;
         this.preventInnerCloseTimeout = null;
-        
+
         // Whether event listeners for keyboard and mouse input have been attached or not
         this.listenersAttached = false;
 
@@ -330,13 +330,13 @@ class ReactImageLightbox extends Component {
             this.requestClose(event);
         }
     }
-    
+
     setPreventInnerClose() {
         if (this.preventInnerCloseTimeout) {
             this.clearTimeout(this.preventInnerCloseTimeout);
         }
         this.preventInnerClose = true;
-        this.preventInnerCloseTimeout = this.setTimeout(()=>{
+        this.preventInnerCloseTimeout = this.setTimeout(() => {
             this.preventInnerClose = false;
             this.preventInnerCloseTimeout = null;
         }, 100);
@@ -661,7 +661,7 @@ class ReactImageLightbox extends Component {
         }
     }
 
-    isTargetMatchImage(target) {
+    static isTargetMatchImage(target) {
         return target && /ril-image-current/.test(target.className);
     }
 
@@ -673,34 +673,35 @@ class ReactImageLightbox extends Component {
             this.eventsSource = source;
             return true;
         }
-        switch(source) {
-            case SOURCE_MOUSE:
-                return false;
-            case SOURCE_TOUCH:
-                this.eventsSource = SOURCE_TOUCH;
+        switch (source) {
+        case SOURCE_MOUSE:
+            return false;
+        case SOURCE_TOUCH:
+            this.eventsSource = SOURCE_TOUCH;
+            this.filterPointersBySource();
+            return true;
+        case SOURCE_POINTER:
+            if (this.eventsSource === SOURCE_MOUSE) {
+                this.eventsSource = SOURCE_POINTER;
                 this.filterPointersBySource();
                 return true;
-            case SOURCE_POINTER:
-                if (this.eventsSource === SOURCE_MOUSE) {
-                    this.eventsSource = SOURCE_POINTER;
-                    this.filterPointersBySource();
-                    return true;
-                } else {
-                    return false;
-                }
+            }
+            return false;
+        default:
+            return false;
         }
     }
 
-    parseMouse(mouseEvent) {
+    static parseMouseEvent(mouseEvent) {
         return {
-            id: "mouse",
+            id: 'mouse',
             source: SOURCE_MOUSE,
             x: parseInt(mouseEvent.clientX, 10),
             y: parseInt(mouseEvent.clientY, 10)
         };
     }
 
-    parseTouch(touchPointer) {
+    static parseTouchPointer(touchPointer) {
         return {
             id: touchPointer.identifier,
             source: SOURCE_TOUCH,
@@ -709,7 +710,7 @@ class ReactImageLightbox extends Component {
         };
     }
 
-    parsePointer(pointerEvent) {
+    static parsePointerEvent(pointerEvent) {
         return {
             id: pointerEvent.pointerId,
             source: SOURCE_POINTER,
@@ -731,21 +732,21 @@ class ReactImageLightbox extends Component {
     }
 
     handleMouseDown(event) {
-        if (this.shouldHandleEvent(SOURCE_MOUSE) && this.isTargetMatchImage(event.target)) {
-            this.addPointer(this.parseMouse(event));
+        if (this.shouldHandleEvent(SOURCE_MOUSE) && ReactImageLightbox.isTargetMatchImage(event.target)) {
+            this.addPointer(ReactImageLightbox.parseMouseEvent(event));
             this.multiPointerStart(event);
         }
     }
 
     handleMouseMove(event) {
         if (this.shouldHandleEvent(SOURCE_MOUSE)) {
-            this.multiPointerMove(event, [this.parseMouse(event)]);
+            this.multiPointerMove(event, [ReactImageLightbox.parseMouseEvent(event)]);
         }
     }
 
     handleMouseUp(event) {
         if (this.shouldHandleEvent(SOURCE_MOUSE)) {
-            this.removePointer(this.parseMouse(event));
+            this.removePointer(ReactImageLightbox.parseMouseEvent(event));
             this.multiPointerEnd(event);
         }
     }
@@ -753,40 +754,45 @@ class ReactImageLightbox extends Component {
     handlePointerEvent(event) {
         if (this.shouldHandleEvent(SOURCE_POINTER)) {
             switch (event.type) {
-                case "pointerdown":
-                    if(this.isTargetMatchImage(event.target)) {
-                        this.addPointer(this.parsePointer(event));
-                        this.multiPointerStart(event);
-                    }
-                    break;
-                case "pointermove":
-                    this.multiPointerMove(event, [this.parsePointer(event)]);
-                    break;
-                case "pointerup":
-                case "pointercancel":
-                    this.removePointer(this.parsePointer(event));
-                    this.multiPointerEnd(event);
-                    break;
+            case 'pointerdown':
+                if (ReactImageLightbox.isTargetMatchImage(event.target)) {
+                    this.addPointer(ReactImageLightbox.parsePointerEvent(event));
+                    this.multiPointerStart(event);
+                }
+                break;
+            case 'pointermove':
+                this.multiPointerMove(event, [ReactImageLightbox.parsePointerEvent(event)]);
+                break;
+            case 'pointerup':
+            case 'pointercancel':
+                this.removePointer(ReactImageLightbox.parsePointerEvent(event));
+                this.multiPointerEnd(event);
+                break;
+            default:
+                break;
             }
         }
     }
 
     handleTouchStart(event) {
-        if (this.shouldHandleEvent(SOURCE_TOUCH) && this.isTargetMatchImage(event.target)) {
-            [].forEach.call(event.changedTouches, eventTouch => this.addPointer(this.parseTouch(eventTouch)));
+        if (this.shouldHandleEvent(SOURCE_TOUCH) && ReactImageLightbox.isTargetMatchImage(event.target)) {
+            [].forEach.call(event.changedTouches,
+                eventTouch => this.addPointer(ReactImageLightbox.parseTouchPointer(eventTouch)));
             this.multiPointerStart(event);
         }
     }
 
     handleTouchMove(event) {
         if (this.shouldHandleEvent(SOURCE_TOUCH)) {
-            this.multiPointerMove(event, [].map.call(event.changedTouches, eventTouch => this.parseTouch(eventTouch)));
+            this.multiPointerMove(event, [].map.call(event.changedTouches,
+                eventTouch => ReactImageLightbox.parseTouchPointer(eventTouch)));
         }
     }
 
     handleTouchEnd(event) {
         if (this.shouldHandleEvent(SOURCE_TOUCH)) {
-            [].map.call(event.changedTouches, touch => this.removePointer(this.parseTouch(touch)));
+            [].map.call(event.changedTouches,
+                touch => this.removePointer(ReactImageLightbox.parseTouchPointer(touch)));
             this.multiPointerEnd(event);
         }
     }
@@ -802,36 +808,40 @@ class ReactImageLightbox extends Component {
     multiPointerStart(event) {
         this.handleEnd(null);
         switch (this.pointerList.length) {
-            case 1: {
-                event.preventDefault();
-                this.decideMoveOrSwipe(this.pointerList[0]);
-                break;
-            }
-            case 2: {
-                event.preventDefault();
-                this.handlePinchStart(this.pointerList);
-                break;
-            }
+        case 1: {
+            event.preventDefault();
+            this.decideMoveOrSwipe(this.pointerList[0]);
+            break;
+        }
+        case 2: {
+            event.preventDefault();
+            this.handlePinchStart(this.pointerList);
+            break;
+        }
+        default:
+            break;
         }
     }
 
     multiPointerMove(event, pointerList) {
         switch (this.currentAction) {
-            case ACTION_MOVE: {
-                event.preventDefault();
-                this.handleMove( pointerList[0]);
-                break;
-            }
-            case ACTION_SWIPE: {
-                event.preventDefault();
-                this.handleSwipe(pointerList[0]);
-                break;
-            }
-            case ACTION_PINCH: {
-                event.preventDefault();
-                this.handlePinch(pointerList);
-                break;
-            }
+        case ACTION_MOVE: {
+            event.preventDefault();
+            this.handleMove(pointerList[0]);
+            break;
+        }
+        case ACTION_SWIPE: {
+            event.preventDefault();
+            this.handleSwipe(pointerList[0]);
+            break;
+        }
+        case ACTION_PINCH: {
+            event.preventDefault();
+            this.handlePinch(pointerList);
+            break;
+        }
+        default:
+            break;
         }
     }
 
@@ -841,34 +851,38 @@ class ReactImageLightbox extends Component {
             this.handleEnd(event);
         }
         switch (this.pointerList.length) {
-            case 0: {
-                this.eventsSource = SOURCE_ANY;
-                break;
-            }
-            case 1: {
-                event.preventDefault();
-                this.decideMoveOrSwipe(this.pointerList[0]);
-                break;
-            }
-            case 2: {
-                event.preventDefault();
-                this.handlePinchStart(this.pointerList);
-                break;
-            }
+        case 0: {
+            this.eventsSource = SOURCE_ANY;
+            break;
+        }
+        case 1: {
+            event.preventDefault();
+            this.decideMoveOrSwipe(this.pointerList[0]);
+            break;
+        }
+        case 2: {
+            event.preventDefault();
+            this.handlePinchStart(this.pointerList);
+            break;
+        }
+        default:
+            break;
         }
     }
 
     handleEnd(event) {
-        switch(this.currentAction) {
-            case ACTION_MOVE:
-                this.handleMoveEnd(event);
-                break;
-            case ACTION_SWIPE:
-                this.handleSwipeEnd(event);
-                break;
-            case ACTION_PINCH:
-                this.handlePinchEnd(event);
-                break;
+        switch (this.currentAction) {
+        case ACTION_MOVE:
+            this.handleMoveEnd(event);
+            break;
+        case ACTION_SWIPE:
+            this.handleSwipeEnd(event);
+            break;
+        case ACTION_PINCH:
+            this.handlePinchEnd(event);
+            break;
+        default:
+            break;
         }
     }
 
@@ -876,11 +890,11 @@ class ReactImageLightbox extends Component {
     // This happens:
     // - On a mouseDown event
     // - On a touchstart event
-    handleMoveStart({x:clientX, y:clientY}) {
+    handleMoveStart({x: clientX, y: clientY}) {
         if (!this.props.enableZoom) {
             return;
         }
-          this.currentAction    = ACTION_MOVE;
+        this.currentAction    = ACTION_MOVE;
         this.moveStartX       = clientX;
         this.moveStartY       = clientY;
         this.moveStartOffsetX = this.state.offsetX;
@@ -891,7 +905,7 @@ class ReactImageLightbox extends Component {
     // This happens:
     // - After a mouseDown and before a mouseUp event
     // - After a touchstart and before a touchend event
-    handleMove({x:clientX, y:clientY}) {
+    handleMove({x: clientX, y: clientY}) {
         const newOffsetX = (this.moveStartX - clientX) + this.moveStartOffsetX;
         const newOffsetY = (this.moveStartY - clientY) + this.moveStartOffsetY;
         if (this.state.offsetX !== newOffsetX || this.state.offsetY !== newOffsetY) {
@@ -924,7 +938,7 @@ class ReactImageLightbox extends Component {
         }
     }
 
-    handleSwipeStart({x:clientX, y:clientY}) {
+    handleSwipeStart({x: clientX, y: clientY}) {
         this.currentAction = ACTION_SWIPE;
         this.swipeStartX   = clientX;
         this.swipeStartY   = clientY;
@@ -932,7 +946,7 @@ class ReactImageLightbox extends Component {
         this.swipeEndY     = clientY;
     }
 
-    handleSwipe({x:clientX, y:clientY}) {
+    handleSwipe({x: clientX, y: clientY}) {
         this.swipeEndX   = clientX;
         this.swipeEndY   = clientY;
     }
@@ -954,12 +968,12 @@ class ReactImageLightbox extends Component {
 
         if (xDiffAbs < MIN_SWIPE_DISTANCE) {
             const boxRect = this.getLightboxRect();
-            if(xDiffAbs < boxRect.width / 4) {
+            if (xDiffAbs < boxRect.width / 4) {
                 return;
             }
         }
 
-        if(xDiff > 0 && this.props.prevSrc) {
+        if (xDiff > 0 && this.props.prevSrc) {
             event.preventDefault();
             this.requestMovePrev();
         } else if (xDiff < 0 && this.props.nextSrc) {
@@ -968,14 +982,14 @@ class ReactImageLightbox extends Component {
         }
     }
 
-    calculatePinchDistance([a,b] = this.pinchTouchList) {
-        return Math.sqrt(Math.pow(a.x - b.x,2) + Math.pow(a.y - b.y,2));
+    calculatePinchDistance([a, b] = this.pinchTouchList) {
+        return Math.sqrt(((a.x - b.x) ** 2) + ((a.y - b.y) ** 2));
     }
 
-    calculatePinchCenter([a,b] = this.pinchTouchList) {
+    calculatePinchCenter([a, b] = this.pinchTouchList) {
         return {
-            x: a.x - (a.x - b.x) / 2,
-            y: a.y - (a.y - b.y) / 2
+            x: a.x - ((a.x - b.x) / 2),
+            y: a.y - ((a.y - b.y) / 2)
         };
     }
 
@@ -989,9 +1003,9 @@ class ReactImageLightbox extends Component {
     }
 
     handlePinch(pointerList) {
-        this.pinchTouchList = this.pinchTouchList.map(oldTouch => {
-            const newTouch = pointerList.find(({id: nid}) => nid === oldTouch.id);
-            return newTouch ? newTouch : oldTouch;
+        this.pinchTouchList = this.pinchTouchList.map((oldPointer) => {
+            const newPointer = pointerList.find(({id: nid}) => nid === oldPointer.id);
+            return newPointer || oldPointer;
         });
 
         const newDistance = this.calculatePinchDistance();
@@ -1321,7 +1335,7 @@ class ReactImageLightbox extends Component {
                         style={imageStyle}
                         src={imageSrc}
                         key={imageSrc + keyEndings[srcType]}
-                        alt={(typeof imageTitle === "string" ? imageTitle : translate('Image'))}
+                        alt={(typeof imageTitle === 'string' ? imageTitle : translate('Image'))}
                         draggable={false}
                     />
                 );
