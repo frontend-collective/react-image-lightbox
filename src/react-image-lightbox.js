@@ -21,6 +21,15 @@ import {
     WHEEL_MOVE_X_THRESHOLD,
     WHEEL_MOVE_Y_THRESHOLD,
     ZOOM_BUTTON_INCREMENT_SIZE,
+    ACTION_NONE,
+    ACTION_MOVE,
+    ACTION_SWIPE,
+    ACTION_PINCH,
+    SOURCE_ANY,
+    SOURCE_MOUSE,
+    SOURCE_TOUCH,
+    SOURCE_POINTER,
+    MIN_SWIPE_DISTANCE
 } from './constant';
 import baseStyles from './style.scss';
 
@@ -73,11 +82,13 @@ class ReactImageLightbox extends Component {
         this.handleImageMouseWheel    = this.handleImageMouseWheel.bind(this);
         this.handleKeyInput           = this.handleKeyInput.bind(this);
         this.handleMouseUp            = this.handleMouseUp.bind(this);
-        this.handleOuterMouseDown     = this.handleOuterMouseDown.bind(this);
-        this.handleOuterMouseMove     = this.handleOuterMouseMove.bind(this);
+        this.handleMouseDown          = this.handleMouseDown.bind(this);
+        this.handleMouseMove          = this.handleMouseMove.bind(this);
         this.handleOuterMousewheel    = this.handleOuterMousewheel.bind(this);
-        this.handleOuterTouchStart    = this.handleOuterTouchStart.bind(this);
-        this.handleOuterTouchMove     = this.handleOuterTouchMove.bind(this);
+        this.handleTouchStart         = this.handleTouchStart.bind(this);
+        this.handleTouchMove          = this.handleTouchMove.bind(this);
+        this.handleTouchEnd           = this.handleTouchEnd.bind(this);
+        this.handlePointerEvent       = this.handlePointerEvent.bind(this);
         this.handleCaptionMousewheel  = this.handleCaptionMousewheel.bind(this);
         this.handleWindowResize       = this.handleWindowResize.bind(this);
         this.handleZoomInButtonClick  = this.handleZoomInButtonClick.bind(this);
@@ -88,6 +99,22 @@ class ReactImageLightbox extends Component {
     }
 
     componentWillMount() {
+        // Timeouts - always clear it before umount
+        this.timeouts = [];
+
+        // Current action
+        this.currentAction = ACTION_NONE;
+
+        // Events source
+        this.eventsSource = SOURCE_ANY;
+
+        // Empty pointers list
+        this.pointerList = [];
+
+        // Prevent inner close
+        this.preventInnerClose = false;
+        this.preventInnerCloseTimeout = null;
+        
         // Whether event listeners for keyboard and mouse input have been attached or not
         this.listenersAttached = false;
 
@@ -110,11 +137,20 @@ class ReactImageLightbox extends Component {
         this.scrollY            = 0;
 
         // Used in panning zoomed images
-        this.isDragging       = false;
-        this.dragStartX       = 0;
-        this.dragStartY       = 0;
-        this.dragStartOffsetX = 0;
-        this.dragStartOffsetY = 0;
+        this.moveStartX       = 0;
+        this.moveStartY       = 0;
+        this.moveStartOffsetX = 0;
+        this.moveStartOffsetY = 0;
+
+        // Used to swpie
+        this.swipeStartX   = 0;
+        this.swipeStartY   = 0;
+        this.swipeEndX     = 0;
+        this.swipeEndY     = 0;
+
+        // Used to pinch
+        this.pinchTouchList = null;
+        this.pinchDistance  = 0;
 
         // Used to differentiate between images with identical src
         this.keyCounter = 0;
@@ -133,6 +169,11 @@ class ReactImageLightbox extends Component {
         this.attachListeners();
 
         this.loadAllImages();
+    }
+
+    shouldComponentUpdate() {
+        // Wait for move...
+        return !this.moveRequested;
     }
 
     componentWillReceiveProps(nextProps) {
@@ -168,6 +209,23 @@ class ReactImageLightbox extends Component {
     componentWillUnmount() {
         this.mounted = false;
         this.detachListeners();
+        this.timeouts.forEach(tid => clearTimeout(tid));
+    }
+
+    setTimeout(func, time) {
+        const id = setTimeout(() => {
+            this.timeouts = this.timeouts.filter(tid => tid !== id);
+            func();
+        }, time);
+        this.timeouts.push(id);
+        return id;
+    }
+
+    clearTimeout(id) {
+        if (this.timeouts.find(tid => tid === id)) {
+            this.timeouts = this.timeouts.filter(tid => tid !== id);
+            clearTimeout(id);
+        }
     }
 
     // Attach key and mouse input events
@@ -175,13 +233,22 @@ class ReactImageLightbox extends Component {
         if (!this.listenersAttached && typeof window !== 'undefined') {
             window.addEventListener('resize', this.handleWindowResize);
             window.addEventListener('mouseup', this.handleMouseUp);
-            window.addEventListener('touchend', this.handleMouseUp);
-
+            window.addEventListener('touchend', this.handleTouchEnd);
+            window.addEventListener('touchcancel', this.handleTouchEnd);
+            window.addEventListener('pointerdown', this.handlePointerEvent);
+            window.addEventListener('pointermove', this.handlePointerEvent);
+            window.addEventListener('pointerup', this.handlePointerEvent);
+            window.addEventListener('pointercancel', this.handlePointerEvent);
             // Have to add an extra mouseup handler to catch mouseup events outside of the window
             //  if the page containing the lightbox is displayed in an iframe
             if (isInIframe()) {
                 window.top.addEventListener('mouseup', this.handleMouseUp);
-                window.top.addEventListener('touchend', this.handleMouseUp);
+                window.top.addEventListener('touchend', this.handleTouchEnd);
+                window.top.addEventListener('touchcancel', this.handleTouchEnd);
+                window.top.addEventListener('pointerdown', this.handlePointerEvent);
+                window.top.addEventListener('pointermove', this.handlePointerEvent);
+                window.top.addEventListener('pointerup', this.handlePointerEvent);
+                window.top.addEventListener('pointercancel', this.handlePointerEvent);
             }
 
             this.listenersAttached = true;
@@ -197,6 +264,7 @@ class ReactImageLightbox extends Component {
 
         // Constrain zoom level to the set bounds
         const nextZoomLevel = Math.max(MIN_ZOOM_LEVEL, Math.min(MAX_ZOOM_LEVEL, zoomLevel));
+
 
         // Ignore requests that don't change the zoom level
         if (nextZoomLevel === this.state.zoomLevel) {
@@ -242,10 +310,12 @@ class ReactImageLightbox extends Component {
         let nextOffsetY = nextImageOffsetY - nextImageRealOffsetY;
 
         // When zooming out, limit the offset so things don't get left askew
-        const maxOffsets = this.getMaxOffsets();
-        if (this.state.zoomLevel > nextZoomLevel) {
-            nextOffsetX = Math.max(maxOffsets.minX, Math.min(maxOffsets.maxX, nextOffsetX));
-            nextOffsetY = Math.max(maxOffsets.minY, Math.min(maxOffsets.maxY, nextOffsetY));
+        if (this.currentAction !== ACTION_PINCH) {
+            const maxOffsets = this.getMaxOffsets();
+            if (this.state.zoomLevel > nextZoomLevel) {
+                nextOffsetX = Math.max(maxOffsets.minX, Math.min(maxOffsets.maxX, nextOffsetX));
+                nextOffsetY = Math.max(maxOffsets.minY, Math.min(maxOffsets.maxY, nextOffsetY));
+            }
         }
 
         this.setState({
@@ -256,9 +326,20 @@ class ReactImageLightbox extends Component {
     }
 
     closeIfClickInner(event) {
-        if (event.target.className.search(/\binner\b/) > -1) {
+        if (!this.preventInnerClose && event.target.className.search(/\binner\b/) > -1) {
             this.requestClose(event);
         }
+    }
+    
+    setPreventInnerClose() {
+        if (this.preventInnerCloseTimeout) {
+            this.clearTimeout(this.preventInnerCloseTimeout);
+        }
+        this.preventInnerClose = true;
+        this.preventInnerCloseTimeout = this.setTimeout(()=>{
+            this.preventInnerClose = false;
+            this.preventInnerCloseTimeout = null;
+        }, 100);
     }
 
     // Detach key and mouse input events
@@ -266,11 +347,20 @@ class ReactImageLightbox extends Component {
         if (this.listenersAttached) {
             window.removeEventListener('resize', this.handleWindowResize);
             window.removeEventListener('mouseup', this.handleMouseUp);
-            window.removeEventListener('touchend', this.handleMouseUp);
-
+            window.removeEventListener('touchend', this.handleTouchEnd);
+            window.removeEventListener('touchcancel', this.handleTouchEnd);
+            window.removeEventListener('pointerdown', this.handlePointerEvent);
+            window.removeEventListener('pointermove', this.handlePointerEvent);
+            window.removeEventListener('pointerup', this.handlePointerEvent);
+            window.removeEventListener('pointercancel', this.handlePointerEvent);
             if (isInIframe()) {
                 window.top.removeEventListener('mouseup', this.handleMouseUp);
-                window.top.removeEventListener('touchend', this.handleMouseUp);
+                window.top.removeEventListener('touchend', this.handleTouchEnd);
+                window.top.removeEventListener('touchcancel', this.handleTouchEnd);
+                window.top.removeEventListener('pointerdown', this.handlePointerEvent);
+                window.top.removeEventListener('pointermove', this.handlePointerEvent);
+                window.top.removeEventListener('pointerup', this.handlePointerEvent);
+                window.top.removeEventListener('pointercancel', this.handlePointerEvent);
             }
 
             this.listenersAttached = false;
@@ -489,8 +579,8 @@ class ReactImageLightbox extends Component {
         let actionDelay = 0;
         const imageMoveDelay = 500;
 
-        clearTimeout(this.resetScrollTimeout);
-        this.resetScrollTimeout = setTimeout(() => {
+        this.clearTimeout(this.resetScrollTimeout);
+        this.resetScrollTimeout = this.setTimeout(() => {
             this.scrollX = 0;
             this.scrollY = 0;
         }, 300);
@@ -522,7 +612,7 @@ class ReactImageLightbox extends Component {
 
         // Allow successive actions after the set delay
         if (actionDelay !== 0) {
-            this.wheelActionTimeout = setTimeout(() => {
+            this.wheelActionTimeout = this.setTimeout(() => {
                 this.wheelActionTimeout = null;
             }, actionDelay);
         }
@@ -571,16 +661,253 @@ class ReactImageLightbox extends Component {
         }
     }
 
-    /**
-     * Handle a mouse click ending in the lightbox container
-     */
-    handleMouseUp() {
-        if (!this.isDragging) {
+    isTargetMatchImage(target) {
+        return target && /ril-image-current/.test(target.className);
+    }
+
+    shouldHandleEvent(source) {
+        if (this.eventsSource === source) {
+            return true;
+        }
+        if (this.eventsSource === SOURCE_ANY) {
+            this.eventsSource = source;
+            return true;
+        }
+        switch(source) {
+            case SOURCE_MOUSE:
+                return false;
+            case SOURCE_TOUCH:
+                this.eventsSource = SOURCE_TOUCH;
+                this.filterPointersBySource();
+                return true;
+            case SOURCE_POINTER:
+                if (this.eventsSource === SOURCE_MOUSE) {
+                    this.eventsSource = SOURCE_POINTER;
+                    this.filterPointersBySource();
+                    return true;
+                } else {
+                    return false;
+                }
+        }
+    }
+
+    parseMouse(mouseEvent) {
+        return {
+            id: "mouse",
+            source: SOURCE_MOUSE,
+            x: parseInt(mouseEvent.clientX, 10),
+            y: parseInt(mouseEvent.clientY, 10)
+        };
+    }
+
+    parseTouch(touchPointer) {
+        return {
+            id: touchPointer.identifier,
+            source: SOURCE_TOUCH,
+            x: parseInt(touchPointer.clientX, 10),
+            y: parseInt(touchPointer.clientY, 10)
+        };
+    }
+
+    parsePointer(pointerEvent) {
+        return {
+            id: pointerEvent.pointerId,
+            source: SOURCE_POINTER,
+            x: parseInt(pointerEvent.clientX, 10),
+            y: parseInt(pointerEvent.clientY, 10)
+        };
+    }
+
+    addPointer(pointer) {
+        this.pointerList.push(pointer);
+    }
+
+    removePointer(pointer) {
+        this.pointerList = this.pointerList.filter(({id}) => id !== pointer.id);
+    }
+
+    filterPointersBySource() {
+        this.pointerList = this.pointerList.filter(({source}) => source === this.eventsSource);
+    }
+
+    handleMouseDown(event) {
+        if (this.shouldHandleEvent(SOURCE_MOUSE) && this.isTargetMatchImage(event.target)) {
+            this.addPointer(this.parseMouse(event));
+            this.multiPointerStart(event);
+        }
+    }
+
+    handleMouseMove(event) {
+        if (this.shouldHandleEvent(SOURCE_MOUSE)) {
+            this.multiPointerMove(event, [this.parseMouse(event)]);
+        }
+    }
+
+    handleMouseUp(event) {
+        if (this.shouldHandleEvent(SOURCE_MOUSE)) {
+            this.removePointer(this.parseMouse(event));
+            this.multiPointerEnd(event);
+        }
+    }
+
+    handlePointerEvent(event) {
+        if (this.shouldHandleEvent(SOURCE_POINTER)) {
+            switch (event.type) {
+                case "pointerdown":
+                    if(this.isTargetMatchImage(event.target)) {
+                        this.addPointer(this.parsePointer(event));
+                        this.multiPointerStart(event);
+                    }
+                    break;
+                case "pointermove":
+                    this.multiPointerMove(event, [this.parsePointer(event)]);
+                    break;
+                case "pointerup":
+                case "pointercancel":
+                    this.removePointer(this.parsePointer(event));
+                    this.multiPointerEnd(event);
+                    break;
+            }
+        }
+    }
+
+    handleTouchStart(event) {
+        if (this.shouldHandleEvent(SOURCE_TOUCH) && this.isTargetMatchImage(event.target)) {
+            [].forEach.call(event.changedTouches, eventTouch => this.addPointer(this.parseTouch(eventTouch)));
+            this.multiPointerStart(event);
+        }
+    }
+
+    handleTouchMove(event) {
+        if (this.shouldHandleEvent(SOURCE_TOUCH)) {
+            this.multiPointerMove(event, [].map.call(event.changedTouches, eventTouch => this.parseTouch(eventTouch)));
+        }
+    }
+
+    handleTouchEnd(event) {
+        if (this.shouldHandleEvent(SOURCE_TOUCH)) {
+            [].map.call(event.changedTouches, touch => this.removePointer(this.parseTouch(touch)));
+            this.multiPointerEnd(event);
+        }
+    }
+
+    decideMoveOrSwipe(pointer) {
+        if (this.state.zoomLevel <= MIN_ZOOM_LEVEL) {
+            this.handleSwipeStart(pointer);
+        } else {
+            this.handleMoveStart(pointer);
+        }
+    }
+
+    multiPointerStart(event) {
+        this.handleEnd(null);
+        switch (this.pointerList.length) {
+            case 1: {
+                event.preventDefault();
+                this.decideMoveOrSwipe(this.pointerList[0]);
+                break;
+            }
+            case 2: {
+                event.preventDefault();
+                this.handlePinchStart(this.pointerList);
+                break;
+            }
+        }
+    }
+
+    multiPointerMove(event, pointerList) {
+        switch (this.currentAction) {
+            case ACTION_MOVE: {
+                event.preventDefault();
+                this.handleMove( pointerList[0]);
+                break;
+            }
+            case ACTION_SWIPE: {
+                event.preventDefault();
+                this.handleSwipe(pointerList[0]);
+                break;
+            }
+            case ACTION_PINCH: {
+                event.preventDefault();
+                this.handlePinch(pointerList);
+                break;
+            }
+        }
+    }
+
+    multiPointerEnd(event) {
+        if (this.currentAction !== ACTION_NONE) {
+            this.setPreventInnerClose();
+            this.handleEnd(event);
+        }
+        switch (this.pointerList.length) {
+            case 0: {
+                this.eventsSource = SOURCE_ANY;
+                break;
+            }
+            case 1: {
+                event.preventDefault();
+                this.decideMoveOrSwipe(this.pointerList[0]);
+                break;
+            }
+            case 2: {
+                event.preventDefault();
+                this.handlePinchStart(this.pointerList);
+                break;
+            }
+        }
+    }
+
+    handleEnd(event) {
+        switch(this.currentAction) {
+            case ACTION_MOVE:
+                this.handleMoveEnd(event);
+                break;
+            case ACTION_SWIPE:
+                this.handleSwipeEnd(event);
+                break;
+            case ACTION_PINCH:
+                this.handlePinchEnd(event);
+                break;
+        }
+    }
+
+    // Handle move start over the lightbox container
+    // This happens:
+    // - On a mouseDown event
+    // - On a touchstart event
+    handleMoveStart({x:clientX, y:clientY}) {
+        if (!this.props.enableZoom) {
             return;
         }
+          this.currentAction    = ACTION_MOVE;
+        this.moveStartX       = clientX;
+        this.moveStartY       = clientY;
+        this.moveStartOffsetX = this.state.offsetX;
+        this.moveStartOffsetY = this.state.offsetY;
+    }
 
-        this.isDragging = false;
+    // Handle dragging over the lightbox container
+    // This happens:
+    // - After a mouseDown and before a mouseUp event
+    // - After a touchstart and before a touchend event
+    handleMove({x:clientX, y:clientY}) {
+        const newOffsetX = (this.moveStartX - clientX) + this.moveStartOffsetX;
+        const newOffsetY = (this.moveStartY - clientY) + this.moveStartOffsetY;
+        if (this.state.offsetX !== newOffsetX || this.state.offsetY !== newOffsetY) {
+            this.setState({
+                offsetX: newOffsetX,
+                offsetY: newOffsetY,
+            });
+        }
+    }
 
+    handleMoveEnd() {
+        this.currentAction    = ACTION_NONE;
+        this.moveStartX       = 0;
+        this.moveStartY       = 0;
+        this.moveStartOffsetX = 0;
+        this.moveStartOffsetY = 0;
         // Snap image back into frame if outside max offset range
         const maxOffsets = this.getMaxOffsets();
         const nextOffsetX = Math.max(maxOffsets.minX, Math.min(maxOffsets.maxX, this.state.offsetX));
@@ -591,84 +918,106 @@ class ReactImageLightbox extends Component {
                 offsetY:       nextOffsetY,
                 shouldAnimate: true,
             });
-
-            setTimeout(() => {
+            this.setTimeout(() => {
                 this.setState({ shouldAnimate: false });
             }, this.props.animationDuration);
         }
     }
 
-    // Handle move start over the lightbox container
-    // This happens:
-    // - On a mouseDown event
-    // - On a touchstart event
-    handleMoveStart(clientX, clientY) {
-        // Only allow dragging when zoomed
-        if (this.state.zoomLevel <= MIN_ZOOM_LEVEL) {
+    handleSwipeStart({x:clientX, y:clientY}) {
+        this.currentAction = ACTION_SWIPE;
+        this.swipeStartX   = clientX;
+        this.swipeStartY   = clientY;
+        this.swipeEndX     = clientX;
+        this.swipeEndY     = clientY;
+    }
+
+    handleSwipe({x:clientX, y:clientY}) {
+        this.swipeEndX   = clientX;
+        this.swipeEndY   = clientY;
+    }
+
+    handleSwipeEnd(event) {
+        const xDiff    = this.swipeEndX - this.swipeStartX;
+        const xDiffAbs = Math.abs(xDiff);
+        const yDiffAbs = Math.abs(this.swipeEndY - this.swipeStartY);
+
+        this.currentAction = ACTION_NONE;
+        this.swipeStartX   = 0;
+        this.swipeStartY   = 0;
+        this.swipeEndX     = 0;
+        this.swipeEndY     = 0;
+
+        if (!event || this.isAnimating() || xDiffAbs < yDiffAbs * 1.5) {
             return;
         }
 
-        this.isDragging       = true;
-        this.dragStartX       = clientX;
-        this.dragStartY       = clientY;
-        this.dragStartOffsetX = this.state.offsetX;
-        this.dragStartOffsetY = this.state.offsetY;
+        if (xDiffAbs < MIN_SWIPE_DISTANCE) {
+            const boxRect = this.getLightboxRect();
+            if(xDiffAbs < boxRect.width / 4) {
+                return;
+            }
+        }
+
+        if(xDiff > 0 && this.props.prevSrc) {
+            event.preventDefault();
+            this.requestMovePrev();
+        } else if (xDiff < 0 && this.props.nextSrc) {
+            event.preventDefault();
+            this.requestMoveNext();
+        }
     }
 
-    // Handle the mouse clicking down in the lightbox container
-    handleOuterMouseDown(event) {
-        event.preventDefault();
-        this.handleMoveStart(event.clientX, event.clientY);
+    calculatePinchDistance([a,b] = this.pinchTouchList) {
+        return Math.sqrt(Math.pow(a.x - b.x,2) + Math.pow(a.y - b.y,2));
     }
 
-    // Touch screen version of handleOuterMouseDown()
-    handleOuterTouchStart(event) {
-        const touchObj = event.changedTouches[0];
-        this.handleMoveStart(parseInt(touchObj.clientX, 10), parseInt(touchObj.clientY, 10));
+    calculatePinchCenter([a,b] = this.pinchTouchList) {
+        return {
+            x: a.x - (a.x - b.x) / 2,
+            y: a.y - (a.y - b.y) / 2
+        };
     }
 
-    // Handle dragging over the lightbox container
-    // This happens:
-    // - After a mouseDown and before a mouseUp event
-    // - After a touchstart and before a touchend event
-    handleMove(clientX, clientY) {
-        if (!this.isDragging) {
+    handlePinchStart(pointerList) {
+        if (!this.props.enableZoom) {
             return;
         }
-
-        const newOffsetX = (this.dragStartX - clientX) + this.dragStartOffsetX;
-        const newOffsetY = (this.dragStartY - clientY) + this.dragStartOffsetY;
-        if (this.state.offsetX !== newOffsetX || this.state.offsetY !== newOffsetY) {
-            this.setState({
-                offsetX: newOffsetX,
-                offsetY: newOffsetY,
-            });
-        }
+        this.currentAction  = ACTION_PINCH;
+        this.pinchTouchList = pointerList.map(({id, x, y}) => ({id, x, y}));
+        this.pinchDistance  = this.calculatePinchDistance();
     }
 
-    // Handle the mouse dragging over the lightbox container
-    // (after a mouseDown and before a mouseUp event)
-    handleOuterMouseMove(event) {
-        this.handleMove(event.clientX, event.clientY);
+    handlePinch(pointerList) {
+        this.pinchTouchList = this.pinchTouchList.map(oldTouch => {
+            const newTouch = pointerList.find(({id: nid}) => nid === oldTouch.id);
+            return newTouch ? newTouch : oldTouch;
+        });
+
+        const newDistance = this.calculatePinchDistance();
+
+        // Propably this should be more complicated... but works fine?
+        const zoomLevel = this.state.zoomLevel + newDistance - this.pinchDistance;
+
+        this.pinchDistance = newDistance;
+        const {x: clientX, y: clientY} = this.calculatePinchCenter(this.pinchTouchList);
+        this.changeZoom(
+            zoomLevel,
+            clientX,
+            clientY
+        );
     }
 
-    // Touch screen version of handleOuterMouseMove()
-    handleOuterTouchMove(event) {
-        event.preventDefault();
-
-        // We shouldn't go any further if we're not zoomed
-        if (this.state.zoomLevel <= MIN_ZOOM_LEVEL) {
-            return;
-        }
-
-        const touchObj = event.changedTouches[0];
-        this.handleMove(parseInt(touchObj.clientX, 10), parseInt(touchObj.clientY, 10));
+    handlePinchEnd() {
+        this.currentAction = ACTION_NONE;
+        this.pinchTouchList = null;
+        this.pinchDistance = 0;
     }
 
     // Handle the window resize event
     handleWindowResize() {
-        clearTimeout(this.resizeTimeout);
-        this.resizeTimeout = setTimeout(this.forceUpdate.bind(this), 100);
+        this.clearTimeout(this.resizeTimeout);
+        this.resizeTimeout = this.setTimeout(this.forceUpdate.bind(this), 100);
     }
 
     handleZoomInButtonClick() {
@@ -710,7 +1059,7 @@ class ReactImageLightbox extends Component {
     loadImage(srcType, imageSrc, done) {
         // Return the image info if it is already cached
         if (this.isImageLoaded(imageSrc)) {
-            setTimeout(() => {
+            this.setTimeout(() => {
                 done();
             }, 1);
             return;
@@ -783,7 +1132,7 @@ class ReactImageLightbox extends Component {
         this.setState({ isClosing: true });
 
         // Perform the actual closing at the end of the animation
-        setTimeout(closeLightbox, this.props.animationDuration);
+        this.setTimeout(closeLightbox, this.props.animationDuration);
     }
 
     requestMove(direction, event) {
@@ -797,7 +1146,7 @@ class ReactImageLightbox extends Component {
         // Enable animated states
         if (!this.props.animationDisabled && (!this.keyPressed || this.props.animationOnKeyInput)) {
             nextState.shouldAnimate = true;
-            setTimeout(
+            this.setTimeout(
                 () => this.setState({ shouldAnimate: false }),
                 this.props.animationDuration
             );
@@ -968,10 +1317,12 @@ class ReactImageLightbox extends Component {
                         className={`${imageClass} ${styles.image}`}
                         onDoubleClick={this.handleImageDoubleClick}
                         onWheel={this.handleImageMouseWheel}
+                        onDragStart={e => e.preventDefault()}
                         style={imageStyle}
                         src={imageSrc}
                         key={imageSrc + keyEndings[srcType]}
-                        alt={imageTitle || translate('Image')}
+                        alt={(typeof imageTitle === "string" ? imageTitle : translate('Image'))}
+                        draggable={false}
                     />
                 );
             }
@@ -1075,10 +1426,10 @@ class ReactImageLightbox extends Component {
                     }}
                     ref={(el) => { this.outerEl = el; }}
                     onWheel={this.handleOuterMousewheel}
-                    onMouseMove={this.handleOuterMouseMove}
-                    onMouseDown={this.handleOuterMouseDown}
-                    onTouchStart={this.handleOuterTouchStart}
-                    onTouchMove={this.handleOuterTouchMove}
+                    onMouseMove={this.handleMouseMove}
+                    onMouseDown={this.handleMouseDown}
+                    onTouchStart={this.handleTouchStart}
+                    onTouchMove={this.handleTouchMove}
                     tabIndex="-1" // Enables key handlers on div
                     onKeyDown={this.handleKeyInput}
                     onKeyUp={this.handleKeyInput}
