@@ -326,7 +326,7 @@ class ReactImageLightbox extends Component {
     }
 
     closeIfClickInner(event) {
-        if (!this.preventInnerClose && event.target.className.search(/\binner\b/) > -1) {
+        if (!this.preventInnerClose && event.target.className.search(/\bril-inner\b/) > -1) {
             this.requestClose(event);
         }
     }
