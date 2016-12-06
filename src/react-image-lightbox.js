@@ -142,7 +142,7 @@ class ReactImageLightbox extends Component {
         this.moveStartOffsetX = 0;
         this.moveStartOffsetY = 0;
 
-        // Used to swpie
+        // Used to swipe
         this.swipeStartX   = 0;
         this.swipeStartY   = 0;
         this.swipeEndX     = 0;
@@ -222,10 +222,8 @@ class ReactImageLightbox extends Component {
     }
 
     clearTimeout(id) {
-        if (this.timeouts.find(tid => tid === id)) {
-            this.timeouts = this.timeouts.filter(tid => tid !== id);
-            clearTimeout(id);
-        }
+        this.timeouts = this.timeouts.filter(tid => tid !== id);
+        clearTimeout(id);
     }
 
     // Attach key and mouse input events
@@ -1004,8 +1002,13 @@ class ReactImageLightbox extends Component {
 
     handlePinch(pointerList) {
         this.pinchTouchList = this.pinchTouchList.map((oldPointer) => {
-            const newPointer = pointerList.find(({id: nid}) => nid === oldPointer.id);
-            return newPointer || oldPointer;
+            for (let i = 0; i < pointerList.length; i++) {
+                if (pointerList[i].id === oldPointer.id) {
+                    return pointerList[i];
+                }
+            }
+
+            return oldPointer;
         });
 
         const newDistance = this.calculatePinchDistance();
