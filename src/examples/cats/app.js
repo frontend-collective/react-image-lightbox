@@ -160,7 +160,10 @@ const App = React.createClass({
                         <li>Image Zoom</li>
                         <li>Flexible rendering using src values assigned on the fly</li>
                         <li>Image preloading for smoother viewing</li>
-                        <li>Few dependencies</li>
+                        <li>
+                            Mobile friendly, with pinch to zoom and swipe
+                            (Thanks, <a href="https://github.com/webcarrot">@webcarrot</a>!)
+                        </li>
                         <li>No external CSS</li>
                     </ul>
 
