@@ -87,9 +87,9 @@ Property            | Type   | Default        | Required | Description
 mainSrc             | string |                |    yes   | Main display image url
 prevSrc             | string |                |          | Previous display image url (displayed to the left). If left undefined, `onMovePrevRequest` will not be called, and the button not displayed
 nextSrc             | string |                |          | Next display image url (displayed to the right). If left undefined, `onMoveNextRequest` will not be called, and the button not displayed
-mainSrcThumbnail    | string |                |          | Thumbnail image url corresponding to `props.mainSrc`
-prevSrcThumbnail    | string |                |          | Thumbnail image url corresponding to `props.prevSrc`
-nextSrcThumbnail    | string |                |          | Thumbnail image url corresponding to `props.nextSrc`
+mainSrcThumbnail    | string |                |          | Thumbnail image url corresponding to `props.mainSrc`. Displayed as a placeholder while the full-sized image loads.
+prevSrcThumbnail    | string |                |          | Thumbnail image url corresponding to `props.prevSrc`. Displayed as a placeholder while the full-sized image loads.
+nextSrcThumbnail    | string |                |          | Thumbnail image url corresponding to `props.nextSrc`. Displayed as a placeholder while the full-sized image loads.
 onCloseRequest      | func   |                |    yes   | Close window event. Should change the parent state such that the lightbox is not rendered
 onMovePrevRequest   | func   | empty function |          | Move to previous image event. Should change the parent state such that `props.prevSrc` becomes `props.mainSrc`, `props.mainSrc` becomes `props.nextSrc`, etc.
 onMoveNextRequest   | func   | empty function |          | Move to next image event. Should change the parent state such that `props.nextSrc` becomes `props.mainSrc`, `props.mainSrc` becomes `props.prevSrc`, etc.
