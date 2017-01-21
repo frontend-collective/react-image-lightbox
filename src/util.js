@@ -52,10 +52,11 @@ export function getWindowHeight() {
 }
 
 // Returns true if this window is rendered as an iframe inside another window
-export function isInIframe() {
+// with the same origin.
+export function isInSameOriginIframe() {
     try {
-        return window.self !== window.top;
+        return (window.self !== window.top) && window.top.document;
     } catch (e) {
-        return true;
+        return false;
     }
 }

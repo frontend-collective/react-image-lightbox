@@ -10,7 +10,7 @@ import {
     translate,
     getWindowWidth,
     getWindowHeight,
-    isInIframe,
+    isInSameOriginIframe,
     getIEVersion,
 } from './util';
 import {
@@ -239,7 +239,7 @@ class ReactImageLightbox extends Component {
             window.addEventListener('pointercancel', this.handlePointerEvent);
             // Have to add an extra mouseup handler to catch mouseup events outside of the window
             //  if the page containing the lightbox is displayed in an iframe
-            if (isInIframe()) {
+            if (isInSameOriginIframe()) {
                 window.top.addEventListener('mouseup', this.handleMouseUp);
                 window.top.addEventListener('touchend', this.handleTouchEnd);
                 window.top.addEventListener('touchcancel', this.handleTouchEnd);
@@ -351,7 +351,7 @@ class ReactImageLightbox extends Component {
             window.removeEventListener('pointermove', this.handlePointerEvent);
             window.removeEventListener('pointerup', this.handlePointerEvent);
             window.removeEventListener('pointercancel', this.handlePointerEvent);
-            if (isInIframe()) {
+            if (isInSameOriginIframe()) {
                 window.top.removeEventListener('mouseup', this.handleMouseUp);
                 window.top.removeEventListener('touchend', this.handleTouchEnd);
                 window.top.removeEventListener('touchcancel', this.handleTouchEnd);
