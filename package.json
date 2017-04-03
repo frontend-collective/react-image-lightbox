@@ -12,6 +12,7 @@
     "start": "cross-env NODE_ENV=development webpack-dev-server --hot --inline --config webpack.config.dev.babel.js",
     "test": "webpack",
     "lint": "eslint src",
+    "server-test": "node server.js",
     "deploy": "npm run build && gh-pages -d build",
     "prepublish": "npm run lint && npm run build:umd"
   },
