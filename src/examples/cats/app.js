@@ -129,6 +129,7 @@ const App = React.createClass({
 
         return (
             <div>
+                <style>{styles._getCss()}</style>
                 <section className={styles['page-header']}>
                     <h1 className={styles['project-name']}>
                         React Image Lightbox
