@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import Lightbox from '../../react-image-lightbox';
 import styles from './stylesheets/app.scss';
@@ -81,28 +81,41 @@ const captions = [
     '',
 ];
 
-const App = React.createClass({
-    getInitialState() {
-        return {
+class App extends Component {
+    constructor() {
+        super();
+
+        this.state = {
             index: 0,
             isOpen: false
         };
-    },
+
+        this.openLightbox = this.openLightbox.bind(this);
+        this.closeLightbox = this.closeLightbox.bind(this);
+        this.moveNext = this.moveNext.bind(this);
+        this.movePrev = this.movePrev.bind(this);
+    }
+
     openLightbox() {
         this.setState({ isOpen: true });
-    },
+    }
+
     closeLightbox() {
         this.setState({ isOpen: false });
-    },
+    }
+
     moveNext() {
         this.setState({ index: (this.state.index + 1) % images.length });
-    },
+    }
+
     movePrev() {
         this.setState({ index: (this.state.index + images.length - 1) % images.length });
-    },
-    onImageLoadError(imageSrc, _srcType, errorEvent) {
+    }
+
+    static onImageLoadError(imageSrc, _srcType, errorEvent) {
         console.error(`Could not load image at ${imageSrc}`, errorEvent); // eslint-disable-line no-console
-    },
+    }
+
     render() {
         let lightbox;
         if (this.state.isOpen) {
@@ -119,7 +132,7 @@ const App = React.createClass({
                     onCloseRequest={this.closeLightbox}
                     onMovePrevRequest={this.movePrev}
                     onMoveNextRequest={this.moveNext}
-                    onImageLoadError={this.onImageLoadError}
+                    onImageLoadError={App.onImageLoadError}
 
                     imageTitle={titles[this.state.index]}
                     imageCaption={captions[this.state.index]}
@@ -191,6 +204,6 @@ const App = React.createClass({
             </div>
         );
     }
-});
+}
 
 ReactDOM.render(<App />, document.getElementById('app'));

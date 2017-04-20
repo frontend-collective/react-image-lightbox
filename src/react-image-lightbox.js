@@ -4,7 +4,8 @@
  * @license Open source under the MIT License
  */
 
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import Modal from 'react-modal';
 import {
     translate,
