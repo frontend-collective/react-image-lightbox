@@ -1426,135 +1426,138 @@ class ReactImageLightbox extends Component {
         //             zoom-in, zoom-out
 
         return (
-            <Modal
-                isOpen
-                onRequestClose={clickOutsideToClose ? this.requestClose : noop}
-                onAfterOpen={() => this.outerEl && this.outerEl.focus()} // Focus on the div with key handlers
-                style={modalStyle}
-                contentLabel={translate('Lightbox')}
-            >
-                <div // eslint-disable-line jsx-a11y/no-static-element-interactions
-                    // Floating modal with closing animations
-                    className={`outer ril-outer ${styles.outer} ${styles.outerAnimating}` +
-                        (isClosing ? ` closing ril-closing ${styles.outerClosing}` : '')
-                    }
-                    style={{
-                        transition:         `opacity ${animationDuration}ms`,
-                        animationDuration:  `${animationDuration}ms`,
-                        animationDirection: isClosing ? 'normal' : 'reverse',
-                    }}
-                    ref={(el) => { this.outerEl = el; }}
-                    onWheel={this.handleOuterMousewheel}
-                    onMouseMove={this.handleMouseMove}
-                    onMouseDown={this.handleMouseDown}
-                    onTouchStart={this.handleTouchStart}
-                    onTouchMove={this.handleTouchMove}
-                    tabIndex="-1" // Enables key handlers on div
-                    onKeyDown={this.handleKeyInput}
-                    onKeyUp={this.handleKeyInput}
+            <div>
+                <style>{styles._getCss()}</style>
+                <Modal
+                    isOpen
+                    onRequestClose={clickOutsideToClose ? this.requestClose : noop}
+                    onAfterOpen={() => this.outerEl && this.outerEl.focus()} // Focus on the div with key handlers
+                    style={modalStyle}
+                    contentLabel={translate('Lightbox')}
                 >
-
                     <div // eslint-disable-line jsx-a11y/no-static-element-interactions
-                        // Image holder
-                        className={`inner ril-inner ${styles.inner}`}
-                        onClick={clickOutsideToClose ? this.closeIfClickInner : noop}
+                        // Floating modal with closing animations
+                        className={`outer ril-outer ${styles.outer} ${styles.outerAnimating}` +
+                            (isClosing ? ` closing ril-closing ${styles.outerClosing}` : '')
+                        }
+                        style={{
+                            transition:         `opacity ${animationDuration}ms`,
+                            animationDuration:  `${animationDuration}ms`,
+                            animationDirection: isClosing ? 'normal' : 'reverse',
+                        }}
+                        ref={(el) => { this.outerEl = el; }}
+                        onWheel={this.handleOuterMousewheel}
+                        onMouseMove={this.handleMouseMove}
+                        onMouseDown={this.handleMouseDown}
+                        onTouchStart={this.handleTouchStart}
+                        onTouchMove={this.handleTouchMove}
+                        tabIndex="-1" // Enables key handlers on div
+                        onKeyDown={this.handleKeyInput}
+                        onKeyUp={this.handleKeyInput}
                     >
-                        {images}
-                    </div>
 
-                    {prevSrc &&
-                        <button // Move to previous image button
-                            type="button"
-                            className={`prev-button ril-prev-button ${styles.navButtons} ${styles.navButtonPrev}`}
-                            key="prev"
-                            onClick={!this.isAnimating() ? this.requestMovePrev : noop} // Ignore clicks during animation
-                        />
-                    }
-
-                    {nextSrc &&
-                        <button // Move to next image button
-                            type="button"
-                            className={`next-button ril-next-button ${styles.navButtons} ${styles.navButtonNext}`}
-                            key="next"
-                            onClick={!this.isAnimating() ? this.requestMoveNext : noop} // Ignore clicks during animation
-                        />
-                    }
-
-                    <div // Lightbox toolbar
-                        className={`toolbar ril-toolbar ${styles.toolbar}`}
-                    >
-                        <ul className={`toolbar-left ril-toolbar-left ${styles.toolbarSide} ${styles.toolbarLeftSide}`}>
-                            <li className={`ril-toolbar__item ${styles.toolbarItem}`}>
-                                <span className={`ril-toolbar__item__child ${styles.toolbarItemChild}`}>
-                                    {imageTitle}
-                                </span>
-                            </li>
-                        </ul>
-
-                        <ul
-                            className={[
-                                'toolbar-right',
-                                'ril-toolbar-right',
-                                styles.toolbarSide,
-                                styles.toolbarRightSide,
-                            ].join(' ')}
+                        <div // eslint-disable-line jsx-a11y/no-static-element-interactions
+                            // Image holder
+                            className={`inner ril-inner ${styles.inner}`}
+                            onClick={clickOutsideToClose ? this.closeIfClickInner : noop}
                         >
-                            {!toolbarButtons ? '' : toolbarButtons.map((button, i) => (
-                                <li key={i} className={`ril-toolbar__item ${styles.toolbarItem}`}>{button}</li>
-                            ))}
-
-                            {enableZoom &&
-                                <li className={`ril-toolbar__item ${styles.toolbarItem}`}>
-                                    <button // Lightbox zoom in button
-                                        type="button"
-                                        key="zoom-in"
-                                        className={`zoom-in ril-zoom-in ${zoomInButtonClasses.join(' ')}`}
-                                        onClick={zoomInButtonHandler}
-                                    />
-                                </li>
-                            }
-
-                            {enableZoom &&
-                                <li className={`ril-toolbar__item ${styles.toolbarItem}`}>
-                                    <button // Lightbox zoom out button
-                                        type="button"
-                                        key="zoom-out"
-                                        className={`zoom-out ril-zoom-out ${zoomOutButtonClasses.join(' ')}`}
-                                        onClick={zoomOutButtonHandler}
-                                    />
-                                </li>
-                            }
-
-                            <li className={`ril-toolbar__item ${styles.toolbarItem}`}>
-                                <button // Lightbox close button
-                                    type="button"
-                                    key="close"
-                                    className={'close ril-close ril-toolbar__item__child' +
-                                        ` ${styles.toolbarItemChild} ${styles.builtinButton} ${styles.closeButton}`
-                                    }
-                                    onClick={!this.isAnimating() ? this.requestClose : noop} // Ignore clicks during animation
-                                />
-                            </li>
-                        </ul>
-                    </div>
-
-                    {this.props.imageCaption &&
-                        <div // Image caption
-                            onWheel={this.handleCaptionMousewheel}
-                            onMouseDown={event => event.stopPropagation()}
-                            className={`ril-caption ${styles.caption}`}
-                            ref={(el) => { this.caption = el; }}
-                        >
-                            <div
-                                className={`ril-caption-content ${styles.captionContent}`}
-                            >
-                                {this.props.imageCaption}
-                            </div>
+                            {images}
                         </div>
-                    }
 
-                </div>
-            </Modal>
+                        {prevSrc &&
+                            <button // Move to previous image button
+                                type="button"
+                                className={`prev-button ril-prev-button ${styles.navButtons} ${styles.navButtonPrev}`}
+                                key="prev"
+                                onClick={!this.isAnimating() ? this.requestMovePrev : noop} // Ignore clicks during animation
+                            />
+                        }
+
+                        {nextSrc &&
+                            <button // Move to next image button
+                                type="button"
+                                className={`next-button ril-next-button ${styles.navButtons} ${styles.navButtonNext}`}
+                                key="next"
+                                onClick={!this.isAnimating() ? this.requestMoveNext : noop} // Ignore clicks during animation
+                            />
+                        }
+
+                        <div // Lightbox toolbar
+                            className={`toolbar ril-toolbar ${styles.toolbar}`}
+                        >
+                            <ul className={`toolbar-left ril-toolbar-left ${styles.toolbarSide} ${styles.toolbarLeftSide}`}>
+                                <li className={`ril-toolbar__item ${styles.toolbarItem}`}>
+                                    <span className={`ril-toolbar__item__child ${styles.toolbarItemChild}`}>
+                                        {imageTitle}
+                                    </span>
+                                </li>
+                            </ul>
+
+                            <ul
+                                className={[
+                                    'toolbar-right',
+                                    'ril-toolbar-right',
+                                    styles.toolbarSide,
+                                    styles.toolbarRightSide,
+                                ].join(' ')}
+                            >
+                                {!toolbarButtons ? '' : toolbarButtons.map((button, i) => (
+                                    <li key={i} className={`ril-toolbar__item ${styles.toolbarItem}`}>{button}</li>
+                                ))}
+
+                                {enableZoom &&
+                                    <li className={`ril-toolbar__item ${styles.toolbarItem}`}>
+                                        <button // Lightbox zoom in button
+                                            type="button"
+                                            key="zoom-in"
+                                            className={`zoom-in ril-zoom-in ${zoomInButtonClasses.join(' ')}`}
+                                            onClick={zoomInButtonHandler}
+                                        />
+                                    </li>
+                                }
+
+                                {enableZoom &&
+                                    <li className={`ril-toolbar__item ${styles.toolbarItem}`}>
+                                        <button // Lightbox zoom out button
+                                            type="button"
+                                            key="zoom-out"
+                                            className={`zoom-out ril-zoom-out ${zoomOutButtonClasses.join(' ')}`}
+                                            onClick={zoomOutButtonHandler}
+                                        />
+                                    </li>
+                                }
+
+                                <li className={`ril-toolbar__item ${styles.toolbarItem}`}>
+                                    <button // Lightbox close button
+                                        type="button"
+                                        key="close"
+                                        className={'close ril-close ril-toolbar__item__child' +
+                                            ` ${styles.toolbarItemChild} ${styles.builtinButton} ${styles.closeButton}`
+                                        }
+                                        onClick={!this.isAnimating() ? this.requestClose : noop} // Ignore clicks during animation
+                                    />
+                                </li>
+                            </ul>
+                        </div>
+
+                        {this.props.imageCaption &&
+                            <div // Image caption
+                                onWheel={this.handleCaptionMousewheel}
+                                onMouseDown={event => event.stopPropagation()}
+                                className={`ril-caption ${styles.caption}`}
+                                ref={(el) => { this.caption = el; }}
+                            >
+                                <div
+                                    className={`ril-caption-content ${styles.captionContent}`}
+                                >
+                                    {this.props.imageCaption}
+                                </div>
+                            </div>
+                        }
+
+                    </div>
+                </Modal>
+            </div>
         );
     }
 }
