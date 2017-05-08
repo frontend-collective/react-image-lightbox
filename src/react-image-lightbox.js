@@ -1416,6 +1416,12 @@ class ReactImageLightbox extends Component {
             },
         };
 
+        // Insert component styles
+        if (typeof window === 'object') {
+            styles._insertCss();
+        }
+
+
         // DEPRECATION NOTICE
         // All unprefixed classes (listed below) will be removed in v4.0.0.
         // Use their `ril-` prefixed alternatives instead.

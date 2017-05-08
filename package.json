@@ -30,6 +30,7 @@
   ],
   "license": "MIT",
   "dependencies": {
+    "isomorphic-style-loader": "^2.0.0",
     "react-modal": "^1.4.0"
   },
   "peerDependencies": {
