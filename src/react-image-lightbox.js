@@ -167,6 +167,7 @@ class ReactImageLightbox extends Component {
 
     componentDidMount() {
         this.mounted = true;
+        ReactImageLightbox.loadStyles();
         this.attachListeners();
 
         this.loadAllImages();
@@ -1218,6 +1219,13 @@ class ReactImageLightbox extends Component {
         };
     }
 
+    static loadStyles() {
+        // Insert component styles
+        if (typeof window === 'object') {
+            styles._insertCss();
+        }
+    }
+
     render() {
         const {
             animationDisabled,
@@ -1415,12 +1423,6 @@ class ReactImageLightbox extends Component {
                 ...reactModalStyle.content, // Allow style overrides via props
             },
         };
-
-        // Insert component styles
-        if (typeof window === 'object') {
-            styles._insertCss();
-        }
-
 
         // DEPRECATION NOTICE
         // All unprefixed classes (listed below) will be removed in v4.0.0.
