@@ -60,7 +60,7 @@ module.exports = {
     },
     devServer: {
         contentBase: 'build',
-        port: 3001,
+        port: process.env.PORT || 3001,
         stats: {
             chunks: false,
             hash: false,
