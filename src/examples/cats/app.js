@@ -96,6 +96,12 @@ class App extends Component {
         this.movePrev = this.movePrev.bind(this);
     }
 
+    componentDidMount() {
+        if (window) {
+            styles._insertCss();
+        }
+    }
+
     openLightbox() {
         this.setState({ isOpen: true });
     }
