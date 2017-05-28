@@ -72,14 +72,7 @@ export default class LightboxExample extends Component {
     }
 }
 
-
 ```
-
-## Deprecation Notice
-
-All unprefixed classes (listed below) will be removed in v4.0.0. Use their `ril-` prefixed alternatives instead.
-`close`, `closing`, `download-blocker`, `image-current`, `image-next`, `image-prev`, `inner`, `next-button`, `not-loaded`, `outer`, `prev-button`, `toolbar`, `toolbar-left`, `toolbar-right`, `zoom-in`, `zoom-out`
-
 ## Options
 
 Property            | Type   | Default        | Required | Description
@@ -116,7 +109,6 @@ enableZoom          | bool   | `true`         |          | Set to false to disab
 | Firefox  | Yes                                 |
 | Safari   | Yes                                 |
 | IE >= 10 | Yes                                 |
-| IE 9     | Everything works, but no animations |
 
 ## Contributing
 
