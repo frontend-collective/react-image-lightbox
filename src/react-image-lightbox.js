@@ -167,6 +167,7 @@ class ReactImageLightbox extends Component {
 
     componentDidMount() {
         this.mounted = true;
+        ReactImageLightbox.loadStyles();
         this.attachListeners();
 
         this.loadAllImages();
@@ -1216,6 +1217,13 @@ class ReactImageLightbox extends Component {
             [isOldIE ? 'msTransform' : 'transform']:
                 transforms.length === 0 ? 'none' : transforms.join(' '),
         };
+    }
+
+    static loadStyles() {
+        // Insert component styles
+        if (typeof window === 'object') {
+            styles._insertCss();
+        }
     }
 
     render() {
