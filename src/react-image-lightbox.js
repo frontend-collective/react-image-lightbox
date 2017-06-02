@@ -260,9 +260,7 @@ class ReactImageLightbox extends Component {
 
     changeRotation(angle) {
         this.setState({rotate: this.state.rotate + angle});
-        if (this.props.onImageRotate) {
-            this.props.onImageRotate(angle);
-        }
+        this.props.onImageRotate(angle);
     }
 
     // Change zoom level
@@ -1732,6 +1730,7 @@ ReactImageLightbox.defaultProps = {
     onMovePrevRequest: () => {},
     onMoveNextRequest: () => {},
     onImageLoadError:  () => {},
+    onImageRotate:     () => {},
 
     discourageDownloads: false,
 
