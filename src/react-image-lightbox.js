@@ -1553,7 +1553,11 @@ class ReactImageLightbox extends Component {
                                         key="rotate-left"
                                         className={`ril-rotate-left ${rotateLeftButtonClasses.join(' ')}`}
                                         onClick={rotateLeftButtonHandler}
-                                    />
+                                    >
+                                        <svg className="icon icon-rotate" xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 16 16">
+                                            <path fill="#ddd" d="M16 7V3l-1.1 1.1C13.6 1.6 11 0 8 0 3.6 0 0 3.6 0 8s3.6 8 8 8c2.4 0 4.6-1.1 6-2.8l-1.5-1.3C11.4 13.2 9.8 14 8 14c-3.3 0-6-2.7-6-6s2.7-6 6-6c2.4 0 4.5 1.5 5.5 3.5L12 7h4z"/>
+                                        </svg>
+                                    </button>
                                 </li>
                             }
 
@@ -1564,7 +1568,11 @@ class ReactImageLightbox extends Component {
                                         key="rotate-right"
                                         className={`ril-rotate-right ${rotateRightButtonClasses.join(' ')}`}
                                         onClick={rotateRightButtonHandler}
-                                    />
+                                    >
+                                        <svg className="icon icon-rotate" xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 16 16">
+                                            <path fill="#ddd" d="M16 7V3l-1.1 1.1C13.6 1.6 11 0 8 0 3.6 0 0 3.6 0 8s3.6 8 8 8c2.4 0 4.6-1.1 6-2.8l-1.5-1.3C11.4 13.2 9.8 14 8 14c-3.3 0-6-2.7-6-6s2.7-6 6-6c2.4 0 4.5 1.5 5.5 3.5L12 7h4z"/>
+                                        </svg>
+                                    </button>
                                 </li>
                             }
 
