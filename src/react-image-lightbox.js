@@ -1403,8 +1403,8 @@ class ReactImageLightbox extends Component {
 
         const rotateLeftButtonClasses  = [styles.toolbarItemChild, styles.builtinButton, styles.rotateLeftButton];
         const rotateRightButtonClasses = [styles.toolbarItemChild, styles.builtinButton, styles.rotateRightButton];
-        let rotateLeftButtonHandler  = () => this.changeRotation(90);
-        let rotateRightButtonHandler = () => this.changeRotation(-90);
+        let rotateLeftButtonHandler  = () => this.changeRotation(-90);
+        let rotateRightButtonHandler = () => this.changeRotation(90);
 
 
         // Disable zooming in when zoomed all the way in
