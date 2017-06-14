@@ -1430,7 +1430,11 @@ class ReactImageLightbox extends Component {
                 isOpen
                 onRequestClose={clickOutsideToClose ? this.requestClose : noop}
                 onAfterOpen={() => {
-                    this.outerEl && this.outerEl.focus(); // Focus on the div with key handlers
+                    // Focus on the div with key handlers
+                    if (this.outerEl) {
+                        this.outerEl.focus();
+                    }
+
                     onAfterOpen();
                 }}
                 style={modalStyle}
