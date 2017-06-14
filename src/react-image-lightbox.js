@@ -1251,6 +1251,7 @@ class ReactImageLightbox extends Component {
             prevSrc,
             toolbarButtons,
             reactModalStyle,
+            onAfterOpen,
         } = this.props;
         const {
             zoomLevel,
@@ -1451,7 +1452,10 @@ class ReactImageLightbox extends Component {
             <Modal
                 isOpen
                 onRequestClose={clickOutsideToClose ? this.requestClose : noop}
-                onAfterOpen={() => this.outerEl && this.outerEl.focus()} // Focus on the div with key handlers
+                onAfterOpen={() => {
+                    this.outerEl && this.outerEl.focus(); // Focus on the div with key handlers
+                    onAfterOpen();
+                }}
                 style={modalStyle}
                 contentLabel={translate('Lightbox')}
             >
@@ -1665,6 +1669,9 @@ ReactImageLightbox.propTypes = {
     // (angle: Number)
     onImageRotate: PropTypes.func,
 
+    // Open window event
+    onAfterOpen: PropTypes.func,
+
     //-----------------------------
     // Download discouragement settings
     //-----------------------------
@@ -1739,6 +1746,7 @@ ReactImageLightbox.defaultProps = {
     onMoveNextRequest: () => {},
     onImageLoadError:  () => {},
     onImageRotate:     () => {},
+    onAfterOpen: () => {},
 
     discourageDownloads: false,
 

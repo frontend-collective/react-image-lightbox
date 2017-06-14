@@ -89,6 +89,7 @@ onMovePrevRequest   | func   | empty function |          | Move to previous imag
 onMoveNextRequest   | func   | empty function |          | Move to next image event. Should change the parent state such that `props.nextSrc` becomes `props.mainSrc`, `props.mainSrc` becomes `props.prevSrc`, etc.
 onImageLoadError    | func   | empty function |          | Called when an image fails to load.<div>`(imageSrc: string, srcType: string, errorEvent: object): void`</div>
 onImageRotate       | func   | empty function |          | Called when an image did rotation. `(angle: number)`
+onAfterOpen         | func   | empty function |          | Called after the modal has rendered.
 discourageDownloads | bool   | `false`        |          | Enable download discouragement (prevents [right-click -> Save Image As...])
 animationDisabled   | bool   | `false`        |          | Disable all animation
 animationOnKeyInput | bool   | `false`        |          | Disable animation on actions performed with keyboard shortcuts
