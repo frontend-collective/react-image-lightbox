@@ -13,7 +13,7 @@
     "test": "webpack",
     "lint": "eslint src",
     "deploy": "npm run build && gh-pages -d build",
-    "prepublish": "npm run lint && npm run build:umd"
+    "prepublishOnly": "npm run lint && npm run build:umd"
   },
   "main": "dist/umd/react-image-lightbox.js",
   "files": [
