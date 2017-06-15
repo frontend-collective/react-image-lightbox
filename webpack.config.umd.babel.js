@@ -34,7 +34,10 @@ module.exports = {
     postcss: [
         autoprefixer({ browsers: ['IE >= 9', '> 1%'] }),
     ],
-    externals: [nodeExternals()],
+    externals: [nodeExternals({
+        // load non-javascript files with extensions, presumably via loaders
+        whitelist: [/\.(?!(?:jsx?|json)$).{1,5}$/i],
+    })],
     module: {
         loaders: [
             {

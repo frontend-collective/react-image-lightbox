@@ -3,17 +3,15 @@
   "version": "4.0.0",
   "description": "A lightbox component for React.js",
   "scripts": {
-    "build": "npm run lint && npm run build:demo && npm run build:umd",
+    "build": "npm run clean && cross-env NODE_ENV=production webpack --config webpack.config.umd.babel.js --bail",
     "build:demo": "npm run clean:demo && cross-env NODE_ENV=production webpack --config webpack.config.demo.babel.js --bail",
-    "build:umd": "npm run clean:umd && cross-env NODE_ENV=production webpack --config webpack.config.umd.babel.js --bail",
-    "clean": "npm run clean:demo && npm run clean:umd",
+    "clean": "rimraf dist/umd",
     "clean:demo": "rimraf build",
-    "clean:umd": "rimraf dist/umd",
     "start": "cross-env NODE_ENV=development webpack-dev-server --hot --inline --config webpack.config.dev.babel.js",
     "test": "webpack",
     "lint": "eslint src",
-    "deploy": "npm run build && gh-pages -d build",
-    "prepublishOnly": "npm run lint && npm run build:umd"
+    "deploy": "npm run build:demo && gh-pages -d build",
+    "prepublishOnly": "npm run lint && npm run build"
   },
   "main": "dist/umd/react-image-lightbox.js",
   "files": [
