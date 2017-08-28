@@ -1474,6 +1474,7 @@ class ReactImageLightbox extends Component {
                             type="button"
                             className={`ril-prev-button ${styles.navButtons} ${styles.navButtonPrev}`}
                             key="prev"
+                            aria-label={this.props.prevLabel}
                             onClick={!this.isAnimating() ? this.requestMovePrev : noop} // Ignore clicks during animation
                         />
                     }
@@ -1483,6 +1484,7 @@ class ReactImageLightbox extends Component {
                             type="button"
                             className={`ril-next-button ${styles.navButtons} ${styles.navButtonNext}`}
                             key="next"
+                            aria-label={this.props.nextLabel}
                             onClick={!this.isAnimating() ? this.requestMoveNext : noop} // Ignore clicks during animation
                         />
                     }
@@ -1514,6 +1516,7 @@ class ReactImageLightbox extends Component {
                                     <button // Lightbox zoom in button
                                         type="button"
                                         key="zoom-in"
+                                        aria-label={this.props.zoomInLabel}
                                         className={`ril-zoom-in ${zoomInButtonClasses.join(' ')}`}
                                         onClick={zoomInButtonHandler}
                                     />
@@ -1525,6 +1528,7 @@ class ReactImageLightbox extends Component {
                                     <button // Lightbox zoom out button
                                         type="button"
                                         key="zoom-out"
+                                        aria-label={this.props.zoomOutLabel}
                                         className={`ril-zoom-out ${zoomOutButtonClasses.join(' ')}`}
                                         onClick={zoomOutButtonHandler}
                                     />
@@ -1535,6 +1539,7 @@ class ReactImageLightbox extends Component {
                                 <button // Lightbox close button
                                     type="button"
                                     key="close"
+                                    aria-label={this.props.closeLabel}
                                     className={'ril-close ril-toolbar__item__child' +
                                         ` ${styles.toolbarItemChild} ${styles.builtinButton} ${styles.closeButton}`
                                     }
@@ -1683,6 +1688,13 @@ ReactImageLightbox.propTypes = {
 
     // Set to false to disable zoom functionality and hide zoom buttons
     enableZoom: PropTypes.bool,
+
+    // Aria-labels
+    nextLabel: PropTypes.string,
+    prevLabel: PropTypes.string,
+    zoomInLabel: PropTypes.string,
+    zoomOutLabel: PropTypes.string,
+    closeLabel: PropTypes.string,
 };
 
 ReactImageLightbox.defaultProps = {
@@ -1704,6 +1716,11 @@ ReactImageLightbox.defaultProps = {
     imagePadding:        10,
     clickOutsideToClose: true,
     enableZoom:          true,
+    nextLabel: 'Next picture',
+    prevLabel: 'Previous picture',
+    zoomInLabel: 'Zoom in',
+    zoomOutLabel: 'Zoom out',
+    closeLabel: 'Close lightbox',
 };
 
 export default ReactImageLightbox;
