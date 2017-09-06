@@ -1321,8 +1321,8 @@ class ReactImageLightbox extends Component {
                 return;
             }
 
-            imageStyle.width  = bestImageInfo.width;
-            imageStyle.height = bestImageInfo.height;
+            imageStyle.width = (isNaN(bestImageInfo.width)) ? 0 : bestImageInfo.width;
+            imageStyle.height = (isNaN(bestImageInfo.height)) ? 0 : bestImageInfo.height;
 
             const imageSrc = bestImageInfo.src;
             if (discourageDownloads) {
