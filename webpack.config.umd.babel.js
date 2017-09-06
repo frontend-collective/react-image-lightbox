@@ -1,6 +1,7 @@
 import path from 'path';
 import webpack from 'webpack';
 import autoprefixer from 'autoprefixer';
+import nodeExternals from 'webpack-node-externals';
 
 module.exports = {
     entry: {
@@ -33,11 +34,10 @@ module.exports = {
     postcss: [
         autoprefixer({ browsers: ['IE >= 9', '> 1%'] }),
     ],
-    externals: {
-        react: 'react',
-        'react-dom': 'react-dom',
-        'react-modal': 'react-modal',
-    },
+    externals: [nodeExternals({
+        // load non-javascript files with extensions, presumably via loaders
+        whitelist: [/\.(?!(?:jsx?|json)$).{1,5}$/i],
+    })],
     module: {
         loaders: [
             {

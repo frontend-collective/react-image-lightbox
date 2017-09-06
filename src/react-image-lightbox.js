@@ -1238,6 +1238,7 @@ class ReactImageLightbox extends Component {
             prevSrc,
             toolbarButtons,
             reactModalStyle,
+            onAfterOpen,
         } = this.props;
         const {
             zoomLevel,
@@ -1320,8 +1321,8 @@ class ReactImageLightbox extends Component {
                 return;
             }
 
-            imageStyle.width  = bestImageInfo.width;
-            imageStyle.height = bestImageInfo.height;
+            imageStyle.width = (isNaN(bestImageInfo.width)) ? 0 : bestImageInfo.width;
+            imageStyle.height = (isNaN(bestImageInfo.height)) ? 0 : bestImageInfo.height;
 
             const imageSrc = bestImageInfo.src;
             if (discourageDownloads) {
@@ -1428,7 +1429,14 @@ class ReactImageLightbox extends Component {
             <Modal
                 isOpen
                 onRequestClose={clickOutsideToClose ? this.requestClose : noop}
-                onAfterOpen={() => this.outerEl && this.outerEl.focus()} // Focus on the div with key handlers
+                onAfterOpen={() => {
+                    // Focus on the div with key handlers
+                    if (this.outerEl) {
+                        this.outerEl.focus();
+                    }
+
+                    onAfterOpen();
+                }}
                 style={modalStyle}
                 contentLabel={translate('Lightbox')}
             >
@@ -1466,6 +1474,7 @@ class ReactImageLightbox extends Component {
                             type="button"
                             className={`ril-prev-button ${styles.navButtons} ${styles.navButtonPrev}`}
                             key="prev"
+                            aria-label={this.props.prevLabel}
                             onClick={!this.isAnimating() ? this.requestMovePrev : noop} // Ignore clicks during animation
                         />
                     }
@@ -1475,6 +1484,7 @@ class ReactImageLightbox extends Component {
                             type="button"
                             className={`ril-next-button ${styles.navButtons} ${styles.navButtonNext}`}
                             key="next"
+                            aria-label={this.props.nextLabel}
                             onClick={!this.isAnimating() ? this.requestMoveNext : noop} // Ignore clicks during animation
                         />
                     }
@@ -1506,6 +1516,7 @@ class ReactImageLightbox extends Component {
                                     <button // Lightbox zoom in button
                                         type="button"
                                         key="zoom-in"
+                                        aria-label={this.props.zoomInLabel}
                                         className={`ril-zoom-in ${zoomInButtonClasses.join(' ')}`}
                                         onClick={zoomInButtonHandler}
                                     />
@@ -1517,6 +1528,7 @@ class ReactImageLightbox extends Component {
                                     <button // Lightbox zoom out button
                                         type="button"
                                         key="zoom-out"
+                                        aria-label={this.props.zoomOutLabel}
                                         className={`ril-zoom-out ${zoomOutButtonClasses.join(' ')}`}
                                         onClick={zoomOutButtonHandler}
                                     />
@@ -1527,6 +1539,7 @@ class ReactImageLightbox extends Component {
                                 <button // Lightbox close button
                                     type="button"
                                     key="close"
+                                    aria-label={this.props.closeLabel}
                                     className={'ril-close ril-toolbar__item__child' +
                                         ` ${styles.toolbarItemChild} ${styles.builtinButton} ${styles.closeButton}`
                                     }
@@ -1608,6 +1621,9 @@ ReactImageLightbox.propTypes = {
     // (imageSrc: string, srcType: string, errorEvent: object): void
     onImageLoadError: PropTypes.func,
 
+    // Open window event
+    onAfterOpen: PropTypes.func,
+
     //-----------------------------
     // Download discouragement settings
     //-----------------------------
@@ -1674,12 +1690,20 @@ ReactImageLightbox.propTypes = {
 
     // Set to false to disable zoom functionality and hide zoom buttons
     enableZoom: PropTypes.bool,
+
+    // Aria-labels
+    nextLabel: PropTypes.string,
+    prevLabel: PropTypes.string,
+    zoomInLabel: PropTypes.string,
+    zoomOutLabel: PropTypes.string,
+    closeLabel: PropTypes.string,
 };
 
 ReactImageLightbox.defaultProps = {
     onMovePrevRequest: () => {},
     onMoveNextRequest: () => {},
     onImageLoadError:  () => {},
+    onAfterOpen: () => {},
 
     discourageDownloads: false,
 
@@ -1694,8 +1718,13 @@ ReactImageLightbox.defaultProps = {
     imagePadding:        10,
     clickOutsideToClose: true,
     enableZoom:          true,
-
     wrapperClassName:    '',
+
+    nextLabel: 'Next picture',
+    prevLabel: 'Previous picture',
+    zoomInLabel: 'Zoom in',
+    zoomOutLabel: 'Zoom out',
+    closeLabel: 'Close lightbox',
 };
 
 export default ReactImageLightbox;
