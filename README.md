@@ -9,6 +9,7 @@ A flexible lightbox component for displaying images in a React project.
 Features
 - Keyboard shortcuts (with rate limiting)
 - Image Zoom
+- Image Rotation
 - Flexible rendering using src values assigned on the fly
 - Image preloading for smoother viewing
 - Mobile friendly, with pinch to zoom and swipe (Thanks, [@webcarrot](https://github.com/webcarrot)!)
@@ -87,6 +88,7 @@ onCloseRequest      | func   |                |    yes   | Close window event. S
 onMovePrevRequest   | func   | empty function |          | Move to previous image event. Should change the parent state such that `props.prevSrc` becomes `props.mainSrc`, `props.mainSrc` becomes `props.nextSrc`, etc.
 onMoveNextRequest   | func   | empty function |          | Move to next image event. Should change the parent state such that `props.nextSrc` becomes `props.mainSrc`, `props.mainSrc` becomes `props.prevSrc`, etc.
 onImageLoadError    | func   | empty function |          | Called when an image fails to load.<div>`(imageSrc: string, srcType: string, errorEvent: object): void`</div>
+onImageRotate       | func   | empty function |          | Called when an image did rotation. `(angle: number)`
 onAfterOpen         | func   | empty function |          | Called after the modal has rendered.
 discourageDownloads | bool   | `false`        |          | Enable download discouragement (prevents [right-click -> Save Image As...])
 animationDisabled   | bool   | `false`        |          | Disable all animation
@@ -101,6 +103,7 @@ reactModalStyle     | Object | `{}`           |          | Set `z-index` style, 
 imagePadding        | number | `10`           |          | Padding (px) between the edge of the window and the lightbox
 clickOutsideToClose | bool   | `true`         |          | When true, clicks outside of the image close the lightbox
 enableZoom          | bool   | `true`         |          | Set to false to disable zoom functionality and hide zoom buttons
+enableRotate        | bool   | `true`         |          | Set to false to disable rotation functionality and hide rotate buttons
 
 ## Browser Compatibility
 

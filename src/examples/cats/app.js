@@ -177,6 +177,7 @@ class App extends Component {
                     <ul>
                         <li>Keyboard shortcuts (with rate limiting)</li>
                         <li>Image Zoom</li>
+                        <li>Image Rotation</li>
                         <li>Flexible rendering using src values assigned on the fly</li>
                         <li>Image preloading for smoother viewing</li>
                         <li>
