@@ -1442,7 +1442,7 @@ class ReactImageLightbox extends Component {
             >
                 <div // eslint-disable-line jsx-a11y/no-static-element-interactions
                     // Floating modal with closing animations
-                    className={`ril-outer ${styles.outer} ${styles.outerAnimating}` +
+                    className={`ril-outer ${styles.outer} ${styles.outerAnimating} ${this.props.wrapperClassName} ` +
                         (isClosing ? ` ril-closing ${styles.outerClosing}` : '')
                     }
                     style={{
@@ -1676,6 +1676,8 @@ ReactImageLightbox.propTypes = {
     // Padding (px) between the edge of the window and the lightbox
     imagePadding: PropTypes.number,
 
+    wrapperClassName: PropTypes.string,
+
     //-----------------------------
     // Other
     //-----------------------------
@@ -1716,6 +1718,8 @@ ReactImageLightbox.defaultProps = {
     imagePadding:        10,
     clickOutsideToClose: true,
     enableZoom:          true,
+    wrapperClassName:    '',
+
     nextLabel: 'Next picture',
     prevLabel: 'Previous picture',
     zoomInLabel: 'Zoom in',
