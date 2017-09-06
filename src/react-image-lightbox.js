@@ -1720,8 +1720,8 @@ ReactImageLightbox.defaultProps = {
     enableZoom:          true,
     wrapperClassName:    '',
 
-    nextLabel: 'Next picture',
-    prevLabel: 'Previous picture',
+    nextLabel: 'Next image',
+    prevLabel: 'Previous image',
     zoomInLabel: 'Zoom in',
     zoomOutLabel: 'Zoom out',
     closeLabel: 'Close lightbox',

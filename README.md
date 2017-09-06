@@ -101,7 +101,12 @@ reactModalStyle     | Object | `{}`           |          | Set `z-index` style, 
 imagePadding        | number | `10`           |          | Padding (px) between the edge of the window and the lightbox
 clickOutsideToClose | bool   | `true`         |          | When true, clicks outside of the image close the lightbox
 enableZoom          | bool   | `true`         |          | Set to false to disable zoom functionality and hide zoom buttons
-wrapperClassName    | string | empty string   |          | Class name which will be applied to root element after React Modal   
+wrapperClassName    | string | `''`           |          | Class name which will be applied to root element after React Modal   
+nextLabel           | string | `'Next image'`    |     | `aria-label` set on the 'Next' button
+prevLabel           | string | `'Previous image'`|     | `aria-label` set on the 'Previous' button
+zoomInLabel         | string | `'Zoom in'`         |     | `aria-label` set on the 'Zoom In' button
+zoomOutLabel        | string | `'Zoom out'`        |     | `aria-label` set on the 'Zoom Out' button
+closeLabel          | string | `'Close lightbox'`  |     | `aria-label` set on the 'Close Lightbox' button
 
 ## Browser Compatibility
 
