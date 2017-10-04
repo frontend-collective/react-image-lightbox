@@ -385,8 +385,10 @@ class ReactImageLightbox extends Component {
 
         return {
             src:    imageSrc,
-            height: fitSizes.height,
-            width:  fitSizes.width,
+            height: this.imageCache[imageSrc].height,
+            width:  this.imageCache[imageSrc].width,
+            targetHeight: fitSizes.height,
+            targetWidth: fitSizes.width
         };
     }
 
@@ -1196,27 +1198,17 @@ class ReactImageLightbox extends Component {
     }
 
     // Request to transition to the previous image
-    static getTransform({ x = null, y = null, zoom = null }) {
+    static getTransform({ x = 0, y = 0, zoom = 1, width, targetWidth }) {
         const isOldIE = _ieVersion < 10;
-        const transforms = [];
-        if (x !== null || y !== null) {
-            transforms.push(isOldIE ?
-                `translate(${x || 0}px,${y || 0}px)` :
-                `translate3d(${x || 0}px,${y || 0}px,0)`
-            );
+        const windowWidth = getWindowWidth()
+        if (width > windowWidth) {
+            x += (windowWidth - width) / 2;
         }
+        const scaleFactor = zoom * (targetWidth / width)
 
-        if (zoom !== null) {
-            transforms.push(isOldIE ?
-                `scale(${zoom})` :
-                `scale3d(${zoom},${zoom},1)`
-            );
-        }
-
-        return {
-            [isOldIE ? 'msTransform' : 'transform']:
-                transforms.length === 0 ? 'none' : transforms.join(' '),
-        };
+        return isOldIE ?
+            { msTransform: `translate(${x}px,${y}px) scale(${scaleFactor})` } :
+            { transform: `translate3d(${x}px,${y}px,0) scale3d(${scaleFactor},${scaleFactor},1)` };
     }
 
     static loadStyles() {
@@ -1266,18 +1258,25 @@ class ReactImageLightbox extends Component {
 
         // Images to be displayed
         const images = [];
-        const addImage = (srcType, imageClass, baseStyle = {}) => {
+        const addImage = (srcType, imageClass, transforms) => {
             // Ignore types that have no source defined for their full size image
             if (!this.props[srcType]) {
                 return;
             }
+            const bestImageInfo = this.getBestImageForType(srcType);
 
-            const imageStyle = { ...baseStyle, ...transitionStyle };
+            const imageStyle = {
+                ...transitionStyle,
+                ...ReactImageLightbox.getTransform({
+                    ...transforms,
+                    ...bestImageInfo
+                })
+            };
+
             if (zoomLevel > MIN_ZOOM_LEVEL) {
                 imageStyle.cursor = 'move';
             }
 
-            const bestImageInfo = this.getBestImageForType(srcType);
             if (bestImageInfo === null) {
                 let loadingIcon;
                 if (_ieVersion < 10) {
@@ -1321,9 +1320,6 @@ class ReactImageLightbox extends Component {
                 return;
             }
 
-            imageStyle.width = isNaN(bestImageInfo.width) ? null : bestImageInfo.width;
-            imageStyle.height = isNaN(bestImageInfo.height) ? null : bestImageInfo.height;
-
             const imageSrc = bestImageInfo.src;
             if (discourageDownloads) {
                 imageStyle.backgroundImage = `url('${imageSrc}')`;
@@ -1360,23 +1356,23 @@ class ReactImageLightbox extends Component {
         addImage(
             'nextSrc',
             `ril-image-next ${styles.imageNext}`,
-            ReactImageLightbox.getTransform({ x: boxSize.width })
+            { x: boxSize.width }
         );
         // Main Image
         addImage(
             'mainSrc',
             'ril-image-current',
-            ReactImageLightbox.getTransform({
+            {
                 x: -1 * offsetX,
                 y: -1 * offsetY,
                 zoom: zoomMultiplier,
-            })
+            }
         );
         // Previous Image (displayed on the left)
         addImage(
             'prevSrc',
             `ril-image-prev ${styles.imagePrev}`,
-            ReactImageLightbox.getTransform({ x: -1 * boxSize.width })
+            { x: -1 * boxSize.width }
         );
 
         const noop = () => {};
