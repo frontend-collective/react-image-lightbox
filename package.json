@@ -1,6 +1,6 @@
 {
   "name": "react-image-lightbox",
-  "version": "4.2.1",
+  "version": "4.2.2",
   "description": "A lightbox component for React.js",
   "scripts": {
     "build": "npm run clean && cross-env NODE_ENV=production webpack --config webpack.config.umd.babel.js --bail",
