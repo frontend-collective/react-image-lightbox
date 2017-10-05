@@ -17,22 +17,22 @@ export const WHEEL_MOVE_X_THRESHOLD = 200;
 export const WHEEL_MOVE_Y_THRESHOLD = 1;
 
 export const KEYS = {
-    ESC:         27,
-    LEFT_ARROW:  37,
-    RIGHT_ARROW: 39,
+  ESC: 27,
+  LEFT_ARROW: 37,
+  RIGHT_ARROW: 39,
 };
 
 // Actions
-export const ACTION_NONE   = 0;
-export const ACTION_MOVE   = 1;
-export const ACTION_SWIPE  = 2;
-export const ACTION_PINCH  = 3;
+export const ACTION_NONE = 0;
+export const ACTION_MOVE = 1;
+export const ACTION_SWIPE = 2;
+export const ACTION_PINCH = 3;
 export const ACTION_ROTATE = 4;
 
 // Events source
-export const SOURCE_ANY     = 0;
-export const SOURCE_MOUSE   = 1;
-export const SOURCE_TOUCH   = 2;
+export const SOURCE_ANY = 0;
+export const SOURCE_MOUSE = 1;
+export const SOURCE_TOUCH = 2;
 export const SOURCE_POINTER = 3;
 
 // Minimal swipe distance

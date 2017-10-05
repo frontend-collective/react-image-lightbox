@@ -1,43 +1,43 @@
-@import "./vendor/stylesheet";
-@import "./vendor/github-light";
+@import './vendor/stylesheet';
+@import './vendor/github-light';
 
 .page-header {
-    padding: 1rem 6rem;
+  padding: 1rem 6rem;
 }
 
 .main-content {
-    box-sizing: border-box;
+  box-sizing: border-box;
 }
 
 .creditLink {
-    color: #1e6bb8;
-    text-decoration: none;
+  color: #1e6bb8;
+  text-decoration: none;
 
-    &:hover {
-        text-decoration: underline;
-    }
+  &:hover {
+    text-decoration: underline;
+  }
 }
 
 .demoButton {
-    border-radius: 5px;
-    font-size: 1.2rem;
-    cursor: pointer;
-    background-color: #303030;
-    border: none;
-    color: #FFF;
-    outline: none;
-    padding: 8px 15px;
+  border-radius: 5px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  background-color: #303030;
+  border: none;
+  color: #fff;
+  outline: none;
+  padding: 8px 15px;
 
-    &:hover {
-        background-color: #000;
-        text-shadow: 0 0 6px #FFF;
-    }
+  &:hover {
+    background-color: #000;
+    text-shadow: 0 0 6px #fff;
+  }
 
-    &:active {
-        text-shadow: 0 0 6px #FFF, 0 0 6px #FFF, 0 0 6px #FFF;
-    }
+  &:active {
+    text-shadow: 0 0 6px #fff, 0 0 6px #fff, 0 0 6px #fff;
+  }
 
-    &:focus {
-        box-shadow: 0 0 3px 2px #999;
-    }
+  &:focus {
+    box-shadow: 0 0 3px 2px #999;
+  }
 }
