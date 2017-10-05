@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import Lightbox from '../../react-image-lightbox';
+import Lightbox from '../../src/react-image-lightbox';
 import styles from './stylesheets/app.scss';
-
 import image1 from './images/1.jpg';
 import image2 from './images/2.jpg';
 import image3 from './images/3.jpg';
@@ -11,6 +10,11 @@ import image1Thumb from './images/1_thumb.jpg';
 import image2Thumb from './images/2_thumb.jpg';
 import image3Thumb from './images/3_thumb.jpg';
 import image4Thumb from './images/4_thumb.jpg';
+import '../shared/favicon/apple-touch-icon.png';
+import '../shared/favicon/favicon-16x16.png';
+import '../shared/favicon/favicon-32x32.png';
+import '../shared/favicon/favicon.ico';
+import '../shared/favicon/safari-pinned-tab.svg';
 
 const images = [image1, image2, image3, image4];
 const thumbs = [image1Thumb, image2Thumb, image3Thumb, image4Thumb];
@@ -222,4 +226,4 @@ class App extends Component {
   }
 }
 
-ReactDOM.render(<App />, document.getElementById('app'));
+export default App;
