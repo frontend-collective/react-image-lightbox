@@ -92,7 +92,7 @@ onImageLoadError    | func   | empty function |          | Called when an image 
 onAfterOpen         | func   | empty function |          | Called after the modal has rendered.
 discourageDownloads | bool   | `false`        |          | Enable download discouragement (prevents [right-click -> Save Image As...])
 animationDisabled   | bool   | `false`        |          | Disable all animation
-animationOnKeyInput | bool   | `false`        |          | Disable animation on actions performed with keyboard shortcuts
+animationOnKeyInput | bool   | `false`        |          | Enable animation on actions performed with keyboard shortcuts
 animationDuration   | number | `300`          |          | Animation duration (ms)
 keyRepeatLimit      | number | `180`          |          | Required interval of time (ms) between key actions (prevents excessively fast navigation of images)
 keyRepeatKeyupBonus | number | `40`           |          | Amount of time (ms) restored after each keyup (makes rapid key presses slightly faster than holding down the key to navigate images)
