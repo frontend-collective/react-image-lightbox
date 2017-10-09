@@ -31,11 +31,11 @@
   "license": "MIT",
   "dependencies": {
     "prop-types": "^15.5.8",
-    "react-modal": "^1.4.0"
+    "react-modal": "^3.0.0"
   },
   "peerDependencies": {
-    "react": "^15.5.0",
-    "react-dom": "^15.5.0"
+    "react": "^16.0.0",
+    "react-dom": "^16.0.0"
   },
   "devDependencies": {
     "autoprefixer": "^7.1.4",
