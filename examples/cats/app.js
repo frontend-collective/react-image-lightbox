@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import ReactDOM from 'react-dom';
 import Lightbox from '../../src/react-image-lightbox';
 import styles from './stylesheets/app.scss';
 import image1 from './images/1.jpg';
