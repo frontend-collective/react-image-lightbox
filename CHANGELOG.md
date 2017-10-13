@@ -8,13 +8,12 @@ All notable changes to this project will be documented in this file. See [standa
 
 ### Bug Fixes
 
-* Allow older versions of react ([a2dbf63](https://github.com/fritz-c/react-image-lightbox/commit/a2dbf63))
 * Hide orange outline around viewer in Chrome on Android ([359e9bd](https://github.com/fritz-c/react-image-lightbox/commit/359e9bd))
 
 
 ### Features
 
-* Add react[@16](https://github.com/16) support ([e3e63b6](https://github.com/fritz-c/react-image-lightbox/commit/e3e63b6))
+* Add react@16 support ([e3e63b6](https://github.com/fritz-c/react-image-lightbox/commit/e3e63b6))
 
 
 
