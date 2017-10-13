@@ -154,6 +154,8 @@ class ReactImageLightbox extends Component {
     this.requestClose = this.requestClose.bind(this);
     this.requestMoveNext = this.requestMoveNext.bind(this);
     this.requestMovePrev = this.requestMovePrev.bind(this);
+    this.onFocusStart = this.onFocusStart.bind(this);
+    this.onFocusEnd = this.onFocusEnd.bind(this);
   }
 
   componentWillMount() {
@@ -1301,6 +1303,16 @@ class ReactImageLightbox extends Component {
     this.requestMove('prev', event);
   }
 
+  // set focus on last Element of the Modal
+  onFocusStart(){
+    this.gaurdEnd.focus();
+  }
+  
+  // set focus on last Element of the Modal
+  onFocusEnd(){
+    this.gaurdStart.focus();
+  }
+
   render() {
     const {
       animationDisabled,
@@ -1540,6 +1552,7 @@ class ReactImageLightbox extends Component {
         style={modalStyle}
         contentLabel={translate('Lightbox')}
       >
+        <span className="tabGaurdStart" tabIndex="1000" onFocus={(this.onFocusStart)}/>
         <div // eslint-disable-line jsx-a11y/no-static-element-interactions
           // Floating modal with closing animations
           className={`ril-outer ${styles.outer} ${styles.outerAnimating} ${this
@@ -1567,6 +1580,8 @@ class ReactImageLightbox extends Component {
             // Image holder
             className={`ril-inner ${styles.inner}`}
             onClick={clickOutsideToClose ? this.closeIfClickInner : noop}
+            tabIndex="1005"
+            ref={(node)=>this.gaurdStart=node}
           >
             {images}
           </div>
@@ -1576,6 +1591,7 @@ class ReactImageLightbox extends Component {
               type="button"
               className={`ril-prev-button ${styles.navButtons} ${styles.navButtonPrev}`}
               key="prev"
+              tabIndex="1010"
               aria-label={this.props.prevLabel}
               onClick={!this.isAnimating() ? this.requestMovePrev : noop} // Ignore clicks during animation
             />
@@ -1586,6 +1602,7 @@ class ReactImageLightbox extends Component {
               type="button"
               className={`ril-next-button ${styles.navButtons} ${styles.navButtonNext}`}
               key="next"
+              tabIndex="1011"
               aria-label={this.props.nextLabel}
               onClick={!this.isAnimating() ? this.requestMoveNext : noop} // Ignore clicks during animation
             />
@@ -1617,6 +1634,7 @@ class ReactImageLightbox extends Component {
                 toolbarButtons.map((button, i) => (
                   <li
                     key={`button_${i + 1}`}
+                    tabIndex={"1013"+i}
                     className={`ril-toolbar__item ${styles.toolbarItem}`}
                   >
                     {button}
@@ -1628,6 +1646,7 @@ class ReactImageLightbox extends Component {
                   <button // Lightbox zoom in button
                     type="button"
                     key="zoom-in"
+                    tabIndex="1030"
                     aria-label={this.props.zoomInLabel}
                     className={`ril-zoom-in ${zoomInButtonClasses.join(' ')}`}
                     onClick={zoomInButtonHandler}
@@ -1640,6 +1659,7 @@ class ReactImageLightbox extends Component {
                   <button // Lightbox zoom out button
                     type="button"
                     key="zoom-out"
+                    tabIndex="1031"
                     aria-label={this.props.zoomOutLabel}
                     className={`ril-zoom-out ${zoomOutButtonClasses.join(' ')}`}
                     onClick={zoomOutButtonHandler}
@@ -1651,12 +1671,14 @@ class ReactImageLightbox extends Component {
                 <button // Lightbox close button
                   type="button"
                   key="close"
+                  tabIndex="1050"
                   aria-label={this.props.closeLabel}
                   className={
                     'ril-close ril-toolbar__item__child' +
                     ` ${styles.toolbarItemChild} ${styles.builtinButton} ${styles.closeButton}`
                   }
                   onClick={!this.isAnimating() ? this.requestClose : noop} // Ignore clicks during animation
+                  ref={(node)=>this.gaurdEnd=node}
                 />
               </li>
             </ul>
@@ -1678,6 +1700,7 @@ class ReactImageLightbox extends Component {
             </div>
           )}
         </div>
+        <span className="tabGaurdEnd" tabIndex="1051" onFocus={(this.onFocusEnd)}/>
       </Modal>
     );
   }
