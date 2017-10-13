@@ -1147,9 +1147,8 @@ class ReactImageLightbox extends Component {
       return;
     }
 
-    const height = this.caption.getBoundingClientRect().height;
-    const scrollHeight = this.caption.scrollHeight;
-    const scrollTop = this.caption.scrollTop;
+    const { height } = this.caption.getBoundingClientRect();
+    const { scrollHeight, scrollTop } = this.caption;
     if (
       (event.deltaY > 0 && height + scrollTop >= scrollHeight) ||
       (event.deltaY < 0 && scrollTop <= 0)
@@ -1564,7 +1563,7 @@ class ReactImageLightbox extends Component {
           onKeyDown={this.handleKeyInput}
           onKeyUp={this.handleKeyInput}
         >
-          <div // eslint-disable-line jsx-a11y/no-static-element-interactions
+          <div // eslint-disable-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events
             // Image holder
             className={`ril-inner ${styles.inner}`}
             onClick={clickOutsideToClose ? this.closeIfClickInner : noop}
