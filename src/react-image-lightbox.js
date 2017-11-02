@@ -1184,6 +1184,10 @@ class ReactImageLightbox extends Component {
     const that = this;
     const inMemoryImage = new Image();
 
+    if (this.props.imageCrossOrigin) {
+      inMemoryImage.crossOrigin = this.props.imageCrossOrigin;
+    }
+
     inMemoryImage.onerror = errorEvent => {
       this.props.onImageLoadError(imageSrc, srcType, errorEvent);
       done(errorEvent);
@@ -1314,6 +1318,7 @@ class ReactImageLightbox extends Component {
       toolbarButtons,
       reactModalStyle,
       onAfterOpen,
+      imageCrossOrigin,
     } = this.props;
     const { zoomLevel, offsetX, offsetY, isClosing } = this.state;
 
@@ -1439,6 +1444,7 @@ class ReactImageLightbox extends Component {
       } else {
         images.push(
           <img
+            { ...( imageCrossOrigin && { crossOrigin: imageCrossOrigin } ) }
             className={`${imageClass} ${styles.image}`}
             onDoubleClick={this.handleImageDoubleClick}
             onWheel={this.handleImageMouseWheel}
@@ -1779,6 +1785,9 @@ ReactImageLightbox.propTypes = {
   // Image caption
   imageCaption: PropTypes.node,
 
+  // Optional crossOrigin attribute
+  imageCrossOrigin: PropTypes.string,
+
   //-----------------------------
   // Lightbox style
   //-----------------------------
@@ -1824,6 +1833,7 @@ ReactImageLightbox.defaultProps = {
   discourageDownloads: false,
   enableZoom: true,
   imagePadding: 10,
+  imageCrossOrigin: null,
   keyRepeatKeyupBonus: 40,
   keyRepeatLimit: 180,
   mainSrcThumbnail: null,
