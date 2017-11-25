@@ -1,9 +1,3 @@
-/*
- * react-image-lightbox
- * Copyright 2016 Chris Fritz All rights reserved.
- * @license Open source under the MIT License
- */
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Modal from 'react-modal';
