@@ -8,7 +8,7 @@
     "clean": "rimraf dist",
     "clean:demo": "rimraf build",
     "start": "cross-env NODE_ENV=development TARGET=development webpack-dev-server --inline --hot",
-    "lint": "eslint src examples",
+    "lint": "eslint .",
     "prettier": "prettier --single-quote --trailing-comma es5 --write \"{src,examples}/**/*.{js,jsx,css,scss}\"",
     "prepublishOnly": "npm run lint && npm run test && npm run build",
     "test": "jest",
@@ -29,6 +29,28 @@
     "Chris Fritz"
   ],
   "license": "MIT",
+  "jest": {
+    "setupTestFrameworkScriptFile": "./node_modules/jest-enzyme/lib/index.js",
+    "setupFiles": [
+      "./test-config/shim.js",
+      "./test-config/test-setup.js"
+    ],
+    "moduleFileExtensions": [
+      "js",
+      "jsx",
+      "json"
+    ],
+    "moduleDirectories": [
+      "node_modules"
+    ],
+    "moduleNameMapper": {
+      "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/__mocks__/fileMock.js",
+      "\\.(css|scss|less)$": "identity-obj-proxy"
+    },
+    "snapshotSerializers": [
+      "enzyme-to-json/serializer"
+    ]
+  },
   "dependencies": {
     "prop-types": "^15.5.8",
     "react-modal": "^3.1.4"
@@ -49,6 +71,8 @@
     "cross-env": "^5.1.1",
     "css-loader": "^0.28.7",
     "enzyme": "^3.2.0",
+    "enzyme-adapter-react-16": "^1.1.0",
+    "enzyme-to-json": "^3.2.2",
     "eslint": "^4.11.0",
     "eslint-config-airbnb": "^16.1.0",
     "eslint-config-prettier": "^2.8.0",
@@ -58,6 +82,7 @@
     "file-loader": "^1.1.5",
     "gh-pages": "^1.1.0",
     "html-webpack-plugin": "^2.22.0",
+    "identity-obj-proxy": "^3.0.0",
     "isomorphic-style-loader": "^4.0.0",
     "jest": "^21.2.1",
     "jest-enzyme": "^4.0.1",
