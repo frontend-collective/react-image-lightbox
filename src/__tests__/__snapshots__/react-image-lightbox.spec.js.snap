@@ -10,6 +10,7 @@ exports[`Snapshot Testing Lightbox renders properly" 1`] = `
   discourageDownloads={false}
   enableZoom={true}
   imageCaption={null}
+  imageCrossOrigin={null}
   imagePadding={10}
   imageTitle={null}
   keyRepeatKeyupBonus={40}
