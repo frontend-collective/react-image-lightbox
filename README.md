@@ -97,7 +97,7 @@ keyRepeatLimit      | number | `180`          |          | Required interval of 
 keyRepeatKeyupBonus | number | `40`           |          | Amount of time (ms) restored after each keyup (makes rapid key presses slightly faster than holding down the key to navigate images)
 imageTitle          | node   |                |          | Image title (Descriptive element above image)
 imageCaption        | node   |                |          | Image caption (Descriptive element below image)
-imageCrossOrigin    | string |                |          | `CrossOrigin` attribute tu append to html image elements ([MDN documentation](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/img#attr-crossorigin))
+imageCrossOrigin    | string |                |          | `crossorigin` attribute to append to `img` elements ([MDN documentation](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/img#attr-crossorigin))
 toolbarButtons      | node[] |                |          | Array of custom toolbar buttons
 reactModalStyle     | Object | `{}`           |          | Set `z-index` style, etc., for the parent react-modal ([react-modal style format](https://github.com/reactjs/react-modal#styles))
 reactModalProps     | Object | `{}`           |          | Override props set on react-modal (https://github.com/reactjs/react-modal)

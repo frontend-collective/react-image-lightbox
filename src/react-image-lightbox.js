@@ -1471,7 +1471,7 @@ class ReactImageLightbox extends Component {
       } else {
         images.push(
           <img
-            { ...( imageCrossOrigin && { crossOrigin: imageCrossOrigin } ) }
+            {...(imageCrossOrigin ? { crossOrigin: imageCrossOrigin } : {})}
             className={`${imageClass} ${styles.image}`}
             onDoubleClick={this.handleImageDoubleClick}
             onWheel={this.handleImageMouseWheel}
