@@ -149,7 +149,10 @@ describe('Key bindings', () => {
 describe('Snapshot Testing', () => {
   it('Lightbox renders properly"', () => {
     const wrapper = mount(
-      <Lightbox {...commonProps} reactModalProps={{ appElement: null }} />
+      <Lightbox
+        {...commonProps}
+        reactModalProps={{ appElement: document.createElement('div') }}
+      />
     );
     expect(wrapper).toMatchSnapshot();
   });

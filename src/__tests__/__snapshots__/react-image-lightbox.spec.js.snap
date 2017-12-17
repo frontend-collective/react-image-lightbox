@@ -30,7 +30,9 @@ exports[`Snapshot Testing Lightbox renders properly" 1`] = `
   prevSrcThumbnail={null}
   reactModalProps={
     Object {
-      "appElement": null,
+      "appElement": <div
+        aria-hidden="true"
+      />,
     }
   }
   reactModalStyle={Object {}}
@@ -40,7 +42,11 @@ exports[`Snapshot Testing Lightbox renders properly" 1`] = `
   zoomOutLabel="Zoom out"
 >
   <Modal
-    appElement={null}
+    appElement={
+      <div
+        aria-hidden="true"
+      />
+    }
     ariaHideApp={true}
     bodyOpenClassName="ReactModal__Body--open"
     closeTimeoutMS={0}
@@ -75,7 +81,11 @@ exports[`Snapshot Testing Lightbox renders properly" 1`] = `
     }
   >
     <ModalPortal
-      appElement={null}
+      appElement={
+        <div
+          aria-hidden="true"
+        />
+      }
       ariaHideApp={true}
       bodyOpenClassName="ReactModal__Body--open"
       closeTimeoutMS={0}
