@@ -28,6 +28,11 @@ exports[`Snapshot Testing Lightbox renders properly" 1`] = `
   prevLabel="Previous image"
   prevSrc={null}
   prevSrcThumbnail={null}
+  reactModalProps={
+    Object {
+      "appElement": null,
+    }
+  }
   reactModalStyle={Object {}}
   toolbarButtons={null}
   wrapperClassName=""
@@ -35,6 +40,7 @@ exports[`Snapshot Testing Lightbox renders properly" 1`] = `
   zoomOutLabel="Zoom out"
 >
   <Modal
+    appElement={null}
     ariaHideApp={true}
     bodyOpenClassName="ReactModal__Body--open"
     closeTimeoutMS={0}
@@ -69,6 +75,7 @@ exports[`Snapshot Testing Lightbox renders properly" 1`] = `
     }
   >
     <ModalPortal
+      appElement={null}
       ariaHideApp={true}
       bodyOpenClassName="ReactModal__Body--open"
       closeTimeoutMS={0}
@@ -129,6 +136,7 @@ exports[`Snapshot Testing Lightbox renders properly" 1`] = `
       }
     >
       <div
+        aria-modal="true"
         className="ReactModal__Overlay ReactModal__Overlay--after-open"
         onClick={[Function]}
         onMouseDown={[Function]}
