@@ -23,60 +23,57 @@ import React, { Component } from 'react';
 import Lightbox from 'react-image-lightbox';
 
 const images = [
-    '//placekitten.com/1500/500',
-    '//placekitten.com/4000/3000',
-    '//placekitten.com/800/1200',
-    '//placekitten.com/1500/1500'
+  '//placekitten.com/1500/500',
+  '//placekitten.com/4000/3000',
+  '//placekitten.com/800/1200',
+  '//placekitten.com/1500/1500',
 ];
 
 export default class LightboxExample extends Component {
-    constructor(props) {
-        super(props);
+  constructor(props) {
+    super(props);
 
-        this.state = {
-            photoIndex: 0,
-            isOpen: false
-        };
-    }
+    this.state = {
+      photoIndex: 0,
+      isOpen: false,
+    };
+  }
 
-    render() {
-        const {
-            photoIndex,
-            isOpen,
-        } = this.state;
+  render() {
+    const { photoIndex, isOpen } = this.state;
 
-        return (
-            <div>
-                <button
-                    type="button"
-                    onClick={() => this.setState({ isOpen: true })}
-                >
-                    Open Lightbox
-                </button>
+    return (
+      <div>
+        <button type="button" onClick={() => this.setState({ isOpen: true })}>
+          Open Lightbox
+        </button>
 
-                {isOpen &&
-                    <Lightbox
-                        mainSrc={images[photoIndex]}
-                        nextSrc={images[(photoIndex + 1) % images.length]}
-                        prevSrc={images[(photoIndex + images.length - 1) % images.length]}
-
-                        onCloseRequest={() => this.setState({ isOpen: false })}
-                        onMovePrevRequest={() => this.setState({
-                            photoIndex: (photoIndex + images.length - 1) % images.length,
-                        })}
-                        onMoveNextRequest={() => this.setState({
-                            photoIndex: (photoIndex + 1) % images.length,
-                        })}
-                    />
-                }
-            </div>
-        );
-    }
+        {isOpen && (
+          <Lightbox
+            mainSrc={images[photoIndex]}
+            nextSrc={images[(photoIndex + 1) % images.length]}
+            prevSrc={images[(photoIndex + images.length - 1) % images.length]}
+            onCloseRequest={() => this.setState({ isOpen: false })}
+            onMovePrevRequest={() =>
+              this.setState({
+                photoIndex: (photoIndex + images.length - 1) % images.length,
+              })
+            }
+            onMoveNextRequest={() =>
+              this.setState({
+                photoIndex: (photoIndex + 1) % images.length,
+              })
+            }
+          />
+        )}
+      </div>
+    );
+  }
 }
+```
 
 Play with the code on the [example on CodeSandbox](https://codesandbox.io/s/wkw2mjm5l8)
 
-```
 ## Options
 
 Property            | Type   | Default        | Required | Description
@@ -100,9 +97,10 @@ keyRepeatLimit      | number | `180`          |          | Required interval of 
 keyRepeatKeyupBonus | number | `40`           |          | Amount of time (ms) restored after each keyup (makes rapid key presses slightly faster than holding down the key to navigate images)
 imageTitle          | node   |                |          | Image title (Descriptive element above image)
 imageCaption        | node   |                |          | Image caption (Descriptive element below image)
-imageCrossOrigin    | string |                |          | `CrossOrigin` attribute tu append to html image elements ([MDN documentation](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/img#attr-crossorigin))
+imageCrossOrigin    | string |                |          | `crossorigin` attribute to append to `img` elements ([MDN documentation](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/img#attr-crossorigin))
 toolbarButtons      | node[] |                |          | Array of custom toolbar buttons
 reactModalStyle     | Object | `{}`           |          | Set `z-index` style, etc., for the parent react-modal ([react-modal style format](https://github.com/reactjs/react-modal#styles))
+reactModalProps     | Object | `{}`           |          | Override props set on react-modal (https://github.com/reactjs/react-modal)
 imagePadding        | number | `10`           |          | Padding (px) between the edge of the window and the lightbox
 clickOutsideToClose | bool   | `true`         |          | When `true`, clicks outside of the image close the lightbox
 enableZoom          | bool   | `true`         |          | Set to `false` to disable zoom functionality and hide zoom buttons
