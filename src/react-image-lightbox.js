@@ -1317,6 +1317,7 @@ class ReactImageLightbox extends Component {
       reactModalStyle,
       onAfterOpen,
       imageCrossOrigin,
+      reactModalProps,
     } = this.props;
     const { zoomLevel, offsetX, offsetY, isClosing } = this.state;
 
@@ -1574,6 +1575,7 @@ class ReactImageLightbox extends Component {
         appElement={
           typeof window !== 'undefined' ? window.document.body : undefined
         }
+        {...reactModalProps}
       >
         <div // eslint-disable-line jsx-a11y/no-static-element-interactions
           // Floating modal with closing animations
@@ -1851,6 +1853,9 @@ ReactImageLightbox.propTypes = {
   // Set to false to disable zoom functionality and hide zoom buttons
   enableZoom: PropTypes.bool,
 
+  // Override props set on react-modal (https://github.com/reactjs/react-modal)
+  reactModalProps: PropTypes.shape({}),
+
   // Aria-labels
   nextLabel: PropTypes.string,
   prevLabel: PropTypes.string,
@@ -1863,6 +1868,7 @@ ReactImageLightbox.defaultProps = {
   imageTitle: null,
   imageCaption: null,
   toolbarButtons: null,
+  reactModalProps: {},
   animationDisabled: false,
   animationDuration: 300,
   animationOnKeyInput: false,

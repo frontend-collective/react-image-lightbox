@@ -103,6 +103,7 @@ imageCaption        | node   |                |          | Image caption (Descri
 imageCrossOrigin    | string |                |          | `CrossOrigin` attribute tu append to html image elements ([MDN documentation](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/img#attr-crossorigin))
 toolbarButtons      | node[] |                |          | Array of custom toolbar buttons
 reactModalStyle     | Object | `{}`           |          | Set `z-index` style, etc., for the parent react-modal ([react-modal style format](https://github.com/reactjs/react-modal#styles))
+reactModalProps     | Object | `{}`           |          | Override props set on react-modal (https://github.com/reactjs/react-modal)
 imagePadding        | number | `10`           |          | Padding (px) between the edge of the window and the lightbox
 clickOutsideToClose | bool   | `true`         |          | When `true`, clicks outside of the image close the lightbox
 enableZoom          | bool   | `true`         |          | Set to `false` to disable zoom functionality and hide zoom buttons
