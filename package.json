@@ -53,14 +53,14 @@
   },
   "dependencies": {
     "prop-types": "^15.5.8",
-    "react-modal": "^3.1.4"
+    "react-modal": "^3.1.8"
   },
   "peerDependencies": {
     "react": "^15.5.0 || ^16.0.0",
     "react-dom": "^15.5.0 || ^16.0.0"
   },
   "devDependencies": {
-    "autoprefixer": "^7.1.6",
+    "autoprefixer": "^7.2.3",
     "babel-cli": "^6.10.1",
     "babel-core": "^6.10.4",
     "babel-loader": "^7.1.2",
@@ -73,14 +73,14 @@
     "css-loader": "^0.28.7",
     "enzyme": "^3.2.0",
     "enzyme-adapter-react-16": "^1.1.0",
-    "enzyme-to-json": "^3.2.2",
-    "eslint": "^4.11.0",
+    "enzyme-to-json": "^3.3.0",
+    "eslint": "^4.13.1",
     "eslint-config-airbnb": "^16.1.0",
-    "eslint-config-prettier": "^2.8.0",
+    "eslint-config-prettier": "^2.9.0",
     "eslint-plugin-import": "^2.8.0",
-    "eslint-plugin-jsx-a11y": "^6.0.2",
+    "eslint-plugin-jsx-a11y": "^6.0.3",
     "eslint-plugin-react": "^7.5.1",
-    "file-loader": "^1.1.5",
+    "file-loader": "^1.1.6",
     "gh-pages": "^1.1.0",
     "html-webpack-plugin": "^2.22.0",
     "identity-obj-proxy": "^3.0.0",
@@ -89,14 +89,14 @@
     "jest-enzyme": "^4.0.1",
     "node-sass": "^4.7.2",
     "postcss-loader": "^2.0.9",
-    "prettier": "^1.8.2",
-    "react": "^16.1.1",
-    "react-dom": "^16.1.1",
+    "prettier": "^1.9.2",
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0",
     "react-hot-loader": "^3.1.3",
     "rimraf": "^2.5.3",
     "sass-loader": "^6.0.6",
-    "webpack": "^3.8.1",
-    "webpack-dev-server": "^2.9.4",
+    "webpack": "^3.10.0",
+    "webpack-dev-server": "^2.9.7",
     "webpack-node-externals": "^1.6.0"
   },
   "keywords": [
