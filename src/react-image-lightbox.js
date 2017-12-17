@@ -36,8 +36,12 @@ if (ieVersion < 10) {
   styles = {
     ...styles,
     toolbarSide: `${styles.toolbarSide} ${styles.toolbarSideNoFlex}`,
-    toolbarLeftSide: `${styles.toolbarLeftSide} ${styles.toolbarLeftSideNoFlex}`,
-    toolbarRightSide: `${styles.toolbarRightSide} ${styles.toolbarRightSideNoFlex}`,
+    toolbarLeftSide: `${styles.toolbarLeftSide} ${
+      styles.toolbarLeftSideNoFlex
+    }`,
+    toolbarRightSide: `${styles.toolbarRightSide} ${
+      styles.toolbarRightSideNoFlex
+    }`,
   };
 }
 
@@ -409,15 +413,15 @@ class ReactImageLightbox extends Component {
   }
 
   /**
-     * Get sizing when the image is scaled
-     */
+   * Get sizing when the image is scaled
+   */
   getZoomMultiplier(zoomLevel = this.state.zoomLevel) {
     return ZOOM_RATIO ** zoomLevel;
   }
 
   /**
-     * Get the size of the lightbox in pixels
-     */
+   * Get the size of the lightbox in pixels
+   */
   getLightboxRect() {
     if (this.outerEl) {
       return this.outerEl.getBoundingClientRect();
@@ -597,8 +601,8 @@ class ReactImageLightbox extends Component {
   }
 
   /**
-     * Handle user keyboard actions
-     */
+   * Handle user keyboard actions
+   */
   handleKeyInput(event) {
     event.stopPropagation();
 
@@ -661,8 +665,8 @@ class ReactImageLightbox extends Component {
   }
 
   /**
-     * Handle a mouse wheel event over the lightbox container
-     */
+   * Handle a mouse wheel event over the lightbox container
+   */
   handleOuterMousewheel(event) {
     // Prevent scrolling of the background
     event.preventDefault();
@@ -737,8 +741,8 @@ class ReactImageLightbox extends Component {
   }
 
   /**
-     * Handle a double click on the current image
-     */
+   * Handle a double click on the current image
+   */
   handleImageDoubleClick(event) {
     if (this.state.zoomLevel > MIN_ZOOM_LEVEL) {
       // A double click when zoomed in zooms all the way out
@@ -1365,43 +1369,69 @@ class ReactImageLightbox extends Component {
         } else {
           loadingIcon = (
             <div
-              className={`ril-loading-circle ${styles.loadingCircle} ${styles.loadingContainer__icon}`}
+              className={`ril-loading-circle ${styles.loadingCircle} ${
+                styles.loadingContainer__icon
+              }`}
             >
               <div
-                className={`ril-loading-circle-point ${styles.loadingCirclePoint}`}
+                className={`ril-loading-circle-point ${
+                  styles.loadingCirclePoint
+                }`}
               />
               <div
-                className={`ril-loading-circle-point ${styles.loadingCirclePoint}`}
+                className={`ril-loading-circle-point ${
+                  styles.loadingCirclePoint
+                }`}
               />
               <div
-                className={`ril-loading-circle-point ${styles.loadingCirclePoint}`}
+                className={`ril-loading-circle-point ${
+                  styles.loadingCirclePoint
+                }`}
               />
               <div
-                className={`ril-loading-circle-point ${styles.loadingCirclePoint}`}
+                className={`ril-loading-circle-point ${
+                  styles.loadingCirclePoint
+                }`}
               />
               <div
-                className={`ril-loading-circle-point ${styles.loadingCirclePoint}`}
+                className={`ril-loading-circle-point ${
+                  styles.loadingCirclePoint
+                }`}
               />
               <div
-                className={`ril-loading-circle-point ${styles.loadingCirclePoint}`}
+                className={`ril-loading-circle-point ${
+                  styles.loadingCirclePoint
+                }`}
               />
               <div
-                className={`ril-loading-circle-point ${styles.loadingCirclePoint}`}
+                className={`ril-loading-circle-point ${
+                  styles.loadingCirclePoint
+                }`}
               />
               <div
-                className={`ril-loading-circle-point ${styles.loadingCirclePoint}`}
+                className={`ril-loading-circle-point ${
+                  styles.loadingCirclePoint
+                }`}
               />
               <div
-                className={`ril-loading-circle-point ${styles.loadingCirclePoint}`}
+                className={`ril-loading-circle-point ${
+                  styles.loadingCirclePoint
+                }`}
               />
               <div
-                className={`ril-loading-circle-point ${styles.loadingCirclePoint}`}
+                className={`ril-loading-circle-point ${
+                  styles.loadingCirclePoint
+                }`}
               />
               <div
-                className={`ril-loading-circle-point ${styles.loadingCirclePoint}`}
+                className={`ril-loading-circle-point ${
+                  styles.loadingCirclePoint
+                }`}
               />
               <div
-                className={`ril-loading-circle-point ${styles.loadingCirclePoint}`}
+                className={`ril-loading-circle-point ${
+                  styles.loadingCirclePoint
+                }`}
               />
             </div>
           );
@@ -1426,7 +1456,9 @@ class ReactImageLightbox extends Component {
         imageStyle.backgroundImage = `url('${imageSrc}')`;
         images.push(
           <div
-            className={`${imageClass} ${styles.image} ${styles.imageDiscourager}`}
+            className={`${imageClass} ${styles.image} ${
+              styles.imageDiscourager
+            }`}
             onDoubleClick={this.handleImageDoubleClick}
             onWheel={this.handleImageMouseWheel}
             style={imageStyle}
@@ -1542,10 +1574,9 @@ class ReactImageLightbox extends Component {
       >
         <div // eslint-disable-line jsx-a11y/no-static-element-interactions
           // Floating modal with closing animations
-          className={`ril-outer ${styles.outer} ${styles.outerAnimating} ${this
-            .props.wrapperClassName} ${isClosing
-            ? `ril-closing ${styles.outerClosing}`
-            : ''}`}
+          className={`ril-outer ${styles.outer} ${styles.outerAnimating} ${
+            this.props.wrapperClassName
+          } ${isClosing ? `ril-closing ${styles.outerClosing}` : ''}`}
           style={{
             transition: `opacity ${animationDuration}ms`,
             animationDuration: `${animationDuration}ms`,
@@ -1574,7 +1605,9 @@ class ReactImageLightbox extends Component {
           {prevSrc && (
             <button // Move to previous image button
               type="button"
-              className={`ril-prev-button ${styles.navButtons} ${styles.navButtonPrev}`}
+              className={`ril-prev-button ${styles.navButtons} ${
+                styles.navButtonPrev
+              }`}
               key="prev"
               aria-label={this.props.prevLabel}
               onClick={!this.isAnimating() ? this.requestMovePrev : noop} // Ignore clicks during animation
@@ -1584,7 +1617,9 @@ class ReactImageLightbox extends Component {
           {nextSrc && (
             <button // Move to next image button
               type="button"
-              className={`ril-next-button ${styles.navButtons} ${styles.navButtonNext}`}
+              className={`ril-next-button ${styles.navButtons} ${
+                styles.navButtonNext
+              }`}
               key="next"
               aria-label={this.props.nextLabel}
               onClick={!this.isAnimating() ? this.requestMoveNext : noop} // Ignore clicks during animation
@@ -1595,11 +1630,15 @@ class ReactImageLightbox extends Component {
             className={`ril-toolbar ${styles.toolbar}`}
           >
             <ul
-              className={`ril-toolbar-left ${styles.toolbarSide} ${styles.toolbarLeftSide}`}
+              className={`ril-toolbar-left ${styles.toolbarSide} ${
+                styles.toolbarLeftSide
+              }`}
             >
               <li className={`ril-toolbar__item ${styles.toolbarItem}`}>
                 <span
-                  className={`ril-toolbar__item__child ${styles.toolbarItemChild}`}
+                  className={`ril-toolbar__item__child ${
+                    styles.toolbarItemChild
+                  }`}
                 >
                   {imageTitle}
                 </span>
@@ -1654,7 +1693,9 @@ class ReactImageLightbox extends Component {
                   aria-label={this.props.closeLabel}
                   className={
                     'ril-close ril-toolbar__item__child' +
-                    ` ${styles.toolbarItemChild} ${styles.builtinButton} ${styles.closeButton}`
+                    ` ${styles.toolbarItemChild} ${styles.builtinButton} ${
+                      styles.closeButton
+                    }`
                   }
                   onClick={!this.isAnimating() ? this.requestClose : noop} // Ignore clicks during animation
                 />
