@@ -4,7 +4,10 @@
  * @return {?number} ieVersion - IE version as an integer, or undefined if not IE
  */
 export function getIEVersion() {
-  if (typeof window === 'undefined') {
+  if (
+    typeof window === 'undefined' ||
+    typeof window.navigator === 'undefined'
+  ) {
     return undefined;
   }
 
