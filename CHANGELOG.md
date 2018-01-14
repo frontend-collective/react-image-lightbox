@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="4.4.1"></a>
+## [4.4.1](https://github.com/fritz-c/react-image-lightbox/compare/v4.4.0...v4.4.1) (2018-01-14)
+
+
+### Bug Fixes
+
+* handle environment with no navigator. Fixes [#97](https://github.com/fritz-c/react-image-lightbox/issues/97) ([7f36b72](https://github.com/fritz-c/react-image-lightbox/commit/7f36b72))
+
+
+
 <a name="4.4.0"></a>
 # [4.4.0](https://github.com/fritz-c/react-image-lightbox/compare/v4.3.0...v4.4.0) (2017-12-17)
 
