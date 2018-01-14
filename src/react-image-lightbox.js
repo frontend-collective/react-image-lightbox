@@ -1314,83 +1314,28 @@ class ReactImageLightbox extends Component {
       }
 
       if (bestImageInfo === null) {
-        let loadingIcon;
-        if (ieVersion < 10) {
-          loadingIcon = (
+        const loadingIcon =
+          ieVersion < 10 ? (
             <div className={styles.loadingContainer__icon}>
               {translate('Loading...')}
             </div>
-          );
-        } else {
-          loadingIcon = (
+          ) : (
             <div
               className={`ril-loading-circle ${styles.loadingCircle} ${
                 styles.loadingContainer__icon
               }`}
             >
-              <div
-                className={`ril-loading-circle-point ${
-                  styles.loadingCirclePoint
-                }`}
-              />
-              <div
-                className={`ril-loading-circle-point ${
-                  styles.loadingCirclePoint
-                }`}
-              />
-              <div
-                className={`ril-loading-circle-point ${
-                  styles.loadingCirclePoint
-                }`}
-              />
-              <div
-                className={`ril-loading-circle-point ${
-                  styles.loadingCirclePoint
-                }`}
-              />
-              <div
-                className={`ril-loading-circle-point ${
-                  styles.loadingCirclePoint
-                }`}
-              />
-              <div
-                className={`ril-loading-circle-point ${
-                  styles.loadingCirclePoint
-                }`}
-              />
-              <div
-                className={`ril-loading-circle-point ${
-                  styles.loadingCirclePoint
-                }`}
-              />
-              <div
-                className={`ril-loading-circle-point ${
-                  styles.loadingCirclePoint
-                }`}
-              />
-              <div
-                className={`ril-loading-circle-point ${
-                  styles.loadingCirclePoint
-                }`}
-              />
-              <div
-                className={`ril-loading-circle-point ${
-                  styles.loadingCirclePoint
-                }`}
-              />
-              <div
-                className={`ril-loading-circle-point ${
-                  styles.loadingCirclePoint
-                }`}
-              />
-              <div
-                className={`ril-loading-circle-point ${
-                  styles.loadingCirclePoint
-                }`}
-              />
+              {[...new Array(12)].map((_, index) => (
+                <div
+                  // eslint-disable-next-line react/no-array-index-key
+                  key={index}
+                  className={`ril-loading-circle-point ${
+                    styles.loadingCirclePoint
+                  }`}
+                />
+              ))}
             </div>
           );
-        }
 
         // Fall back to loading icon if the thumbnail has not been loaded
         images.push(
@@ -1458,40 +1403,6 @@ class ReactImageLightbox extends Component {
       x: -1 * boxSize.width,
     });
 
-    const noop = () => {};
-
-    // Prepare styles and handlers for the zoom in/out buttons
-    const zoomInButtonClasses = [
-      styles.toolbarItemChild,
-      styles.builtinButton,
-      styles.zoomInButton,
-    ];
-    const zoomOutButtonClasses = [
-      styles.toolbarItemChild,
-      styles.builtinButton,
-      styles.zoomOutButton,
-    ];
-    let zoomInButtonHandler = this.handleZoomInButtonClick;
-    let zoomOutButtonHandler = this.handleZoomOutButtonClick;
-
-    // Disable zooming in when zoomed all the way in
-    if (zoomLevel === MAX_ZOOM_LEVEL) {
-      zoomInButtonClasses.push(styles.builtinButtonDisabled);
-      zoomInButtonHandler = noop;
-    }
-
-    // Disable zooming out when zoomed all the way out
-    if (zoomLevel === MIN_ZOOM_LEVEL) {
-      zoomOutButtonClasses.push(styles.builtinButtonDisabled);
-      zoomOutButtonHandler = noop;
-    }
-
-    // Ignore clicks during animation
-    if (this.isAnimating()) {
-      zoomInButtonHandler = noop;
-      zoomOutButtonHandler = noop;
-    }
-
     const modalStyle = {
       overlay: {
         zIndex: 1000,
@@ -1515,7 +1426,7 @@ class ReactImageLightbox extends Component {
     return (
       <Modal
         isOpen
-        onRequestClose={clickOutsideToClose ? this.requestClose : noop}
+        onRequestClose={clickOutsideToClose ? this.requestClose : undefined}
         onAfterOpen={() => {
           // Focus on the div with key handlers
           if (this.outerEl) {
@@ -1558,7 +1469,7 @@ class ReactImageLightbox extends Component {
           <div // eslint-disable-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events
             // Image holder
             className={`ril-inner ${styles.inner}`}
-            onClick={clickOutsideToClose ? this.closeIfClickInner : noop}
+            onClick={clickOutsideToClose ? this.closeIfClickInner : undefined}
           >
             {images}
           </div>
@@ -1571,7 +1482,7 @@ class ReactImageLightbox extends Component {
               }`}
               key="prev"
               aria-label={this.props.prevLabel}
-              onClick={!this.isAnimating() ? this.requestMovePrev : noop} // Ignore clicks during animation
+              onClick={!this.isAnimating() ? this.requestMovePrev : undefined} // Ignore clicks during animation
             />
           )}
 
@@ -1583,7 +1494,7 @@ class ReactImageLightbox extends Component {
               }`}
               key="next"
               aria-label={this.props.nextLabel}
-              onClick={!this.isAnimating() ? this.requestMoveNext : noop} // Ignore clicks during animation
+              onClick={!this.isAnimating() ? this.requestMoveNext : undefined} // Ignore clicks during animation
             />
           )}
 
@@ -1629,8 +1540,23 @@ class ReactImageLightbox extends Component {
                     type="button"
                     key="zoom-in"
                     aria-label={this.props.zoomInLabel}
-                    className={`ril-zoom-in ${zoomInButtonClasses.join(' ')}`}
-                    onClick={zoomInButtonHandler}
+                    className={[
+                      'ril-zoom-in',
+                      styles.toolbarItemChild,
+                      styles.builtinButton,
+                      styles.zoomInButton,
+                      ...(zoomLevel === MAX_ZOOM_LEVEL
+                        ? [styles.builtinButtonDisabled]
+                        : []),
+                    ].join(' ')}
+                    disabled={
+                      this.isAnimating() || zoomLevel === MAX_ZOOM_LEVEL
+                    }
+                    onClick={
+                      !this.isAnimating() && zoomLevel !== MAX_ZOOM_LEVEL
+                        ? this.handleZoomInButtonClick
+                        : undefined
+                    }
                   />
                 </li>
               )}
@@ -1641,8 +1567,23 @@ class ReactImageLightbox extends Component {
                     type="button"
                     key="zoom-out"
                     aria-label={this.props.zoomOutLabel}
-                    className={`ril-zoom-out ${zoomOutButtonClasses.join(' ')}`}
-                    onClick={zoomOutButtonHandler}
+                    className={[
+                      'ril-zoom-out',
+                      styles.toolbarItemChild,
+                      styles.builtinButton,
+                      styles.zoomOutButton,
+                      ...(zoomLevel === MIN_ZOOM_LEVEL
+                        ? [styles.builtinButtonDisabled]
+                        : []),
+                    ].join(' ')}
+                    disabled={
+                      this.isAnimating() || zoomLevel === MIN_ZOOM_LEVEL
+                    }
+                    onClick={
+                      !this.isAnimating() && zoomLevel !== MIN_ZOOM_LEVEL
+                        ? this.handleZoomOutButtonClick
+                        : undefined
+                    }
                   />
                 </li>
               )}
@@ -1658,7 +1599,7 @@ class ReactImageLightbox extends Component {
                       styles.closeButton
                     }`
                   }
-                  onClick={!this.isAnimating() ? this.requestClose : noop} // Ignore clicks during animation
+                  onClick={!this.isAnimating() ? this.requestClose : undefined} // Ignore clicks during animation
                 />
               </li>
             </ul>
