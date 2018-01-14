@@ -1,4 +1,3 @@
-/* eslint-env jest */
 import { mount } from 'enzyme';
 import React from 'react';
 import Modal from 'react-modal';
@@ -151,7 +150,7 @@ describe('Snapshot Testing', () => {
     const wrapper = mount(
       <Lightbox
         {...commonProps}
-        reactModalProps={{ appElement: document.createElement('div') }}
+        reactModalProps={{ appElement: global.document.createElement('div') }}
       />
     );
     expect(wrapper).toMatchSnapshot();

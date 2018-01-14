@@ -5,7 +5,6 @@ import {
   translate,
   getWindowWidth,
   getWindowHeight,
-  isInSameOriginIframe,
   getIEVersion,
 } from './util';
 import {
@@ -96,7 +95,7 @@ class ReactImageLightbox extends Component {
 
   static loadStyles() {
     // Insert component styles
-    if (typeof window === 'object') {
+    if (typeof global.window !== 'undefined') {
       // eslint-disable-next-line no-underscore-dangle
       styles._insertCss();
     }
@@ -171,9 +170,6 @@ class ReactImageLightbox extends Component {
     this.preventInnerClose = false;
     this.preventInnerCloseTimeout = null;
 
-    // Whether event listeners for keyboard and mouse input have been attached or not
-    this.listenersAttached = false;
-
     // Used to disable animation when changing props.mainSrc|nextSrc|prevSrc
     this.keyPressed = false;
 
@@ -221,9 +217,21 @@ class ReactImageLightbox extends Component {
   }
 
   componentDidMount() {
-    this.mounted = true;
     ReactImageLightbox.loadStyles();
-    this.attachListeners();
+
+    this.listeners = {
+      resize: this.handleWindowResize,
+      mouseup: this.handleMouseUp,
+      touchend: this.handleTouchEnd,
+      touchcancel: this.handleTouchEnd,
+      pointerdown: this.handlePointerEvent,
+      pointermove: this.handlePointerEvent,
+      pointerup: this.handlePointerEvent,
+      pointercancel: this.handlePointerEvent,
+    };
+    Object.keys(this.listeners).forEach(type => {
+      global.window.top.addEventListener(type, this.listeners[type]);
+    });
 
     this.loadAllImages();
   }
@@ -264,8 +272,10 @@ class ReactImageLightbox extends Component {
   }
 
   componentWillUnmount() {
-    this.mounted = false;
-    this.detachListeners();
+    this.didUnmount = true;
+    Object.keys(this.listeners).forEach(type => {
+      global.window.top.removeEventListener(type, this.listeners[type]);
+    });
     this.timeouts.forEach(tid => clearTimeout(tid));
   }
 
@@ -442,33 +452,6 @@ class ReactImageLightbox extends Component {
     clearTimeout(id);
   }
 
-  // Attach key and mouse input events
-  attachListeners() {
-    if (!this.listenersAttached && typeof window !== 'undefined') {
-      window.addEventListener('resize', this.handleWindowResize);
-      window.addEventListener('mouseup', this.handleMouseUp);
-      window.addEventListener('touchend', this.handleTouchEnd);
-      window.addEventListener('touchcancel', this.handleTouchEnd);
-      window.addEventListener('pointerdown', this.handlePointerEvent);
-      window.addEventListener('pointermove', this.handlePointerEvent);
-      window.addEventListener('pointerup', this.handlePointerEvent);
-      window.addEventListener('pointercancel', this.handlePointerEvent);
-      // Have to add an extra mouseup handler to catch mouseup events outside of the window
-      //  if the page containing the lightbox is displayed in an iframe
-      if (isInSameOriginIframe()) {
-        window.top.addEventListener('mouseup', this.handleMouseUp);
-        window.top.addEventListener('touchend', this.handleTouchEnd);
-        window.top.addEventListener('touchcancel', this.handleTouchEnd);
-        window.top.addEventListener('pointerdown', this.handlePointerEvent);
-        window.top.addEventListener('pointermove', this.handlePointerEvent);
-        window.top.addEventListener('pointerup', this.handlePointerEvent);
-        window.top.addEventListener('pointercancel', this.handlePointerEvent);
-      }
-
-      this.listenersAttached = true;
-    }
-  }
-
   // Change zoom level
   changeZoom(zoomLevel, clientX, clientY) {
     // Ignore if zoom disabled
@@ -569,34 +552,6 @@ class ReactImageLightbox extends Component {
       event.target.className.search(/\bril-inner\b/) > -1
     ) {
       this.requestClose(event);
-    }
-  }
-
-  // Detach key and mouse input events
-  detachListeners() {
-    if (this.listenersAttached) {
-      window.removeEventListener('resize', this.handleWindowResize);
-      window.removeEventListener('mouseup', this.handleMouseUp);
-      window.removeEventListener('touchend', this.handleTouchEnd);
-      window.removeEventListener('touchcancel', this.handleTouchEnd);
-      window.removeEventListener('pointerdown', this.handlePointerEvent);
-      window.removeEventListener('pointermove', this.handlePointerEvent);
-      window.removeEventListener('pointerup', this.handlePointerEvent);
-      window.removeEventListener('pointercancel', this.handlePointerEvent);
-      if (isInSameOriginIframe()) {
-        window.top.removeEventListener('mouseup', this.handleMouseUp);
-        window.top.removeEventListener('touchend', this.handleTouchEnd);
-        window.top.removeEventListener('touchcancel', this.handleTouchEnd);
-        window.top.removeEventListener('pointerdown', this.handlePointerEvent);
-        window.top.removeEventListener('pointermove', this.handlePointerEvent);
-        window.top.removeEventListener('pointerup', this.handlePointerEvent);
-        window.top.removeEventListener(
-          'pointercancel',
-          this.handlePointerEvent
-        );
-      }
-
-      this.listenersAttached = false;
     }
   }
 
@@ -1179,8 +1134,7 @@ class ReactImageLightbox extends Component {
       return;
     }
 
-    const that = this;
-    const inMemoryImage = new Image();
+    const inMemoryImage = new global.Image();
 
     if (this.props.imageCrossOrigin) {
       inMemoryImage.crossOrigin = this.props.imageCrossOrigin;
@@ -1191,11 +1145,11 @@ class ReactImageLightbox extends Component {
       done(errorEvent);
     };
 
-    inMemoryImage.onload = function onLoad() {
-      that.imageCache[imageSrc] = {
+    inMemoryImage.onload = () => {
+      this.imageCache[imageSrc] = {
         loaded: true,
-        width: this.width,
-        height: this.height,
+        width: inMemoryImage.width,
+        height: inMemoryImage.height,
       };
 
       done();
@@ -1214,7 +1168,7 @@ class ReactImageLightbox extends Component {
 
       // Don't rerender if the src is not the same as when the load started
       // or if the component has unmounted
-      if (this.props[srcType] !== imageSrc || !this.mounted) {
+      if (this.props[srcType] !== imageSrc || this.didUnmount) {
         return;
       }
 
@@ -1573,7 +1527,9 @@ class ReactImageLightbox extends Component {
         style={modalStyle}
         contentLabel={translate('Lightbox')}
         appElement={
-          typeof window !== 'undefined' ? window.document.body : undefined
+          typeof global.window !== 'undefined'
+            ? global.window.document.body
+            : undefined
         }
         {...reactModalProps}
       >

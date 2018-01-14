@@ -5,13 +5,13 @@
  */
 export function getIEVersion() {
   if (
-    typeof window === 'undefined' ||
-    typeof window.navigator === 'undefined'
+    typeof global.window === 'undefined' ||
+    typeof global.window.navigator === 'undefined'
   ) {
     return undefined;
   }
 
-  const match = window.navigator.userAgent.match(
+  const match = global.window.navigator.userAgent.match(
     /(?:MSIE |Trident\/.*; rv:)(\d+)/
   );
   return match ? parseInt(match[1], 10) : undefined;
@@ -36,35 +36,9 @@ export function translate(str, replaceStrings = null) {
 }
 
 export function getWindowWidth() {
-  if (typeof window === 'undefined') {
-    return 0;
-  }
-
-  return (
-    window.innerWidth ||
-    document.documentElement.clientWidth ||
-    document.body.clientWidth
-  );
+  return typeof global.window !== 'undefined' ? global.window.innerWidth : 0;
 }
 
 export function getWindowHeight() {
-  if (typeof window === 'undefined') {
-    return 0;
-  }
-
-  return (
-    window.innerHeight ||
-    document.documentElement.clientHeight ||
-    document.body.clientHeight
-  );
-}
-
-// Returns true if this window is rendered as an iframe inside another window
-// with the same origin.
-export function isInSameOriginIframe() {
-  try {
-    return window.self !== window.top && window.top.document;
-  } catch (e) {
-    return false;
-  }
+  return typeof global.window !== 'undefined' ? global.window.innerHeight : 0;
 }
