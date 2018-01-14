@@ -211,21 +211,72 @@ exports[`Snapshot Testing Lightbox renders properly" 1`] = `
               className="ril-inner inner"
               onClick={[Function]}
             >
-              <img
-                alt="Image"
-                className="ril-image-current image"
-                draggable={false}
+              <div
+                className="ril-image-current image ril-not-loaded"
                 key="/fake/image/src.jpgi0"
-                onDoubleClick={[Function]}
-                onDragStart={[Function]}
-                onWheel={[Function]}
-                src="/fake/image/src.jpg"
                 style={
                   Object {
                     "transform": "translate3d(0px,0px,0) scale3d(NaN,NaN,1)",
                   }
                 }
-              />
+              >
+                <div
+                  className="loadingContainer"
+                >
+                  <div
+                    className="ril-loading-circle loadingCircle loadingContainer__icon"
+                  >
+                    <div
+                      className="ril-loading-circle-point loadingCirclePoint"
+                      key="0"
+                    />
+                    <div
+                      className="ril-loading-circle-point loadingCirclePoint"
+                      key="1"
+                    />
+                    <div
+                      className="ril-loading-circle-point loadingCirclePoint"
+                      key="2"
+                    />
+                    <div
+                      className="ril-loading-circle-point loadingCirclePoint"
+                      key="3"
+                    />
+                    <div
+                      className="ril-loading-circle-point loadingCirclePoint"
+                      key="4"
+                    />
+                    <div
+                      className="ril-loading-circle-point loadingCirclePoint"
+                      key="5"
+                    />
+                    <div
+                      className="ril-loading-circle-point loadingCirclePoint"
+                      key="6"
+                    />
+                    <div
+                      className="ril-loading-circle-point loadingCirclePoint"
+                      key="7"
+                    />
+                    <div
+                      className="ril-loading-circle-point loadingCirclePoint"
+                      key="8"
+                    />
+                    <div
+                      className="ril-loading-circle-point loadingCirclePoint"
+                      key="9"
+                    />
+                    <div
+                      className="ril-loading-circle-point loadingCirclePoint"
+                      key="10"
+                    />
+                    <div
+                      className="ril-loading-circle-point loadingCirclePoint"
+                      key="11"
+                    />
+                  </div>
+                </div>
+              </div>
             </div>
             <div
               className="ril-toolbar toolbar"
@@ -250,6 +301,7 @@ exports[`Snapshot Testing Lightbox renders properly" 1`] = `
                   <button
                     aria-label="Zoom in"
                     className="ril-zoom-in toolbarItemChild builtinButton zoomInButton"
+                    disabled={false}
                     key="zoom-in"
                     onClick={[Function]}
                     type="button"
@@ -261,8 +313,8 @@ exports[`Snapshot Testing Lightbox renders properly" 1`] = `
                   <button
                     aria-label="Zoom out"
                     className="ril-zoom-out toolbarItemChild builtinButton zoomOutButton builtinButtonDisabled"
+                    disabled={true}
                     key="zoom-out"
-                    onClick={[Function]}
                     type="button"
                   />
                 </li>
