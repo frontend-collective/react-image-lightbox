@@ -11,6 +11,7 @@ exports[`Snapshot Testing Lightbox renders properly" 1`] = `
   enableZoom={true}
   imageCaption={null}
   imageCrossOrigin={null}
+  imageLoadErrorMessage="This image failed to load"
   imagePadding={10}
   imageTitle={null}
   keyRepeatKeyupBonus={40}
