@@ -130,6 +130,9 @@ class ReactImageLightbox extends Component {
 
       // Vertical offset from center
       offsetY: 0,
+
+      // image load error for srcType
+      loadErrorStatus: {}
     };
 
     this.closeIfClickInner = this.closeIfClickInner.bind(this);
@@ -1142,6 +1145,14 @@ class ReactImageLightbox extends Component {
 
     inMemoryImage.onerror = errorEvent => {
       this.props.onImageLoadError(imageSrc, srcType, errorEvent);
+
+      // failed to load so set the state loadErrorStatus
+      this.setState(prevState => ({
+        loadErrorStatus: Object.assign({}, prevState.loadErrorStatus, {
+          [srcType]: true
+        })
+      }));
+
       done(errorEvent);
     };
 
@@ -1179,6 +1190,15 @@ class ReactImageLightbox extends Component {
     // Load the images
     this.getSrcTypes().forEach(srcType => {
       const type = srcType.name;
+
+      // there is no error when we try to load it initially
+      if (props[type]) {
+        this.setState(prevState => ({
+          loadErrorStatus: Object.assign({}, prevState.loadErrorStatus, {
+            [type]: false
+          })
+        }));
+      }
 
       // Load unloaded images
       if (props[type] && !this.isImageLoaded(props[type])) {
@@ -1273,7 +1293,13 @@ class ReactImageLightbox extends Component {
       imageCrossOrigin,
       reactModalProps,
     } = this.props;
-    const { zoomLevel, offsetX, offsetY, isClosing } = this.state;
+    const {
+      zoomLevel,
+      offsetX,
+      offsetY,
+      isClosing,
+      loadErrorStatus
+    } = this.state;
 
     const boxSize = this.getLightboxRect();
     let transitionStyle = {};
@@ -1313,7 +1339,25 @@ class ReactImageLightbox extends Component {
         imageStyle.cursor = 'move';
       }
 
-      if (bestImageInfo === null) {
+      // when error on one of the loads then push custom error stuff
+      if (
+        bestImageInfo === null &&
+        Object.values(loadErrorStatus).includes(true)
+      ) {
+        images.push(
+          <div
+            className={`${imageClass} ${styles.image} ril-not-loaded `}
+            style={imageStyle}
+            key={this.props[srcType] + keyEndings[srcType]}
+          >
+            <div className={styles.errorContainer}>
+              {this.props.imageLoadErrorMessage}
+            </div>
+          </div>
+        );
+
+        return;
+      } else if (bestImageInfo === null) {
         const loadingIcon =
           ieVersion < 10 ? (
             <div className={styles.loadingContainer__icon}>
@@ -1759,6 +1803,8 @@ ReactImageLightbox.propTypes = {
   zoomInLabel: PropTypes.string,
   zoomOutLabel: PropTypes.string,
   closeLabel: PropTypes.string,
+
+  imageLoadErrorMessage: PropTypes.string
 };
 
 ReactImageLightbox.defaultProps = {
@@ -1792,6 +1838,7 @@ ReactImageLightbox.defaultProps = {
   wrapperClassName: '',
   zoomInLabel: 'Zoom in',
   zoomOutLabel: 'Zoom out',
+  imageLoadErrorMessage: 'This image failed to load'
 };
 
 export default ReactImageLightbox;
