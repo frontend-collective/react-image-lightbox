@@ -1148,7 +1148,7 @@ class ReactImageLightbox extends Component {
 
       // failed to load so set the state loadErrorStatus
       this.setState(prevState => ({
-        loadErrorStatus: {...prevState.loadErrorStatus, [srcType]: true }
+        loadErrorStatus: { ...prevState.loadErrorStatus, [srcType]: true }
       }));
 
       done(errorEvent);
@@ -1335,10 +1335,20 @@ class ReactImageLightbox extends Component {
         imageStyle.cursor = 'move';
       }
 
+      // support IE 9 and 11
+      const hasTrueValue = object => {
+        for (let key in object) {
+          if (object[key]){
+            return true;
+          }
+        }
+        return false;
+      }
+
       // when error on one of the loads then push custom error stuff
       if (
         bestImageInfo === null &&
-        Object.values(loadErrorStatus).includes(true)
+        hasTrueValue(loadErrorStatus)
       ) {
         images.push(
           <div
