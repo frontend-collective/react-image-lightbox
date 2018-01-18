@@ -1148,9 +1148,7 @@ class ReactImageLightbox extends Component {
 
       // failed to load so set the state loadErrorStatus
       this.setState(prevState => ({
-        loadErrorStatus: Object.assign({}, prevState.loadErrorStatus, {
-          [srcType]: true
-        })
+        loadErrorStatus: {...prevState.loadErrorStatus, [srcType]: true }
       }));
 
       done(errorEvent);
@@ -1194,9 +1192,7 @@ class ReactImageLightbox extends Component {
       // there is no error when we try to load it initially
       if (props[type]) {
         this.setState(prevState => ({
-          loadErrorStatus: Object.assign({}, prevState.loadErrorStatus, {
-            [type]: false
-          })
+          loadErrorStatus: { ...prevState.loadErrorStatus, [type]: false }
         }));
       }
 
@@ -1804,7 +1800,7 @@ ReactImageLightbox.propTypes = {
   zoomOutLabel: PropTypes.string,
   closeLabel: PropTypes.string,
 
-  imageLoadErrorMessage: PropTypes.string
+  imageLoadErrorMessage: PropTypes.node
 };
 
 ReactImageLightbox.defaultProps = {
