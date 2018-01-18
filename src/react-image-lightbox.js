@@ -1337,8 +1337,9 @@ class ReactImageLightbox extends Component {
 
       // support IE 9 and 11
       const hasTrueValue = object => {
-        for (let key in object) {
-          if (object[key]){
+        const keys = Object.keys(object);
+        for (let i = 0; i < keys.length; i += 1) {
+          if (object[keys[i]]){
             return true;
           }
         }
@@ -1352,7 +1353,7 @@ class ReactImageLightbox extends Component {
       ) {
         images.push(
           <div
-            className={`${imageClass} ${styles.image} ril-not-loaded `}
+            className={`${imageClass} ${styles.image} ril-errored `}
             style={imageStyle}
             key={this.props[srcType] + keyEndings[srcType]}
           >
