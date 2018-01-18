@@ -132,7 +132,7 @@ class ReactImageLightbox extends Component {
       offsetY: 0,
 
       // image load error for srcType
-      loadErrorStatus: {}
+      loadErrorStatus: {},
     };
 
     this.closeIfClickInner = this.closeIfClickInner.bind(this);
@@ -1148,7 +1148,7 @@ class ReactImageLightbox extends Component {
 
       // failed to load so set the state loadErrorStatus
       this.setState(prevState => ({
-        loadErrorStatus: { ...prevState.loadErrorStatus, [srcType]: true }
+        loadErrorStatus: { ...prevState.loadErrorStatus, [srcType]: true },
       }));
 
       done(errorEvent);
@@ -1190,9 +1190,9 @@ class ReactImageLightbox extends Component {
       const type = srcType.name;
 
       // there is no error when we try to load it initially
-      if (props[type]) {
+      if (props[type] && this.state.loadErrorStatus[type]) {
         this.setState(prevState => ({
-          loadErrorStatus: { ...prevState.loadErrorStatus, [type]: false }
+          loadErrorStatus: { ...prevState.loadErrorStatus, [type]: false },
         }));
       }
 
@@ -1294,7 +1294,7 @@ class ReactImageLightbox extends Component {
       offsetX,
       offsetY,
       isClosing,
-      loadErrorStatus
+      loadErrorStatus,
     } = this.state;
 
     const boxSize = this.getLightboxRect();
@@ -1336,24 +1336,14 @@ class ReactImageLightbox extends Component {
       }
 
       // support IE 9 and 11
-      const hasTrueValue = object => {
-        const keys = Object.keys(object);
-        for (let i = 0; i < keys.length; i += 1) {
-          if (object[keys[i]]){
-            return true;
-          }
-        }
-        return false;
-      }
+      const hasTrueValue = object =>
+        Object.keys(object).some(key => object[key]);
 
       // when error on one of the loads then push custom error stuff
-      if (
-        bestImageInfo === null &&
-        hasTrueValue(loadErrorStatus)
-      ) {
+      if (bestImageInfo === null && hasTrueValue(loadErrorStatus)) {
         images.push(
           <div
-            className={`${imageClass} ${styles.image} ril-errored `}
+            className={`${imageClass} ${styles.image} ril-errored`}
             style={imageStyle}
             key={this.props[srcType] + keyEndings[srcType]}
           >
@@ -1811,7 +1801,7 @@ ReactImageLightbox.propTypes = {
   zoomOutLabel: PropTypes.string,
   closeLabel: PropTypes.string,
 
-  imageLoadErrorMessage: PropTypes.node
+  imageLoadErrorMessage: PropTypes.node,
 };
 
 ReactImageLightbox.defaultProps = {
@@ -1845,7 +1835,7 @@ ReactImageLightbox.defaultProps = {
   wrapperClassName: '',
   zoomInLabel: 'Zoom in',
   zoomOutLabel: 'Zoom out',
-  imageLoadErrorMessage: 'This image failed to load'
+  imageLoadErrorMessage: 'This image failed to load',
 };
 
 export default ReactImageLightbox;
