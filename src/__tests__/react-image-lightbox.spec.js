@@ -156,3 +156,30 @@ describe('Snapshot Testing', () => {
     expect(wrapper).toMatchSnapshot();
   });
 });
+
+describe('Error Testing', () => {
+  it('Should render the default error message', () => {
+    const wrapper = mount(<Lightbox {...commonProps} />);
+    wrapper.setState({
+      loadErrorStatus: { mainSrc: true },
+    });
+    wrapper.update();
+    expect(wrapper.find('div.errorContainer')).toHaveText(
+      'This image failed to load'
+    );
+  });
+  it('Should render the specified error message', () => {
+    const wrapper = mount(<Lightbox {...commonProps} />);
+    const imageLoadErrorMessage = <p>Specified Error Message</p>;
+    wrapper.setState({
+      loadErrorStatus: { mainSrc: true },
+    });
+    wrapper.setProps({
+      imageLoadErrorMessage,
+    });
+    wrapper.update();
+    expect(wrapper.find('div.errorContainer')).toContainReact(
+      imageLoadErrorMessage
+    );
+  });
+});

@@ -297,6 +297,30 @@ $maxCaptionHeight: 150px;
   right: 0;
   bottom: 0;
   left: 0;
+  .imagePrev & {
+    display: none;
+  }
+  .imageNext & {
+    display: none;
+  }
+}
+
+.errorContainer {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  .imagePrev & {
+    display: none;
+  }
+  .imageNext & {
+    display: none;
+  }
 }
 
 .loadingContainer__icon {

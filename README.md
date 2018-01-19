@@ -88,6 +88,7 @@ onCloseRequest      | func   |                |    yes   | Close window event. S
 onMovePrevRequest   | func   | empty function |          | Move to previous image event. Should change the parent state such that `props.prevSrc` becomes `props.mainSrc`, `props.mainSrc` becomes `props.nextSrc`, etc.
 onMoveNextRequest   | func   | empty function |          | Move to next image event. Should change the parent state such that `props.nextSrc` becomes `props.mainSrc`, `props.mainSrc` becomes `props.prevSrc`, etc.
 onImageLoadError    | func   | empty function |          | Called when an image fails to load.<div>`(imageSrc: string, srcType: string, errorEvent: object): void`</div>
+imageLoadErrorMessage | node | `"This image failed to load"` || What is rendered in place of an image if it fails to load. Centered in the lightbox viewport.
 onAfterOpen         | func   | empty function |          | Called after the modal has rendered.
 discourageDownloads | bool   | `false`        |          | When `true`, enables download discouragement (preventing [right-click -> Save Image As...])
 animationDisabled   | bool   | `false`        |          | When `true`, image sliding animations are disabled
