@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="4.5.0"></a>
+# [4.5.0](https://github.com/fritz-c/react-image-lightbox/compare/v4.4.1...v4.5.0) (2018-01-21)
+
+
+### Features
+
+* Custom error message prop for when images fail to load ([419998d](https://github.com/fritz-c/react-image-lightbox/commit/419998d)), closes [#82](https://github.com/fritz-c/react-image-lightbox/issues/82)
+
+
+
 <a name="4.4.1"></a>
 ## [4.4.1](https://github.com/fritz-c/react-image-lightbox/compare/v4.4.0...v4.4.1) (2018-01-14)
 
