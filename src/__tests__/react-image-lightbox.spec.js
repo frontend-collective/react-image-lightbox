@@ -252,7 +252,7 @@ describe('Error Testing', () => {
       loadErrorStatus: { mainSrc: true },
     });
     wrapper.update();
-    expect(wrapper.find('div.errorContainer')).toHaveText(
+    expect(wrapper.find('div.ril__errorContainer')).toHaveText(
       'This image failed to load'
     );
   });
@@ -266,7 +266,7 @@ describe('Error Testing', () => {
       imageLoadErrorMessage,
     });
     wrapper.update();
-    expect(wrapper.find('div.errorContainer')).toContainReact(
+    expect(wrapper.find('div.ril__errorContainer')).toContainReact(
       imageLoadErrorMessage
     );
   });
