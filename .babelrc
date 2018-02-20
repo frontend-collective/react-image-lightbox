@@ -5,7 +5,8 @@
         "browsers": ["last 2 versions", "ie >= 9"]
       }
     }],
-    "react"
+    "react",
+    "flow"
   ],
   "plugins": [
     "transform-object-rest-spread",

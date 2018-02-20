@@ -1,0 +1,15 @@
+[ignore]
+<PROJECT_ROOT>/dist/.*
+<PROJECT_ROOT>/build/.*
+<PROJECT_ROOT>/coverage/.*
+<PROJECT_ROOT>/.*/__tests__/.*
+
+[include]
+
+[libs]
+
+[lints]
+
+[options]
+
+[strict]
