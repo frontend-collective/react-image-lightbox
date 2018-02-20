@@ -12,6 +12,12 @@ const commonProps = {
   onCloseRequest: () => {},
 };
 
+const extendedCommonProps = {
+  ...commonProps,
+  prevSrc: '/fake/image/src1.jpg',
+  nextSrc: '/fake/image/src2.jpg',
+};
+
 describe('Lightbox structure', () => {
   const wrapper = mount(<Lightbox {...commonProps} />);
 
@@ -80,12 +86,41 @@ describe('Lightbox structure', () => {
 });
 
 describe('Events', () => {
-  const mockAfterOpen = jest.fn();
+  const mockFns = {
+    onAfterOpen: jest.fn(),
+    onCloseRequest: jest.fn(),
+    onMovePrevRequest: jest.fn(),
+    onMoveNextRequest: jest.fn(),
+  };
 
-  mount(<Lightbox {...commonProps} onAfterOpen={mockAfterOpen} />);
+  const wrapper = mount(
+    <Lightbox {...extendedCommonProps} {...mockFns} animationDisabled />
+  );
 
   it('Calls onAfterOpen when mounted', () => {
-    expect(mockAfterOpen).toHaveBeenCalledTimes(1);
+    expect(mockFns.onAfterOpen).toHaveBeenCalledTimes(1);
+    expect(mockFns.onAfterOpen).toHaveBeenCalledWith();
+  });
+
+  it('Calls onMovePrevRequest when left button clicked', () => {
+    expect(mockFns.onMovePrevRequest).toHaveBeenCalledTimes(0);
+    wrapper.find('.ril-prev-button').simulate('click');
+    expect(mockFns.onMovePrevRequest).toHaveBeenCalledTimes(1);
+    expect(mockFns.onMovePrevRequest).not.toHaveBeenCalledWith();
+  });
+
+  it('Calls onMoveNextRequest when right button clicked', () => {
+    expect(mockFns.onMoveNextRequest).toHaveBeenCalledTimes(0);
+    wrapper.find('.ril-next-button').simulate('click');
+    expect(mockFns.onMoveNextRequest).toHaveBeenCalledTimes(1);
+    expect(mockFns.onMoveNextRequest).not.toHaveBeenCalledWith();
+  });
+
+  it('Calls onCloseRequest when close button clicked', () => {
+    expect(mockFns.onCloseRequest).toHaveBeenCalledTimes(0);
+    wrapper.find('.ril-close').simulate('click');
+    expect(mockFns.onCloseRequest).toHaveBeenCalledTimes(1);
+    expect(mockFns.onCloseRequest).not.toHaveBeenCalledWith();
   });
 });
 
@@ -111,6 +146,7 @@ describe('Key bindings', () => {
   };
 
   it('Responds to close key binding', () => {
+    expect(mockCloseRequest).toHaveBeenCalledTimes(0);
     // Simulate ESC key press
     simulateKey(27);
     expect(mockCloseRequest).toHaveBeenCalledTimes(1);
