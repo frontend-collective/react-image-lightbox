@@ -160,7 +160,7 @@ class ReactImageLightbox extends Component {
     //PB: this is so users don't get the following error if this is in an iFrame
     //Uncaught DOMException: Blocked a frame with origin "my-child-site.com" from accessing a cross-origin frame.
 
-    this.windowContext = (global.window.top == global.window.self) ? this.windowContext : global.window.self;
+    this.windowContext = (global.window.top == global.window.self) ? global.window.top : global.window.self;
     // Timeouts - always clear it before umount
     this.timeouts = [];
 
