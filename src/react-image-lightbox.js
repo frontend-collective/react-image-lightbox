@@ -157,6 +157,10 @@ class ReactImageLightbox extends Component {
   }
 
   componentWillMount() {
+    //PB: this is so users don't get the following error if this is in an iFrame
+    //Uncaught DOMException: Blocked a frame with origin "my-child-site.com" from accessing a cross-origin frame.
+
+    this.windowContext = (global.window.top == global.window.self) ? this.windowContext : global.window.self;
     // Timeouts - always clear it before umount
     this.timeouts = [];
 
@@ -233,7 +237,8 @@ class ReactImageLightbox extends Component {
       pointercancel: this.handlePointerEvent,
     };
     Object.keys(this.listeners).forEach(type => {
-      global.window.top.addEventListener(type, this.listeners[type]);
+
+      this.windowContext.addEventListener(type, this.listeners[type]);
     });
 
     this.loadAllImages();
@@ -277,7 +282,7 @@ class ReactImageLightbox extends Component {
   componentWillUnmount() {
     this.didUnmount = true;
     Object.keys(this.listeners).forEach(type => {
-      global.window.top.removeEventListener(type, this.listeners[type]);
+      this.windowContext.removeEventListener(type, this.listeners[type]);
     });
     this.timeouts.forEach(tid => clearTimeout(tid));
   }
@@ -1155,6 +1160,8 @@ class ReactImageLightbox extends Component {
     };
 
     inMemoryImage.onload = () => {
+      this.props.onImageLoad(imageSrc, srcType);
+
       this.imageCache[imageSrc] = {
         loaded: true,
         width: inMemoryImage.width,
@@ -1718,6 +1725,9 @@ ReactImageLightbox.propTypes = {
   // (imageSrc: string, srcType: string, errorEvent: object): void
   onImageLoadError: PropTypes.func,
 
+  //PB: Called when image successfully loads
+  onImageLoad: PropTypes.func,
+
   // Open window event
   onAfterOpen: PropTypes.func,
 
@@ -1826,6 +1836,7 @@ ReactImageLightbox.defaultProps = {
   nextSrcThumbnail: null,
   onAfterOpen: () => {},
   onImageLoadError: () => {},
+  onImageLoad: () => {},
   onMoveNextRequest: () => {},
   onMovePrevRequest: () => {},
   prevLabel: 'Previous image',
