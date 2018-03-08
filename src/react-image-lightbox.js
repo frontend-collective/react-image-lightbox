@@ -1160,7 +1160,7 @@ class ReactImageLightbox extends Component {
     };
 
     inMemoryImage.onload = () => {
-      this.props.onImageLoad(imageSrc, srcType);
+      this.props.onImageLoad(imageSrc, srcType, inMemoryImage);
 
       this.imageCache[imageSrc] = {
         loaded: true,
@@ -1725,7 +1725,7 @@ ReactImageLightbox.propTypes = {
   // (imageSrc: string, srcType: string, errorEvent: object): void
   onImageLoadError: PropTypes.func,
 
-  //PB: Called when image successfully loads
+  // Called when image successfully loads
   onImageLoad: PropTypes.func,
 
   // Open window event
