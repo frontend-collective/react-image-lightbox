@@ -87,6 +87,7 @@ nextSrcThumbnail    | string |                |          | Thumbnail image url c
 onCloseRequest      | func   |                |    yes   | Close window event. Should change the parent state such that the lightbox is not rendered
 onMovePrevRequest   | func   | empty function |          | Move to previous image event. Should change the parent state such that `props.prevSrc` becomes `props.mainSrc`, `props.mainSrc` becomes `props.nextSrc`, etc.
 onMoveNextRequest   | func   | empty function |          | Move to next image event. Should change the parent state such that `props.nextSrc` becomes `props.mainSrc`, `props.mainSrc` becomes `props.prevSrc`, etc.
+onImageLoad         | func   | empty function |          | Called when an image loads.<div>`(imageSrc: string, srcType: string, image: object): void`</div>
 onImageLoadError    | func   | empty function |          | Called when an image fails to load.<div>`(imageSrc: string, srcType: string, errorEvent: object): void`</div>
 imageLoadErrorMessage | node | `"This image failed to load"` || What is rendered in place of an image if it fails to load. Centered in the lightbox viewport.
 onAfterOpen         | func   | empty function |          | Called after the modal has rendered.

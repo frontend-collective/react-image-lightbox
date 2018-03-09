@@ -23,6 +23,7 @@ exports[`Snapshot Testing Lightbox renders properly" 1`] = `
   nextSrcThumbnail={null}
   onAfterOpen={[Function]}
   onCloseRequest={[Function]}
+  onImageLoad={[Function]}
   onImageLoadError={[Function]}
   onMoveNextRequest={[Function]}
   onMovePrevRequest={[Function]}

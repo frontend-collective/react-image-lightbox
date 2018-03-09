@@ -6,6 +6,7 @@ import {
   getWindowWidth,
   getWindowHeight,
   getIEVersion,
+  getHighestSafeWindowContext,
 } from './util';
 import {
   KEYS,
@@ -222,6 +223,9 @@ class ReactImageLightbox extends Component {
   componentDidMount() {
     ReactImageLightbox.loadStyles();
 
+    // Prevents cross-origin errors when using a cross-origin iframe
+    this.windowContext = getHighestSafeWindowContext();
+
     this.listeners = {
       resize: this.handleWindowResize,
       mouseup: this.handleMouseUp,
@@ -233,7 +237,7 @@ class ReactImageLightbox extends Component {
       pointercancel: this.handlePointerEvent,
     };
     Object.keys(this.listeners).forEach(type => {
-      global.window.top.addEventListener(type, this.listeners[type]);
+      this.windowContext.addEventListener(type, this.listeners[type]);
     });
 
     this.loadAllImages();
@@ -277,7 +281,7 @@ class ReactImageLightbox extends Component {
   componentWillUnmount() {
     this.didUnmount = true;
     Object.keys(this.listeners).forEach(type => {
-      global.window.top.removeEventListener(type, this.listeners[type]);
+      this.windowContext.removeEventListener(type, this.listeners[type]);
     });
     this.timeouts.forEach(tid => clearTimeout(tid));
   }
@@ -1155,6 +1159,8 @@ class ReactImageLightbox extends Component {
     };
 
     inMemoryImage.onload = () => {
+      this.props.onImageLoad(imageSrc, srcType, inMemoryImage);
+
       this.imageCache[imageSrc] = {
         loaded: true,
         width: inMemoryImage.width,
@@ -1718,6 +1724,9 @@ ReactImageLightbox.propTypes = {
   // (imageSrc: string, srcType: string, errorEvent: object): void
   onImageLoadError: PropTypes.func,
 
+  // Called when image successfully loads
+  onImageLoad: PropTypes.func,
+
   // Open window event
   onAfterOpen: PropTypes.func,
 
@@ -1826,6 +1835,7 @@ ReactImageLightbox.defaultProps = {
   nextSrcThumbnail: null,
   onAfterOpen: () => {},
   onImageLoadError: () => {},
+  onImageLoad: () => {},
   onMoveNextRequest: () => {},
   onMovePrevRequest: () => {},
   prevLabel: 'Previous image',
