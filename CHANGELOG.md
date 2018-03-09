@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="4.6.0"></a>
+# [4.6.0](https://github.com/fritz-c/react-image-lightbox/compare/v4.5.0...v4.6.0) (2018-03-09)
+
+
+### Bug Fixes
+
+* avoid cross-origin errors from using window.top ([5bb5ac9](https://github.com/fritz-c/react-image-lightbox/commit/5bb5ac9))
+
+
+### Features
+
+* onImageLoad API ([b08be00](https://github.com/fritz-c/react-image-lightbox/commit/b08be00))
+
+
+
 <a name="4.5.0"></a>
 # [4.5.0](https://github.com/fritz-c/react-image-lightbox/compare/v4.4.1...v4.5.0) (2018-01-21)
 
