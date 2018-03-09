@@ -6,6 +6,7 @@ import {
   getWindowWidth,
   getWindowHeight,
   getIEVersion,
+  getHighestSafeWindowContext,
 } from './util';
 import {
   KEYS,
@@ -157,10 +158,6 @@ class ReactImageLightbox extends Component {
   }
 
   componentWillMount() {
-    //PB: this is so users don't get the following error if this is in an iFrame
-    //Uncaught DOMException: Blocked a frame with origin "my-child-site.com" from accessing a cross-origin frame.
-
-    this.windowContext = (global.window.top == global.window.self) ? global.window.top : global.window.self;
     // Timeouts - always clear it before umount
     this.timeouts = [];
 
@@ -226,6 +223,9 @@ class ReactImageLightbox extends Component {
   componentDidMount() {
     ReactImageLightbox.loadStyles();
 
+    // Prevents cross-origin errors when using a cross-origin iframe
+    this.windowContext = getHighestSafeWindowContext();
+
     this.listeners = {
       resize: this.handleWindowResize,
       mouseup: this.handleMouseUp,
@@ -237,7 +237,6 @@ class ReactImageLightbox extends Component {
       pointercancel: this.handlePointerEvent,
     };
     Object.keys(this.listeners).forEach(type => {
-
       this.windowContext.addEventListener(type, this.listeners[type]);
     });
 
