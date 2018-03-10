@@ -86,11 +86,37 @@ describe('Lightbox structure', () => {
 });
 
 describe('Events', () => {
+  const LOAD_FAILURE_SRC = 'LOAD_FAILURE_SRC';
+  const LOAD_SUCCESS_SRC = 'LOAD_SUCCESS_SRC';
+  let originalImageSrcProto;
+  beforeAll(() => {
+    originalImageSrcProto = Object.getOwnPropertyDescriptor(
+      global.Image.prototype,
+      'src'
+    );
+
+    Object.defineProperty(global.Image.prototype, 'src', {
+      set(src) {
+        if (src === LOAD_FAILURE_SRC) {
+          setTimeout(() => this.onerror(new Error('mock error')));
+        } else if (src === LOAD_SUCCESS_SRC) {
+          setTimeout(this.onload);
+        }
+      },
+    });
+  });
+
+  afterAll(() => {
+    Object.defineProperty(global.Image.prototype, 'src', originalImageSrcProto);
+  });
+
   const mockFns = {
     onAfterOpen: jest.fn(),
     onCloseRequest: jest.fn(),
     onMovePrevRequest: jest.fn(),
     onMoveNextRequest: jest.fn(),
+    onImageLoad: jest.fn(),
+    onImageLoadError: jest.fn(),
   };
 
   const wrapper = mount(
@@ -121,6 +147,32 @@ describe('Events', () => {
     wrapper.find('.ril-close').simulate('click');
     expect(mockFns.onCloseRequest).toHaveBeenCalledTimes(1);
     expect(mockFns.onCloseRequest).not.toHaveBeenCalledWith();
+  });
+
+  it('Calls onImageLoad when image loaded', done => {
+    mockFns.onImageLoad.mockImplementationOnce((imageSrc, srcType, image) => {
+      expect(imageSrc).toEqual(LOAD_SUCCESS_SRC);
+      expect(srcType).toEqual('mainSrc');
+      expect(image).toBeInstanceOf(global.Image);
+      done();
+    });
+
+    expect(mockFns.onImageLoad).toHaveBeenCalledTimes(0);
+    wrapper.setProps({ mainSrc: LOAD_SUCCESS_SRC });
+  });
+
+  it('Calls onImageLoadError when image loaded', done => {
+    mockFns.onImageLoadError.mockImplementationOnce(
+      (imageSrc, srcType, image) => {
+        expect(imageSrc).toEqual(LOAD_FAILURE_SRC);
+        expect(srcType).toEqual('mainSrc');
+        expect(image).toBeInstanceOf(Error);
+        done();
+      }
+    );
+
+    expect(mockFns.onImageLoadError).toHaveBeenCalledTimes(0);
+    wrapper.setProps({ mainSrc: LOAD_FAILURE_SRC });
   });
 });
 
