@@ -121,7 +121,7 @@ class ReactImageLightbox extends Component {
       // Zoom settings
       //-----------------------------
       // Zoom level of image
-      zoomLevel: MIN_ZOOM_LEVEL,
+      zoomLevel: props.zoomMinLevel,
 
       //-----------------------------
       // Image position settings
@@ -468,14 +468,14 @@ class ReactImageLightbox extends Component {
 
     // Constrain zoom level to the set bounds
     const nextZoomLevel = Math.max(
-      MIN_ZOOM_LEVEL,
-      Math.min(MAX_ZOOM_LEVEL, zoomLevel)
+      this.props.zoomMinLevel,
+      Math.min(this.props.zoomMaxLevel, zoomLevel)
     );
 
     // Ignore requests that don't change the zoom level
     if (nextZoomLevel === this.state.zoomLevel) {
       return;
-    } else if (nextZoomLevel === MIN_ZOOM_LEVEL) {
+    } else if (nextZoomLevel === this.props.zoomMinLevel) {
       // Snap back to center if zoomed all the way out
       this.setState({
         zoomLevel: nextZoomLevel,
@@ -706,9 +706,9 @@ class ReactImageLightbox extends Component {
    * Handle a double click on the current image
    */
   handleImageDoubleClick(event) {
-    if (this.state.zoomLevel > MIN_ZOOM_LEVEL) {
+    if (this.state.zoomLevel > this.props.zoomMinLevel) {
       // A double click when zoomed in zooms all the way out
-      this.changeZoom(MIN_ZOOM_LEVEL, event.clientX, event.clientY);
+      this.changeZoom(this.props.zoomMinLevel, event.clientX, event.clientY);
     } else {
       // A double click when zoomed all the way out zooms in
       this.changeZoom(
@@ -841,7 +841,7 @@ class ReactImageLightbox extends Component {
   }
 
   decideMoveOrSwipe(pointer) {
-    if (this.state.zoomLevel <= MIN_ZOOM_LEVEL) {
+    if (this.state.zoomLevel <= this.props.zoomMinLevel) {
       this.handleSwipeStart(pointer);
     } else {
       this.handleMoveStart(pointer);
@@ -1238,7 +1238,7 @@ class ReactImageLightbox extends Component {
   requestMove(direction, event) {
     // Reset the zoom level on image move
     const nextState = {
-      zoomLevel: MIN_ZOOM_LEVEL,
+      zoomLevel: this.props.zoomMinLevel,
       offsetX: 0,
       offsetY: 0,
     };
@@ -1337,7 +1337,7 @@ class ReactImageLightbox extends Component {
         }),
       };
 
-      if (zoomLevel > MIN_ZOOM_LEVEL) {
+      if (zoomLevel > this.props.zoomMinLevel) {
         imageStyle.cursor = 'move';
       }
 
@@ -1592,15 +1592,15 @@ class ReactImageLightbox extends Component {
                       styles.toolbarItemChild,
                       styles.builtinButton,
                       styles.zoomInButton,
-                      ...(zoomLevel === MAX_ZOOM_LEVEL
+                      ...(zoomLevel === this.props.zoomMaxLevel
                         ? [styles.builtinButtonDisabled]
                         : []),
                     ].join(' ')}
                     disabled={
-                      this.isAnimating() || zoomLevel === MAX_ZOOM_LEVEL
+                      this.isAnimating() || zoomLevel === this.props.zoomMaxLevel
                     }
                     onClick={
-                      !this.isAnimating() && zoomLevel !== MAX_ZOOM_LEVEL
+                      !this.isAnimating() && zoomLevel !== this.props.zoomMaxLevel
                         ? this.handleZoomInButtonClick
                         : undefined
                     }
@@ -1619,15 +1619,15 @@ class ReactImageLightbox extends Component {
                       styles.toolbarItemChild,
                       styles.builtinButton,
                       styles.zoomOutButton,
-                      ...(zoomLevel === MIN_ZOOM_LEVEL
+                      ...(zoomLevel === this.props.zoomMinLevel
                         ? [styles.builtinButtonDisabled]
                         : []),
                     ].join(' ')}
                     disabled={
-                      this.isAnimating() || zoomLevel === MIN_ZOOM_LEVEL
+                      this.isAnimating() || zoomLevel === this.props.zoomMinLevel
                     }
                     onClick={
-                      !this.isAnimating() && zoomLevel !== MIN_ZOOM_LEVEL
+                      !this.isAnimating() && zoomLevel !== this.props.zoomMinLevel
                         ? this.handleZoomOutButtonClick
                         : undefined
                     }
@@ -1811,6 +1811,9 @@ ReactImageLightbox.propTypes = {
   closeLabel: PropTypes.string,
 
   imageLoadErrorMessage: PropTypes.node,
+
+  zoomMinLevel: PropTypes.number,
+  zoomMaxLevel: PropTypes.number,
 };
 
 ReactImageLightbox.defaultProps = {
@@ -1846,6 +1849,8 @@ ReactImageLightbox.defaultProps = {
   zoomInLabel: 'Zoom in',
   zoomOutLabel: 'Zoom out',
   imageLoadErrorMessage: 'This image failed to load',
+  zoomMaxLevel: MAX_ZOOM_LEVEL,
+  zoomMinLevel: MIN_ZOOM_LEVEL,
 };
 
 export default ReactImageLightbox;

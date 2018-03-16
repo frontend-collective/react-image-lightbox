@@ -112,6 +112,8 @@ prevLabel           | string | `'Previous image'`|     | `aria-label` set on the
 zoomInLabel         | string | `'Zoom in'`         |     | `aria-label` set on the 'Zoom In' button
 zoomOutLabel        | string | `'Zoom out'`        |     | `aria-label` set on the 'Zoom Out' button
 closeLabel          | string | `'Close lightbox'`  |     | `aria-label` set on the 'Close Lightbox' button
+zoomMinLevel        | number | `0`            |          | Minimal zoom level, will be used to disable zoom buttons
+zoomMaxLevel        | number | `0`            |          | see zoomMinLevel    
 
 ## Browser Compatibility
 
