@@ -101,6 +101,7 @@ imageTitle          | node   |                |          | Image title (Descript
 imageCaption        | node   |                |          | Image caption (Descriptive element below image)
 imageCrossOrigin    | string |                |          | `crossorigin` attribute to append to `img` elements ([MDN documentation](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/img#attr-crossorigin))
 toolbarButtons      | node[] |                |          | Array of custom toolbar buttons
+hideToolbarButtons  | bool   | `false`        |          | When `true`, hide all default toolbars buttons (close, zoom in, zoom out), useful when override default buttons with custom defined toolbarButtons
 reactModalStyle     | Object | `{}`           |          | Set `z-index` style, etc., for the parent react-modal ([react-modal style format](https://github.com/reactjs/react-modal#styles))
 reactModalProps     | Object | `{}`           |          | Override props set on react-modal (https://github.com/reactjs/react-modal)
 imagePadding        | number | `10`           |          | Padding (px) between the edge of the window and the lightbox
