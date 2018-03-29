@@ -1294,6 +1294,7 @@ class ReactImageLightbox extends Component {
       onAfterOpen,
       imageCrossOrigin,
       reactModalProps,
+      hideToolbarButtons,
     } = this.props;
     const {
       zoomLevel,
@@ -1581,74 +1582,80 @@ class ReactImageLightbox extends Component {
                   </li>
                 ))}
 
-              {enableZoom && (
+              {!hideToolbarButtons &&
+                enableZoom && (
+                  <li className={`ril-toolbar__item ${styles.toolbarItem}`}>
+                    <button // Lightbox zoom in button
+                      type="button"
+                      key="zoom-in"
+                      aria-label={this.props.zoomInLabel}
+                      className={[
+                        'ril-zoom-in',
+                        styles.toolbarItemChild,
+                        styles.builtinButton,
+                        styles.zoomInButton,
+                        ...(zoomLevel === MAX_ZOOM_LEVEL
+                          ? [styles.builtinButtonDisabled]
+                          : []),
+                      ].join(' ')}
+                      disabled={
+                        this.isAnimating() || zoomLevel === MAX_ZOOM_LEVEL
+                      }
+                      onClick={
+                        !this.isAnimating() && zoomLevel !== MAX_ZOOM_LEVEL
+                          ? this.handleZoomInButtonClick
+                          : undefined
+                      }
+                    />
+                  </li>
+                )}
+
+              {!hideToolbarButtons &&
+                enableZoom && (
+                  <li className={`ril-toolbar__item ${styles.toolbarItem}`}>
+                    <button // Lightbox zoom out button
+                      type="button"
+                      key="zoom-out"
+                      aria-label={this.props.zoomOutLabel}
+                      className={[
+                        'ril-zoom-out',
+                        styles.toolbarItemChild,
+                        styles.builtinButton,
+                        styles.zoomOutButton,
+                        ...(zoomLevel === MIN_ZOOM_LEVEL
+                          ? [styles.builtinButtonDisabled]
+                          : []),
+                      ].join(' ')}
+                      disabled={
+                        this.isAnimating() || zoomLevel === MIN_ZOOM_LEVEL
+                      }
+                      onClick={
+                        !this.isAnimating() && zoomLevel !== MIN_ZOOM_LEVEL
+                          ? this.handleZoomOutButtonClick
+                          : undefined
+                      }
+                    />
+                  </li>
+                )}
+
+              {!hideToolbarButtons && (
                 <li className={`ril-toolbar__item ${styles.toolbarItem}`}>
-                  <button // Lightbox zoom in button
+                  <button // Lightbox close button
                     type="button"
-                    key="zoom-in"
-                    aria-label={this.props.zoomInLabel}
-                    className={[
-                      'ril-zoom-in',
-                      styles.toolbarItemChild,
-                      styles.builtinButton,
-                      styles.zoomInButton,
-                      ...(zoomLevel === MAX_ZOOM_LEVEL
-                        ? [styles.builtinButtonDisabled]
-                        : []),
-                    ].join(' ')}
-                    disabled={
-                      this.isAnimating() || zoomLevel === MAX_ZOOM_LEVEL
+                    key="close"
+                    aria-label={this.props.closeLabel}
+                    className={
+                      'ril-close ril-toolbar__item__child' +
+                      ` ${styles.toolbarItemChild} ${styles.builtinButton} ${
+                        styles.closeButton
+                      }`
                     }
                     onClick={
-                      !this.isAnimating() && zoomLevel !== MAX_ZOOM_LEVEL
-                        ? this.handleZoomInButtonClick
-                        : undefined
-                    }
+                      !this.isAnimating() ? this.requestClose : undefined
+                    } // Ignore clicks during animation
                   />
                 </li>
               )}
-
-              {enableZoom && (
-                <li className={`ril-toolbar__item ${styles.toolbarItem}`}>
-                  <button // Lightbox zoom out button
-                    type="button"
-                    key="zoom-out"
-                    aria-label={this.props.zoomOutLabel}
-                    className={[
-                      'ril-zoom-out',
-                      styles.toolbarItemChild,
-                      styles.builtinButton,
-                      styles.zoomOutButton,
-                      ...(zoomLevel === MIN_ZOOM_LEVEL
-                        ? [styles.builtinButtonDisabled]
-                        : []),
-                    ].join(' ')}
-                    disabled={
-                      this.isAnimating() || zoomLevel === MIN_ZOOM_LEVEL
-                    }
-                    onClick={
-                      !this.isAnimating() && zoomLevel !== MIN_ZOOM_LEVEL
-                        ? this.handleZoomOutButtonClick
-                        : undefined
-                    }
-                  />
-                </li>
-              )}
-
-              <li className={`ril-toolbar__item ${styles.toolbarItem}`}>
-                <button // Lightbox close button
-                  type="button"
-                  key="close"
-                  aria-label={this.props.closeLabel}
-                  className={
-                    'ril-close ril-toolbar__item__child' +
-                    ` ${styles.toolbarItemChild} ${styles.builtinButton} ${
-                      styles.closeButton
-                    }`
-                  }
-                  onClick={!this.isAnimating() ? this.requestClose : undefined} // Ignore clicks during animation
-                />
-              </li>
             </ul>
           </div>
 
@@ -1794,6 +1801,9 @@ ReactImageLightbox.propTypes = {
   // Array of custom toolbar buttons
   toolbarButtons: PropTypes.arrayOf(PropTypes.node),
 
+  // When true, hide all default toolbars buttons (close, zoom in, zoom out), useful when override default buttons with custom defined toolbarButtons
+  hideToolbarButtons: PropTypes.bool,
+
   // When true, clicks outside of the image close the lightbox
   clickOutsideToClose: PropTypes.bool,
 
@@ -1829,6 +1839,7 @@ ReactImageLightbox.defaultProps = {
   imageCrossOrigin: null,
   keyRepeatKeyupBonus: 40,
   keyRepeatLimit: 180,
+  hideToolbarButtons: false,
   mainSrcThumbnail: null,
   nextLabel: 'Next image',
   nextSrc: null,
