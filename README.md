@@ -2,11 +2,11 @@
 
 [![NPM](https://nodei.co/npm/react-image-lightbox.png)](https://npmjs.org/package/react-image-lightbox) [![Build Status](https://travis-ci.org/fritz-c/react-image-lightbox.svg?branch=master)](https://travis-ci.org/fritz-c/react-image-lightbox) [![Coverage Status](https://coveralls.io/repos/github/fritz-c/react-image-lightbox/badge.svg?branch=master)](https://coveralls.io/github/fritz-c/react-image-lightbox?branch=master)
 
-[![RIL Snapshot](https://user-images.githubusercontent.com/4413963/31209033-78f60df0-a9c3-11e7-8f83-69998d46973e.png)](https://fritz-c.github.io/react-image-lightbox/)
+[![RIL Snapshot](https://user-images.githubusercontent.com/4413963/31209033-78f60df0-a9c3-11e7-8f83-69998d46973e.png)](https://frontend-collective.github.io/react-image-lightbox/)
 
 A flexible lightbox component for displaying images in a React project.
 
-[DEMO](https://fritz-c.github.io/react-image-lightbox/)
+[DEMO](https://frontend-collective.github.io/react-image-lightbox/)
 
 Features
 - Keyboard shortcuts (with rate limiting)
