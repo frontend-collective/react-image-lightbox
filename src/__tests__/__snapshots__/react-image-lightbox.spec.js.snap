@@ -152,7 +152,6 @@ exports[`Snapshot Testing Lightbox renders properly" 1`] = `
         className="ReactModal__Overlay ReactModal__Overlay--after-open"
         onClick={[Function]}
         onMouseDown={[Function]}
-        onMouseUp={[Function]}
         style={
           Object {
             "backgroundColor": "transparent",
