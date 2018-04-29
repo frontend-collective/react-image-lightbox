@@ -3,6 +3,7 @@ const webpack = require('webpack');
 const autoprefixer = require('autoprefixer');
 const nodeExternals = require('webpack-node-externals');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 
 const target = process.env.TARGET || 'umd';
 
@@ -36,6 +37,7 @@ const cssLoader = isLocal => ({
 });
 
 const config = {
+  mode: 'production',
   entry: './src/index',
   output: {
     path: path.join(__dirname, 'dist'),
@@ -47,14 +49,6 @@ const config = {
   plugins: [
     new webpack.EnvironmentPlugin({ NODE_ENV: 'development' }),
     new webpack.optimize.OccurrenceOrderPlugin(),
-    new webpack.optimize.UglifyJsPlugin({
-      compress: {
-        warnings: false,
-      },
-      mangle: false,
-      beautify: true,
-      comments: true,
-    }),
   ],
   module: {
     rules: [
@@ -86,8 +80,28 @@ switch (target) {
         whitelist: [/\.(?!(?:jsx?|json)$).{1,5}$/i],
       }),
     ];
+
+    // Keep the minimizer from mangling variable names
+    // (we keep minimization enabled to remove dead code)
+    config.optimization = {
+      minimizer: [
+        new UglifyJSPlugin({
+          uglifyOptions: {
+            mangle: false,
+            compress: {
+              warnings: false,
+            },
+            output: {
+              beautify: true,
+              comments: true,
+            },
+          },
+        }),
+      ],
+    };
     break;
   case 'development':
+    config.mode = 'development';
     config.devtool = 'eval';
     config.module.rules.push({
       test: /\.(jpe?g|png|gif|ico|svg)$/,
@@ -133,11 +147,6 @@ switch (target) {
         template: './examples/cats/index.html',
       }),
       new webpack.EnvironmentPlugin({ NODE_ENV: 'production' }),
-      new webpack.optimize.UglifyJsPlugin({
-        compress: {
-          warnings: false,
-        },
-      }),
     ];
 
     break;
