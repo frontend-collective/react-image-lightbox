@@ -74,7 +74,7 @@ export default class LightboxExample extends Component {
 }
 ```
 
-Play with the code on the [example on CodeSandbox](https://codesandbox.io/s/wkw2mjm5l8)
+Play with the code on the [example on CodeSandbox](https://codesandbox.io/s/l9n3vnz8yz)
 
 ## Options
 
