@@ -5,11 +5,11 @@
   "scripts": {
     "build": "npm run clean && cross-env NODE_ENV=production TARGET=umd webpack --bail",
     "build:demo": "npm run clean:demo && cross-env NODE_ENV=production TARGET=demo webpack --bail",
-    "clean": "rimraf dist",
+    "clean": "rimraf dist style.css style.css.map",
     "clean:demo": "rimraf build",
     "start": "cross-env NODE_ENV=development TARGET=development webpack-dev-server --inline --hot",
-    "lint": "eslint \"{src,examples}/**/*.{js,jsx}\"",
-    "prettier": "prettier --single-quote --trailing-comma es5 --write \"{src,examples}/**/*.{js,jsx,css,scss}\"",
+    "lint": "eslint \"{src,examples}/**/*.js\"",
+    "prettier": "prettier --single-quote --trailing-comma es5 --write \"{src,examples}/**/*.{md,js,css}\"",
     "prepublishOnly": "npm run lint && npm run test && npm run build",
     "test": "jest",
     "test:watch": "jest --watchAll",
@@ -17,7 +17,9 @@
   },
   "main": "dist/main.js",
   "files": [
-    "dist"
+    "dist",
+    "style.css",
+    "style.css.map"
   ],
   "repository": {
     "type": "git",
@@ -44,13 +46,17 @@
       "node_modules"
     ],
     "moduleNameMapper": {
-      "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/__mocks__/fileMock.js",
-      "\\.(css|scss|less)$": "identity-obj-proxy"
+      "\\.(css|jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/__mocks__/fileMock.js"
     },
     "snapshotSerializers": [
       "enzyme-to-json/serializer"
     ]
   },
+  "browserslist": [
+    "IE >= 11",
+    "last 2 versions",
+    "> 1%"
+  ],
   "dependencies": {
     "prop-types": "^15.6.1",
     "react-modal": "^3.4.4"
@@ -80,11 +86,10 @@
     "eslint-plugin-import": "^2.11.0",
     "eslint-plugin-jsx-a11y": "^6.0.3",
     "eslint-plugin-react": "^7.7.0",
+    "extract-text-webpack-plugin": "^3.0.2",
     "file-loader": "^1.1.11",
     "gh-pages": "^1.1.0",
     "html-webpack-plugin": "^3.2.0",
-    "identity-obj-proxy": "^3.0.0",
-    "isomorphic-style-loader": "^4.0.0",
     "jest": "^22.4.3",
     "jest-enzyme": "^6.0.0",
     "node-sass": "^4.9.0",

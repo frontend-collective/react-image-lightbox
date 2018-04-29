@@ -1,1 +1,3 @@
-module.exports = require('./react-image-lightbox').default;
+import Lightbox from './react-image-lightbox';
+
+export default Lightbox;
