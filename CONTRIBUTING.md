@@ -84,7 +84,7 @@ Follow this process if you'd like your work considered for inclusion in the proj
    # Navigate to the newly cloned directory
    cd react-image-lightbox
    # Assign the original repo to a remote called "upstream"
-   git remote add upstream https://github.com/fritz-c/react-image-lightbox
+   git remote add upstream https://github.com/frontend-collective/react-image-lightbox
    ```
 
 2. If you cloned a while ago, get the latest changes from upstream:

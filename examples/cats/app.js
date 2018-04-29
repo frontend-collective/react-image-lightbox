@@ -184,16 +184,16 @@ class App extends Component {
             <li>No external CSS</li>
           </ul>
 
-          <a href="https://github.com/fritz-c/react-image-lightbox">
+          <a href="https://github.com/frontend-collective/react-image-lightbox">
             Examples and Documentation on Github
           </a>
 
           <footer className="site-footer">
             <span className="site-footer-owner">
-              <a href="https://github.com/fritz-c/react-image-lightbox">
+              <a href="https://github.com/frontend-collective/react-image-lightbox">
                 React Image Lightbox
               </a>{' '}
-              is maintained by <a href="https://github.com/fritz-c">fritz-c</a>.
+              is maintained by <a href="https://github.com/frontend-collective">Frontend Collective</a>.
             </span>
 
             <span className="site-footer-credits">
@@ -207,7 +207,7 @@ class App extends Component {
           </footer>
         </section>
 
-        <a href="https://github.com/fritz-c/react-image-lightbox">
+        <a href="https://github.com/frontend-collective/react-image-lightbox">
           <img
             style={{ position: 'absolute', top: 0, right: 0, border: 0 }}
             src="https://camo.githubusercontent.com/38ef81f8aca64bb9a64448d0d70f1308ef5341ab/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6461726b626c75655f3132313632312e706e67"
