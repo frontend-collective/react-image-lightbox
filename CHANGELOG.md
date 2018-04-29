@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="5.0.0"></a>
+# [5.0.0](https://github.com/frontend-collective/react-image-lightbox/compare/v4.6.0...v5.0.0) (2018-04-29)
+
+
+### Features
+
+* migrated away from style-loader ([e74b7c9](https://github.com/frontend-collective/react-image-lightbox/commit/e74b7c9))
+
+
+### BREAKING CHANGES
+
+* you must you must import the css for the component yourself,
+using `import 'react-image-lightbox/style.css';`. You only need to do this
+once in your application.
+* Versions of IE earlier than IE 11 are no longer supported.
+
+
+
 <a name="4.6.0"></a>
 # [4.6.0](https://github.com/frontend-collective/react-image-lightbox/compare/v4.5.0...v4.6.0) (2018-03-09)
 
