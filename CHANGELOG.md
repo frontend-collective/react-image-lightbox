@@ -13,7 +13,7 @@ All notable changes to this project will be documented in this file. See [standa
 
 ### BREAKING CHANGES
 
-* you must you must import the css for the component yourself,
+* you must import the css for the component yourself,
 using `import 'react-image-lightbox/style.css';`. You only need to do this
 once in your application.
 * Versions of IE earlier than IE 11 are no longer supported.
