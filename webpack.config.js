@@ -48,6 +48,8 @@ const config = {
   output: {
     path: __dirname,
     filename: '[name].js',
+    // See https://github.com/webpack/webpack/issues/6522
+    globalObject: 'typeof self !== \'undefined\' ? self : this',
     libraryTarget: 'umd',
     library: 'ReactImageLightbox',
   },
