@@ -16,8 +16,10 @@
     "deploy": "npm run build:demo && gh-pages -d build"
   },
   "main": "dist/main.js",
+  "typings": "index.d.ts",
   "files": [
     "dist",
+    "index.d.ts",
     "style.css",
     "style.css.map"
   ],
