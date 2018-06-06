@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Modal from 'react-modal';
+import EXIF from 'exif-js';
+
 import {
   translate,
   getWindowWidth,
@@ -28,8 +30,29 @@ import {
 import './style.css';
 
 class ReactImageLightbox extends Component {
+  static isIphone () {
+    const userAgent = global.navigator.userAgent.toLowerCase();
+    return /iphone|ipod|ipad/.test(userAgent);
+  };
   static isTargetMatchImage(target) {
     return target && /ril-image-current/.test(target.className);
+  }
+
+  static isNeedFixOrientation (orientation) {
+    if (orientation === 5 ||
+        orientation === 6 ||
+        orientation === 7 ||
+        orientation === 8) {
+      return true;
+    }
+    return false;
+  };
+
+  static getSizeByOrientation (width, height, orientation) {
+    if (ReactImageLightbox.isNeedFixOrientation(orientation)) {
+      return [height, width];
+    }
+    return [width, height];
   }
 
   static parseMouseEvent(mouseEvent) {
@@ -1129,13 +1152,28 @@ class ReactImageLightbox extends Component {
     inMemoryImage.onload = () => {
       this.props.onImageLoad(imageSrc, srcType, inMemoryImage);
 
-      this.imageCache[imageSrc] = {
-        loaded: true,
-        width: inMemoryImage.width,
-        height: inMemoryImage.height,
-      };
+      if (ReactImageLightbox.isIphone()) {
+        const that = this;
+        EXIF.getData(inMemoryImage, function () { // eslint-disable-line
+          const orientation = EXIF.getTag(this, 'Orientation');
+          const [width, height] = ReactImageLightbox.getSizeByOrientation(inMemoryImage.width, inMemoryImage.height, orientation)
+          that.imageCache[imageSrc] = {
+            loaded: true,
+            width,
+            height,
+          };
+    
+          done();
+        });
+      } else {
+        this.imageCache[imageSrc] = {
+          loaded: true,
+          width: inMemoryImage.width,
+          height: inMemoryImage.height,
+        };
 
-      done();
+        done();
+      }
     };
 
     inMemoryImage.src = imageSrc;
