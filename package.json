@@ -1,5 +1,5 @@
 {
-  "name": "react-image-lightbox",
+  "name": "@zhyabs1314/react-image-lightbox",
   "version": "5.0.0",
   "description": "A lightbox component for React.js",
   "scripts": {
@@ -60,6 +60,7 @@
     "> 1%"
   ],
   "dependencies": {
+    "exif-js": "^2.3.0",
     "prop-types": "^15.6.1",
     "react-modal": "^3.4.4"
   },
