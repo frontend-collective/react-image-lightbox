@@ -83,6 +83,18 @@ describe('Lightbox structure', () => {
       ).length
     ).toEqual(1);
   });
+
+  it('contains loader icon', () => {
+    expect(wrapper.find('.ril-loading-circle').exists()).toBe(true);
+  });
+
+  it('contains custom loader if it was set', () => {
+    const loader = <p>loading...</p>;
+    wrapper.setProps({ loader });
+
+    expect(wrapper.find('.ril-loading-circle').exists()).toBe(false);
+    expect(wrapper.contains(loader)).toBe(true);
+  });
 });
 
 describe('Events', () => {

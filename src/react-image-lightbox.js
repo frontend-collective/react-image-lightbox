@@ -1262,6 +1262,7 @@ class ReactImageLightbox extends Component {
       onAfterOpen,
       imageCrossOrigin,
       reactModalProps,
+      loader,
     } = this.props;
     const {
       zoomLevel,
@@ -1329,8 +1330,8 @@ class ReactImageLightbox extends Component {
 
         return;
       } else if (bestImageInfo === null) {
-        const loadingIcon = (
-          <div className="ril-loading-circle ril__loadingCircle ril__loadingContainer__icon">
+        const loadingIcon = loader || (
+          <div className="ril-loading-circle ril__loadingCircle">
             {[...new Array(12)].map((_, index) => (
               <div
                 // eslint-disable-next-line react/no-array-index-key
@@ -1348,7 +1349,9 @@ class ReactImageLightbox extends Component {
             style={imageStyle}
             key={this.props[srcType] + keyEndings[srcType]}
           >
-            <div className="ril__loadingContainer">{loadingIcon}</div>
+            <div className="ril__loadingContainer">
+              <div className="ril__loadingContainer__icon">{loadingIcon}</div>
+            </div>
           </div>
         );
 
@@ -1743,6 +1746,7 @@ ReactImageLightbox.propTypes = {
   closeLabel: PropTypes.string,
 
   imageLoadErrorMessage: PropTypes.node,
+  loader: PropTypes.node,
 };
 
 ReactImageLightbox.defaultProps = {
@@ -1778,6 +1782,7 @@ ReactImageLightbox.defaultProps = {
   zoomInLabel: 'Zoom in',
   zoomOutLabel: 'Zoom out',
   imageLoadErrorMessage: 'This image failed to load',
+  loader: null,
 };
 
 export default ReactImageLightbox;
