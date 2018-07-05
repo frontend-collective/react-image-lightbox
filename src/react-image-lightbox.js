@@ -62,7 +62,7 @@ class ReactImageLightbox extends Component {
   // Request to transition to the previous image
   static getTransform({ x = 0, y = 0, zoom = 1, width, targetWidth }) {
     let nextX = x;
-    const windowWidth = getWindowWidth();
+    const windowWidth = getWindowWidth() - this.props.sideBarWidth;
     if (width > windowWidth) {
       nextX += (windowWidth - width) / 2;
     }
@@ -414,7 +414,7 @@ class ReactImageLightbox extends Component {
     }
 
     return {
-      width: getWindowWidth(),
+      width: getWindowWidth() - this.props.sideBarWidth,
       height: getWindowHeight(),
       top: 0,
       right: 0,
@@ -1719,6 +1719,8 @@ ReactImageLightbox.propTypes = {
 
   wrapperClassName: PropTypes.string,
 
+  sideBarWidth: PropTypes.number,
+
   //-----------------------------
   // Other
   //-----------------------------
@@ -1778,6 +1780,7 @@ ReactImageLightbox.defaultProps = {
   zoomInLabel: 'Zoom in',
   zoomOutLabel: 'Zoom out',
   imageLoadErrorMessage: 'This image failed to load',
+  sideBarWidth: 0,
 };
 
 export default ReactImageLightbox;
