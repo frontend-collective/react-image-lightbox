@@ -64,8 +64,8 @@
     "react-modal": "^3.4.4"
   },
   "peerDependencies": {
-    "react": "^15.5.0 || ^16.0.0",
-    "react-dom": "^15.5.0 || ^16.0.0"
+    "react": "^16.3.0",
+    "react-dom": "^16.3.0"
   },
   "devDependencies": {
     "autoprefixer": "^8.4.1",
