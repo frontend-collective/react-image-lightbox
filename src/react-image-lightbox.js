@@ -6,6 +6,15 @@ import {
   getWindowWidth,
   getWindowHeight,
   getHighestSafeWindowContext,
+  isTargetMatchImage,
+  parseMouseEvent,
+  parseTouchPointer,
+  parsePointerEvent,
+  getTransform,
+  getSrcTypes,
+  isImageLoaded,
+  getLoadedImageInfo,
+  loadAllImages,
 } from './util';
 import {
   KEYS,
@@ -27,43 +36,16 @@ import {
 } from './constant';
 import './style.css';
 
-import {
-  isTargetMatchImage,
-  parseMouseEvent,
-  parseTouchPointer,
-  parsePointerEvent,
-  getTransform,
-  getSrcTypes,
-  isImageLoaded,
-  getLoadedImageInfo,
-  loadAllImages,
-} from './static';
-
 class ReactImageLightbox extends Component {
   static getDerivedStateFromProps(props, state) {
     // Iterate through the source types for prevProps and nextProps to
     //  determine if any of the sources changed
-    const prevProps = state.prevProps;
-    let sourcesChanged = false;
-    const prevSrcDict = {};
-    const nextSrcDict = {};
-    getSrcTypes(state.keyCounter).forEach(srcType => {
-      if (prevProps[srcType.name] !== props[srcType.name]) {
-        sourcesChanged = true;
-
-        prevSrcDict[prevProps[srcType.name]] = true;
-        nextSrcDict[props[srcType.name]] = true;
-      }
-    });
-    if (sourcesChanged || state.moveRequested) {
-      /* why??
-      // Reset the loaded state for images not rendered next
-      Object.keys(prevSrcDict).forEach(prevSrc => {
-        if (!(prevSrc in nextSrcDict) && prevSrc in this.imageCache) {
-          this.imageCache[prevSrc].loaded = false;
-        }
-      });
-      */
+    const { prevProps } = state;
+    const sourcesChanged =
+      getSrcTypes(state.keyCounter).findIndex(
+        srcType => prevProps[srcType.name] !== props[srcType.name]
+      ) !== -1;
+    if (sourcesChanged) {
       // Load any new images
       return {
         prevProps: props,
@@ -84,10 +66,10 @@ class ReactImageLightbox extends Component {
 
       // Lightbox is closing
       // When Lightbox is mounted, if animation is enabled it will open with the reverse of the closing animation
-      isClosing: !props.animationDisabled,
+      isClosing: false,
 
       // Component parts should animate (e.g., when images are moving, or image is being zoomed)
-      shouldAnimate: false,
+      shouldAnimate: !props.animationDisabled,
 
       //-----------------------------
       // Zoom settings
@@ -114,10 +96,10 @@ class ReactImageLightbox extends Component {
       moveRequested: false,
 
       // handle image load
-      loadDone: this.loadDone.bind(this),
+      loadDone: this.loadDone.bind(this), // eslint-disable-line react/no-unused-state
 
       // prev props
-      prevProps: {},
+      prevProps: {}, // eslint-disable-line react/no-unused-state
     };
 
     this.closeIfClickInner = this.closeIfClickInner.bind(this);
@@ -207,10 +189,14 @@ class ReactImageLightbox extends Component {
     });
 
     if (!this.props.animationDisabled) {
-      // Make opening animation play
-      this.setState({
-        isClosing: false,
-      });
+      // Make opening animation end
+      this.setTimeout(
+        () =>
+          this.setState({
+            shouldAnimate: false,
+          }),
+        this.props.animationDuration
+      );
     }
   }
 
@@ -225,32 +211,6 @@ class ReactImageLightbox extends Component {
       this.windowContext.removeEventListener(type, this.listeners[type]);
     });
     this.timeouts.forEach(tid => clearTimeout(tid));
-  }
-
-  loadDone(err, srcType, imageSrc, inMemoryImage) {
-    // Give up showing image on error
-    if (err) {
-      this.props.onImageLoadError(imageSrc, srcType, errorEvent);
-      // failed to load so set the state loadErrorStatus
-      this.setState(prevState => ({
-        loadErrorStatus: {
-          ...prevState.loadErrorStatus,
-          [srcType]: true,
-        },
-      }));
-      return;
-    }
-
-    // Don't rerender if the src is not the same as when the load started
-    // or if the component has unmounted
-    if (this.props[srcType] !== imageSrc || this.didUnmount) {
-      return;
-    }
-
-    this.props.onImageLoad(imageSrc, srcType, inMemoryImage);
-
-    // Force rerender with the new image
-    this.forceUpdate();
   }
 
   setTimeout(func, time) {
@@ -390,6 +350,32 @@ class ReactImageLightbox extends Component {
       bottom: 0,
       left: 0,
     };
+  }
+
+  loadDone(err, srcType, imageSrc, inMemoryImage) {
+    // Give up showing image on error
+    if (err) {
+      this.props.onImageLoadError(imageSrc, srcType, err);
+      // failed to load so set the state loadErrorStatus
+      this.setState(prevState => ({
+        loadErrorStatus: {
+          ...prevState.loadErrorStatus,
+          [srcType]: true,
+        },
+      }));
+      return;
+    }
+
+    // Don't rerender if the src is not the same as when the load started
+    // or if the component has unmounted
+    if (this.props[srcType] !== imageSrc || this.didUnmount) {
+      return;
+    }
+
+    this.props.onImageLoad(imageSrc, srcType, inMemoryImage);
+
+    // Force rerender with the new image
+    this.forceUpdate();
   }
 
   clearTimeout(id) {
