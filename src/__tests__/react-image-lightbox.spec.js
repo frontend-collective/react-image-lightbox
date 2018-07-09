@@ -184,6 +184,7 @@ describe('Key bindings', () => {
   const wrapper = mount(
     <Lightbox
       {...commonProps}
+      animationDisabled
       onCloseRequest={mockCloseRequest}
       onMovePrevRequest={mockMovePrevRequest}
       onMoveNextRequest={mockMoveNextRequest}
@@ -238,6 +239,7 @@ describe('Snapshot Testing', () => {
     const wrapper = mount(
       <Lightbox
         {...commonProps}
+        animationDisabled
         reactModalProps={{ appElement: global.document.createElement('div') }}
       />
     );

@@ -2,7 +2,7 @@
 
 exports[`Snapshot Testing Lightbox renders properly" 1`] = `
 <ReactImageLightbox
-  animationDisabled={false}
+  animationDisabled={true}
   animationDuration={300}
   animationOnKeyInput={false}
   clickOutsideToClose={true}
