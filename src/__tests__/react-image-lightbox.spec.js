@@ -249,6 +249,30 @@ describe('Key bindings', () => {
     simulateKey(37);
     expect(mockMovePrevRequest).toHaveBeenCalledTimes(1);
   });
+
+  it('Focus the ZoomIn Button when ZoomOut is disabled', () => {
+    wrapper.setState({ zoomLevel: MIN_ZOOM_LEVEL + ZOOM_BUTTON_INCREMENT_SIZE });
+    const {zoomOutBtn, zoomInBtn} = wrapper.instance();
+    jest.spyOn(zoomOutBtn, 'focus');
+    jest.spyOn(zoomInBtn, 'focus');
+    wrapper.find('.ril-zoom-out').simulate('click')
+    setTimeout(() => {
+      expect(zoomOutBtn.focus).toHaveBeenCalledTimes(0);
+      expect(zoomInBtn.focus).toHaveBeenCalledTimes(1);
+    }, 250);
+  });
+
+  it('Focus the ZoomOut Button when ZoomIn is disabled', () => {
+    wrapper.setState({ zoomLevel: MAX_ZOOM_LEVEL - ZOOM_BUTTON_INCREMENT_SIZE });
+    const {zoomOutBtn, zoomInBtn} = wrapper.instance();
+    jest.spyOn(zoomOutBtn, 'focus');
+    jest.spyOn(zoomInBtn, 'focus');
+    wrapper.find('.ril-zoom-out').simulate('click')
+    setTimeout(() => {
+      expect(zoomOutBtn.focus).toHaveBeenCalledTimes(1);
+      expect(zoomInBtn.focus).toHaveBeenCalledTimes(0);
+    }, 250);
+  });
 });
 
 describe('Snapshot Testing', () => {
