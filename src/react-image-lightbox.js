@@ -1061,11 +1061,19 @@ class ReactImageLightbox extends Component {
   }
 
   handleZoomInButtonClick() {
-    this.changeZoom(this.state.zoomLevel + ZOOM_BUTTON_INCREMENT_SIZE);
+    const nextZoomLevel = this.state.zoomLevel + ZOOM_BUTTON_INCREMENT_SIZE;
+    this.changeZoom(nextZoomLevel);
+    if (nextZoomLevel === MAX_ZOOM_LEVEL) {
+      this.zoomOutBtn.focus();
+    }
   }
 
   handleZoomOutButtonClick() {
-    this.changeZoom(this.state.zoomLevel - ZOOM_BUTTON_INCREMENT_SIZE);
+    const nextZoomLevel = this.state.zoomLevel - ZOOM_BUTTON_INCREMENT_SIZE;
+    this.changeZoom(nextZoomLevel);
+    if (nextZoomLevel === MIN_ZOOM_LEVEL) {
+      this.zoomInBtn.focus();
+    }
   }
 
   handleCaptionMousewheel(event) {
@@ -1533,6 +1541,9 @@ class ReactImageLightbox extends Component {
                         ? ['ril__builtinButtonDisabled']
                         : []),
                     ].join(' ')}
+                    ref={el => {
+                      this.zoomInBtn = el
+                    }}
                     disabled={
                       this.isAnimating() || zoomLevel === MAX_ZOOM_LEVEL
                     }
@@ -1560,6 +1571,9 @@ class ReactImageLightbox extends Component {
                         ? ['ril__builtinButtonDisabled']
                         : []),
                     ].join(' ')}
+                    ref={el => {
+                      this.zoomOutBtn = el
+                    }}
                     disabled={
                       this.isAnimating() || zoomLevel === MIN_ZOOM_LEVEL
                     }
