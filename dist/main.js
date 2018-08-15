@@ -574,13 +574,13 @@
 
                                 // Left arrow key moves to previous image
                                                               case _constant.KEYS.LEFT_ARROW:
-                                if (!this.props.prevSrc) return;
+                                if (!this.props.prevSrc && !this.props.prevCustomContent) return;
                                 event.preventDefault(), this.keyPressed = !0, this.requestMovePrev(event);
                                 break;
 
                                 // Right arrow key moves to next image
                                                               case _constant.KEYS.RIGHT_ARROW:
-                                if (!this.props.nextSrc) return;
+                                if (!this.props.nextSrc && !this.props.nextCustomContent) return;
                                 event.preventDefault(), this.keyPressed = !0, this.requestMoveNext(event);
                             }
                         } else this.lastKeyDownTime -= this.props.keyRepeatKeyupBonus;

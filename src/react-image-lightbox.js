@@ -571,7 +571,7 @@ class ReactImageLightbox extends Component {
 
       // Left arrow key moves to previous image
       case KEYS.LEFT_ARROW:
-        if (!this.props.prevSrc) {
+        if (!this.props.prevSrc && !this.props.prevCustomContent) {
           return;
         }
 
@@ -582,7 +582,7 @@ class ReactImageLightbox extends Component {
 
       // Right arrow key moves to next image
       case KEYS.RIGHT_ARROW:
-        if (!this.props.nextSrc) {
+        if (!this.props.nextSrc && !this.props.nextCustomContent) {
           return;
         }
 
