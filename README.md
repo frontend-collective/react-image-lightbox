@@ -80,7 +80,7 @@ Play with the code on the [example on CodeSandbox](https://codesandbox.io/s/l9n3
 
 | Property                        |  Type  | Description                                                                                                                                                   |
 | :------------------------------ | :----: | :------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| mainSrc<br/>_(required)_        | string | Main display image url                                                                                                                                        |
+| mainSrc<br/>_(required if mainCustomContent is null)_        | string | Main display image url                                                                                                                                        |
 | prevSrc                         | string | Previous display image url (displayed to the left). If left undefined, `onMovePrevRequest` will not be called, and the button not displayed                   |
 | nextSrc                         | string | Next display image url (displayed to the right). If left undefined, `onMoveNextRequest` will not be called, and the button not displayed                      |
 | mainSrcThumbnail                | string | Thumbnail image url corresponding to `props.mainSrc`. Displayed as a placeholder while the full-sized image loads.                                            |
@@ -113,7 +113,10 @@ Play with the code on the [example on CodeSandbox](https://codesandbox.io/s/l9n3
 | prevLabel                       | string | `aria-label` set on the 'Previous' button. Defaults to `'Previous image'`.                                                                                    |
 | zoomInLabel                     | string | `aria-label` set on the 'Zoom In' button. Defaults to `'Zoom in'`.                                                                                            |
 | zoomOutLabel                    | string | `aria-label` set on the 'Zoom Out' button. Defaults to `'Zoom out'`.                                                                                          |
-| closeLabel                      | string | `aria-label` set on the 'Close Lightbox' button. Defaults to `'Close lightbox'`.                                                                              |
+| closeLabel                      | string | `aria-label` set on the 'Close Lightbox' button. Defaults to `'Close lightbox'`.                                                                                            |
+| mainCustomContent<br/>_(required if mainSrc is null)_               |  node  | Main display component used if mainSrc is not defined. Defaults to `'null'`.                                                                                            |
+| nextCustomContent               |  node  | Next display component used if nextSrc is not defined. Defaults to `'null'`.                                                                                            |
+| prevCustomContent               |  node  | Prev display component used if prevSrc is not defined. Defaults to `'null'`.                                                                              |
 
 ## Browser Compatibility
 
