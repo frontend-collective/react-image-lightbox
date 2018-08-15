@@ -121,7 +121,11 @@
             Object.defineProperty(exports, "__esModule", {
                 value: !0
             });
-            var _extends = Object.assign || function(target) {
+            var _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function(obj) {
+                return typeof obj;
+            } : function(obj) {
+                return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
+            }, _extends = Object.assign || function(target) {
                 for (var i = 1; i < arguments.length; i++) {
                     var source = arguments[i];
                     for (var key in source) Object.prototype.hasOwnProperty.call(source, key) && (target[key] = source[key]);
@@ -1070,12 +1074,9 @@
                         // Images to be displayed
                         var images = [], addImage = function(srcType, imageClass, transforms) {
                             if ("mainSrc" === srcType && mainCustomContent) images.push(_react2.default.createElement("div", {
+                                key: srcType + "-mainCustomContent",
                                 className: imageClass + " ril__image"
-                            }, _extends({}, mainCustomContent, {
-                                props: _extends({}, mainCustomContent.props, {
-                                    key: srcType + "-mainCustomContent"
-                                })
-                            }))); else if ("prevSrc" === srcType && prevCustomContent) images.push(_react2.default.createElement("div", {
+                            }, mainCustomContent)); else if ("prevSrc" === srcType && prevCustomContent) images.push(_react2.default.createElement("div", {
                                 key: srcType + "-prevCustomContent"
                             })); else if ("nextSrc" === srcType && nextCustomContent) images.push(_react2.default.createElement("div", {
                                 key: srcType + "-nextCustomContent"
@@ -1289,7 +1290,9 @@
                 // Image sources
                 //-----------------------------
                 // Main display image url
-                mainSrc: _propTypes2.default.string,
+                mainSrc: function(props, prop, component) {
+                    return props.mainSrc || props.mainCustomContent ? props.mainCustomContent || "string" == typeof props.mainSrc ? null : new Error("Invalid prop `" + prop + "` of type `" + _typeof(props.mainSrc) + "` supplied to `" + component + "`, expected `string`.") : new Error("One of 'mainSrc' or 'mainCustomContent' is required by " + component + " component.");
+                },
                 // eslint-disable-line react/no-unused-prop-types
                 // Previous display image url (displayed to the left)
                 // If left undefined, movePrev actions will not be performed, and the button not displayed
@@ -1408,6 +1411,7 @@
                 imageCrossOrigin: null,
                 keyRepeatKeyupBonus: 40,
                 keyRepeatLimit: 180,
+                mainSrc: null,
                 mainSrcThumbnail: null,
                 nextLabel: "Next image",
                 nextSrc: null,

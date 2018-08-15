@@ -1299,8 +1299,8 @@ class ReactImageLightbox extends Component {
     const addImage = (srcType, imageClass, transforms) => {
       if(srcType === 'mainSrc' && mainCustomContent) {
         images.push(
-          <div className={`${imageClass} ril__image`} >
-          {{...mainCustomContent, props: {...mainCustomContent.props, key: `${srcType}-mainCustomContent`}}}
+          <div key={`${srcType}-mainCustomContent`} className={`${imageClass} ril__image`} >
+            {mainCustomContent}
           </div>
         );
         return;
@@ -1633,7 +1633,21 @@ ReactImageLightbox.propTypes = {
   //-----------------------------
 
   // Main display image url
-  mainSrc: PropTypes.string, // eslint-disable-line react/no-unused-prop-types
+  mainSrc: (props, prop, component) => {
+    if (!props.mainSrc && !props.mainCustomContent) {
+      return new Error(
+        `One of 'mainSrc' or 'mainCustomContent' is required by ${
+          component
+        } component.`
+      );
+    }
+    if (!props.mainCustomContent && typeof props.mainSrc !== 'string') {
+      return new Error(`Invalid prop \`${prop}\` of type \`${
+        typeof props.mainSrc
+      }\` supplied to \`${component}\`, expected \`string\`.`);
+    }
+    return null;
+  }, // eslint-disable-line react/no-unused-prop-types
 
   // Previous display image url (displayed to the left)
   // If left undefined, movePrev actions will not be performed, and the button not displayed
@@ -1788,6 +1802,7 @@ ReactImageLightbox.defaultProps = {
   imageCrossOrigin: null,
   keyRepeatKeyupBonus: 40,
   keyRepeatLimit: 180,
+  mainSrc: null,
   mainSrcThumbnail: null,
   nextLabel: 'Next image',
   nextSrc: null,
