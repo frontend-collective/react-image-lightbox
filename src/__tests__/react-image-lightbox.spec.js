@@ -2,6 +2,7 @@ import { mount } from 'enzyme';
 import React from 'react';
 import Modal from 'react-modal';
 import Lightbox from '../index';
+import { MAX_ZOOM_LEVEL, MIN_ZOOM_LEVEL, ZOOM_BUTTON_INCREMENT_SIZE } from '../constant'
 
 // Mock the loadStyles static function to avoid
 // issues with a lack of styles._insertCss
@@ -123,6 +124,11 @@ describe('Events', () => {
     <Lightbox {...extendedCommonProps} {...mockFns} animationDisabled />
   );
 
+  // Spy zoomBtn focus
+  const {zoomOutBtn, zoomInBtn} = wrapper.instance();
+  jest.spyOn(zoomOutBtn, 'focus');
+  jest.spyOn(zoomInBtn, 'focus');
+
   it('Calls onAfterOpen when mounted', () => {
     expect(mockFns.onAfterOpen).toHaveBeenCalledTimes(1);
     expect(mockFns.onAfterOpen).toHaveBeenCalledWith();
@@ -173,6 +179,18 @@ describe('Events', () => {
 
     expect(mockFns.onImageLoadError).toHaveBeenCalledTimes(0);
     wrapper.setProps({ mainSrc: LOAD_FAILURE_SRC });
+  });
+
+  it('Calls the the ZoomIn Focus when ZoomOut is disabled', () => {
+    wrapper.setState({ zoomLevel: MIN_ZOOM_LEVEL + ZOOM_BUTTON_INCREMENT_SIZE });
+    wrapper.instance().handleZoomOutButtonClick();
+    expect(zoomInBtn.focus).toHaveBeenCalledTimes(1);
+  });
+
+  it('Calls the the ZoomOut Focus when ZoomIn is disabled', () => {
+    wrapper.setState({ zoomLevel: MAX_ZOOM_LEVEL - ZOOM_BUTTON_INCREMENT_SIZE });
+    wrapper.instance().handleZoomInButtonClick();
+    expect(zoomOutBtn.focus).toHaveBeenCalledTimes(1);
   });
 });
 
