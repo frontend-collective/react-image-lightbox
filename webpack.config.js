@@ -36,13 +36,6 @@ const cssLoader = isLocal => ({
 });
 
 const config = {
-  entry: './src/index',
-  output: {
-    path: path.join(__dirname, 'dist'),
-    filename: '[name].js',
-    libraryTarget: 'umd',
-    library: 'ReactImageLightbox',
-  },
   devtool: 'source-map',
   plugins: [
     new webpack.EnvironmentPlugin({ NODE_ENV: 'development' }),
@@ -78,15 +71,6 @@ const config = {
 };
 
 switch (target) {
-  case 'umd':
-    // Exclude library dependencies from the bundle
-    config.externals = [
-      nodeExternals({
-        // load non-javascript files with extensions, presumably via loaders
-        whitelist: [/\.(?!(?:jsx?|json)$).{1,5}$/i],
-      }),
-    ];
-    break;
   case 'development':
     config.devtool = 'eval';
     config.module.rules.push({
