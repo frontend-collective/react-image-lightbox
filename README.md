@@ -124,6 +124,20 @@ Play with the code on the [example on CodeSandbox](https://codesandbox.io/s/l9n3
 | Safari  | Yes    |
 | IE 11   | Yes    |
 
+## React Compatibility
+
+React >= 16.3.0 work out of the box.
+
+For React >= 15.5.0 < 16.3.0 use [react-lifecycles-compat](https://github.com/reactjs/react-lifecycles-compat) or similar polyfill. For example:
+
+```js
+//...
+import Lightbox from 'react-image-lightbox';
+import { polyfill } from 'react-lifecycles-compat';
+polyfill(Lightbox);
+//...
+```
+
 ## Contributing
 
 After cloning the repository and running `npm install` inside, you can use the following commands to develop and build the project.
