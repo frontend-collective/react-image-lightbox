@@ -1270,6 +1270,7 @@ class ReactImageLightbox extends Component {
       onAfterOpen,
       imageCrossOrigin,
       reactModalProps,
+      children,
     } = this.props;
     const {
       zoomLevel,
@@ -1614,6 +1615,8 @@ class ReactImageLightbox extends Component {
             </div>
           )}
         </div>
+
+        {children}
       </Modal>
     );
   }
