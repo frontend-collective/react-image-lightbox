@@ -30,39 +30,45 @@ const titles = [
     <a className="creditLink" href="http://flickr.com/photos/titrans/">
       quatre mains
     </a>
-    &nbsp; (<a
+    &nbsp; (
+    <a
       className="creditLink"
       href="http://creativecommons.org/licenses/by/2.0/"
       title="Attribution License"
     >
       Some rights reserved
-    </a>)
+    </a>
+    )
   </span>,
   <span>
     by&nbsp;
     <a className="creditLink" href="http://flickr.com/photos/lachlanrogers/">
       latch.r
     </a>
-    &nbsp; (<a
+    &nbsp; (
+    <a
       className="creditLink"
       href="http://creativecommons.org/licenses/by-sa/2.0/"
       title="Attribution-ShareAlike License"
     >
       Some rights reserved
-    </a>)
+    </a>
+    )
   </span>,
   <span>
     by&nbsp;
     <a className="creditLink" href="http://flickr.com/photos/fazen/">
       fazen
     </a>
-    &nbsp; (<a
+    &nbsp; (
+    <a
       className="creditLink"
       href="http://creativecommons.org/licenses/by/2.0/"
       title="Attribution License"
     >
       Some rights reserved
-    </a>)
+    </a>
+    )
   </span>,
 ];
 
@@ -72,13 +78,20 @@ const captions = [
   <p>
     .. not in the&nbsp;
     <em>mood</em>
-    &nbsp;for games right now<br />
-    ...<br />
-    ...<br />
-    ...<br />
-    ...<br />
-    ...<br />
-    ...<br />
+    &nbsp;for games right now
+    <br />
+    ...
+    <br />
+    ...
+    <br />
+    ...
+    <br />
+    ...
+    <br />
+    ...
+    <br />
+    ...
+    <br />
     C&#39;mon. Seriously.
   </p>,
   '',
@@ -179,7 +192,8 @@ class App extends Component {
             <li>Image preloading for smoother viewing</li>
             <li>
               Mobile friendly, with pinch to zoom and swipe (Thanks,{' '}
-              <a href="https://github.com/webcarrot">@webcarrot</a>!)
+              <a href="https://github.com/webcarrot">@webcarrot</a>
+              !)
             </li>
             <li>No external CSS</li>
           </ul>
@@ -193,7 +207,11 @@ class App extends Component {
               <a href="https://github.com/frontend-collective/react-image-lightbox">
                 React Image Lightbox
               </a>{' '}
-              is maintained by <a href="https://github.com/frontend-collective">Frontend Collective</a>.
+              is maintained by{' '}
+              <a href="https://github.com/frontend-collective">
+                Frontend Collective
+              </a>
+              .
             </span>
 
             <span className="site-footer-credits">

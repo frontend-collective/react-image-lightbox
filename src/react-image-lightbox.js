@@ -324,14 +324,14 @@ class ReactImageLightbox extends Component {
     if (maxRatio > srcRatio) {
       // height is the constraining dimension of the photo
       return {
-        width: width * maxHeight / height,
+        width: (width * maxHeight) / height,
         height: maxHeight,
       };
     }
 
     return {
       width: maxWidth,
-      height: height * maxWidth / width,
+      height: (height * maxWidth) / width,
     };
   }
 
@@ -1542,7 +1542,7 @@ class ReactImageLightbox extends Component {
                         : []),
                     ].join(' ')}
                     ref={el => {
-                      this.zoomInBtn = el
+                      this.zoomInBtn = el;
                     }}
                     disabled={
                       this.isAnimating() || zoomLevel === MAX_ZOOM_LEVEL
@@ -1572,7 +1572,7 @@ class ReactImageLightbox extends Component {
                         : []),
                     ].join(' ')}
                     ref={el => {
-                      this.zoomOutBtn = el
+                      this.zoomOutBtn = el;
                     }}
                     disabled={
                       this.isAnimating() || zoomLevel === MIN_ZOOM_LEVEL
