@@ -130,8 +130,8 @@ describe('Events', () => {
 
   // Spy zoomBtn focus
   const { zoomOutBtn, zoomInBtn } = wrapper.instance();
-  jest.spyOn(zoomOutBtn, 'focus');
-  jest.spyOn(zoomInBtn, 'focus');
+  jest.spyOn(zoomOutBtn.current, 'focus');
+  jest.spyOn(zoomInBtn.current, 'focus');
 
   it('Calls onAfterOpen when mounted', () => {
     expect(mockFns.onAfterOpen).toHaveBeenCalledTimes(1);
@@ -190,7 +190,7 @@ describe('Events', () => {
       zoomLevel: MIN_ZOOM_LEVEL + ZOOM_BUTTON_INCREMENT_SIZE,
     });
     wrapper.instance().handleZoomOutButtonClick();
-    expect(zoomInBtn.focus).toHaveBeenCalledTimes(1);
+    expect(zoomInBtn.current.focus).toHaveBeenCalledTimes(1);
   });
 
   it('Calls the the ZoomOut Focus when ZoomIn is disabled', () => {
@@ -198,7 +198,7 @@ describe('Events', () => {
       zoomLevel: MAX_ZOOM_LEVEL - ZOOM_BUTTON_INCREMENT_SIZE,
     });
     wrapper.instance().handleZoomInButtonClick();
-    expect(zoomOutBtn.focus).toHaveBeenCalledTimes(1);
+    expect(zoomOutBtn.current.focus).toHaveBeenCalledTimes(1);
   });
 });
 
