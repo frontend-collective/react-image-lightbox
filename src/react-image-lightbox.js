@@ -218,18 +218,18 @@ class ReactImageLightbox extends Component {
     this.loadAllImages();
   }
 
-  componentDidUpdate(prevProps) {
+  componentWillReceiveProps(nextProps) {
     // Iterate through the source types for prevProps and nextProps to
     //  determine if any of the sources changed
     let sourcesChanged = false;
     const prevSrcDict = {};
     const nextSrcDict = {};
     this.getSrcTypes().forEach(srcType => {
-      if (prevProps[srcType.name] !== this.props[srcType.name]) {
+      if (this.props[srcType.name] !== nextProps[srcType.name]) {
         sourcesChanged = true;
 
-        prevSrcDict[prevProps[srcType.name]] = true;
-        nextSrcDict[this.props[srcType.name]] = true;
+        prevSrcDict[this.props[srcType.name]] = true;
+        nextSrcDict[nextProps[srcType.name]] = true;
       }
     });
 
@@ -244,8 +244,13 @@ class ReactImageLightbox extends Component {
       this.moveRequested = false;
 
       // Load any new images
-      this.loadAllImages(this.props);
+      this.loadAllImages(nextProps);
     }
+  }
+
+  shouldComponentUpdate() {
+    // Wait for move...
+    return !this.moveRequested;
   }
 
   componentWillUnmount() {
