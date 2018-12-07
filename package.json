@@ -61,8 +61,8 @@
     "react-modal": "^3.6.1"
   },
   "peerDependencies": {
-    "react": "^15.5.0 || ^16.x",
-    "react-dom": "^15.5.0 || ^16.x"
+    "react": "^16.x",
+    "react-dom": "^16.x"
   },
   "devDependencies": {
     "@babel/cli": "^7.1.5",

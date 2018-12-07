@@ -107,6 +107,12 @@ class ReactImageLightbox extends Component {
       loadErrorStatus: {},
     };
 
+    // Refs
+    this.outerEl = React.createRef();
+    this.zoomInBtn = React.createRef();
+    this.zoomOutBtn = React.createRef();
+    this.caption = React.createRef();
+
     this.closeIfClickInner = this.closeIfClickInner.bind(this);
     this.handleImageDoubleClick = this.handleImageDoubleClick.bind(this);
     this.handleImageMouseWheel = this.handleImageMouseWheel.bind(this);
@@ -409,8 +415,8 @@ class ReactImageLightbox extends Component {
    * Get the size of the lightbox in pixels
    */
   getLightboxRect() {
-    if (this.outerEl) {
-      return this.outerEl.getBoundingClientRect();
+    if (this.outerEl.current) {
+      return this.outerEl.current.getBoundingClientRect();
     }
 
     return {
@@ -1064,7 +1070,7 @@ class ReactImageLightbox extends Component {
     const nextZoomLevel = this.state.zoomLevel + ZOOM_BUTTON_INCREMENT_SIZE;
     this.changeZoom(nextZoomLevel);
     if (nextZoomLevel === MAX_ZOOM_LEVEL) {
-      this.zoomOutBtn.focus();
+      this.zoomOutBtn.current.focus();
     }
   }
 
@@ -1072,19 +1078,19 @@ class ReactImageLightbox extends Component {
     const nextZoomLevel = this.state.zoomLevel - ZOOM_BUTTON_INCREMENT_SIZE;
     this.changeZoom(nextZoomLevel);
     if (nextZoomLevel === MIN_ZOOM_LEVEL) {
-      this.zoomInBtn.focus();
+      this.zoomInBtn.current.focus();
     }
   }
 
   handleCaptionMousewheel(event) {
     event.stopPropagation();
 
-    if (!this.caption) {
+    if (!this.caption.current) {
       return;
     }
 
-    const { height } = this.caption.getBoundingClientRect();
-    const { scrollHeight, scrollTop } = this.caption;
+    const { height } = this.caption.current.getBoundingClientRect();
+    const { scrollHeight, scrollTop } = this.caption.current;
     if (
       (event.deltaY > 0 && height + scrollTop >= scrollHeight) ||
       (event.deltaY < 0 && scrollTop <= 0)
@@ -1336,7 +1342,8 @@ class ReactImageLightbox extends Component {
         );
 
         return;
-      } else if (bestImageInfo === null) {
+      }
+      if (bestImageInfo === null) {
         const loadingIcon = (
           <div className="ril-loading-circle ril__loadingCircle ril__loadingContainer__icon">
             {[...new Array(12)].map((_, index) => (
@@ -1439,8 +1446,8 @@ class ReactImageLightbox extends Component {
         onRequestClose={clickOutsideToClose ? this.requestClose : undefined}
         onAfterOpen={() => {
           // Focus on the div with key handlers
-          if (this.outerEl) {
-            this.outerEl.focus();
+          if (this.outerEl.current) {
+            this.outerEl.current.focus();
           }
 
           onAfterOpen();
@@ -1464,9 +1471,7 @@ class ReactImageLightbox extends Component {
             animationDuration: `${animationDuration}ms`,
             animationDirection: isClosing ? 'normal' : 'reverse',
           }}
-          ref={el => {
-            this.outerEl = el;
-          }}
+          ref={this.outerEl}
           onWheel={this.handleOuterMousewheel}
           onMouseMove={this.handleMouseMove}
           onMouseDown={this.handleMouseDown}
@@ -1541,9 +1546,7 @@ class ReactImageLightbox extends Component {
                         ? ['ril__builtinButtonDisabled']
                         : []),
                     ].join(' ')}
-                    ref={el => {
-                      this.zoomInBtn = el;
-                    }}
+                    ref={this.zoomInBtn}
                     disabled={
                       this.isAnimating() || zoomLevel === MAX_ZOOM_LEVEL
                     }
@@ -1571,9 +1574,7 @@ class ReactImageLightbox extends Component {
                         ? ['ril__builtinButtonDisabled']
                         : []),
                     ].join(' ')}
-                    ref={el => {
-                      this.zoomOutBtn = el;
-                    }}
+                    ref={this.zoomOutBtn}
                     disabled={
                       this.isAnimating() || zoomLevel === MIN_ZOOM_LEVEL
                     }
@@ -1604,9 +1605,7 @@ class ReactImageLightbox extends Component {
               onWheel={this.handleCaptionMousewheel}
               onMouseDown={event => event.stopPropagation()}
               className="ril-caption ril__caption"
-              ref={el => {
-                this.caption = el;
-              }}
+              ref={this.caption}
             >
               <div className="ril-caption-content ril__captionContent">
                 {this.props.imageCaption}
