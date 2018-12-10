@@ -125,13 +125,15 @@ class App extends Component {
   }
 
   moveNext() {
-    this.setState({ index: (this.state.index + 1) % images.length });
+    this.setState(prevState => ({
+      index: (prevState.index + 1) % images.length,
+    }));
   }
 
   movePrev() {
-    this.setState({
-      index: (this.state.index + images.length - 1) % images.length,
-    });
+    this.setState(prevState => ({
+      index: (prevState.index + images.length - 1) % images.length,
+    }));
   }
 
   render() {

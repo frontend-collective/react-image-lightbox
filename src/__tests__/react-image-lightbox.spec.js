@@ -70,7 +70,7 @@ describe('Lightbox structure', () => {
 
   it('contains custom toolbar buttons when supplied', () => {
     wrapper.setProps({
-      toolbarButtons: [<button className="my-test-button" />],
+      toolbarButtons: [<button type="button" className="my-test-button" />],
     });
     expect(wrapper.find('.ril-toolbar__item .my-test-button').length).toEqual(
       1

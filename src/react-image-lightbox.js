@@ -450,7 +450,9 @@ class ReactImageLightbox extends Component {
     // Ignore requests that don't change the zoom level
     if (nextZoomLevel === this.state.zoomLevel) {
       return;
-    } else if (nextZoomLevel === MIN_ZOOM_LEVEL) {
+    }
+
+    if (nextZoomLevel === MIN_ZOOM_LEVEL) {
       // Snap back to center if zoomed all the way out
       this.setState({
         zoomLevel: nextZoomLevel,
