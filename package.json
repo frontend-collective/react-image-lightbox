@@ -4,7 +4,7 @@
   "description": "A lightbox component for React.js",
   "scripts": {
     "build": "rollup -c",
-    "build:demo": "parcel build examples/cats/index.html --out-dir build",
+    "build:demo": "parcel build examples/cats/index.html --out-dir build --public-url ./",
     "clean": "rimraf dist style.css style.css.map",
     "clean:demo": "rimraf build",
     "start": "parcel examples/cats/index.html",
