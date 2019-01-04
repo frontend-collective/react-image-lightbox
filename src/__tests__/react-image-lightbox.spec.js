@@ -2,6 +2,7 @@ import { mount } from 'enzyme';
 import React from 'react';
 import Modal from 'react-modal';
 import Lightbox from '../index';
+import { translate, getHighestSafeWindowContext } from '../util';
 import {
   MAX_ZOOM_LEVEL,
   MIN_ZOOM_LEVEL,
@@ -73,7 +74,7 @@ describe('Lightbox structure', () => {
       toolbarButtons: [<button type="button" className="my-test-button" />],
     });
     expect(wrapper.find('.ril-toolbar__item .my-test-button').length).toEqual(
-      1
+      1,
     );
   });
 
@@ -84,8 +85,8 @@ describe('Lightbox structure', () => {
 
     expect(
       wrapper.find(
-        '.ril-toolbar-left .ril-toolbar__item__child .my-image-title'
-      ).length
+        '.ril-toolbar-left .ril-toolbar__item__child .my-image-title',
+      ).length,
     ).toEqual(1);
   });
 });
@@ -97,7 +98,7 @@ describe('Events', () => {
   beforeAll(() => {
     originalImageSrcProto = Object.getOwnPropertyDescriptor(
       global.Image.prototype,
-      'src'
+      'src',
     );
 
     Object.defineProperty(global.Image.prototype, 'src', {
@@ -125,7 +126,7 @@ describe('Events', () => {
   };
 
   const wrapper = mount(
-    <Lightbox {...extendedCommonProps} {...mockFns} animationDisabled />
+    <Lightbox {...extendedCommonProps} {...mockFns} animationDisabled />,
   );
 
   // Spy zoomBtn focus
@@ -178,7 +179,7 @@ describe('Events', () => {
         expect(srcType).toEqual('mainSrc');
         expect(image).toBeInstanceOf(Error);
         done();
-      }
+      },
     );
 
     expect(mockFns.onImageLoadError).toHaveBeenCalledTimes(0);
@@ -213,7 +214,7 @@ describe('Key bindings', () => {
       onCloseRequest={mockCloseRequest}
       onMovePrevRequest={mockMovePrevRequest}
       onMoveNextRequest={mockMoveNextRequest}
-    />
+    />,
   );
 
   const simulateKey = keyCode => {
@@ -265,7 +266,7 @@ describe('Snapshot Testing', () => {
       <Lightbox
         {...commonProps}
         reactModalProps={{ appElement: global.document.createElement('div') }}
-      />
+      />,
     );
     expect(wrapper).toMatchSnapshot();
   });
@@ -279,7 +280,7 @@ describe('Error Testing', () => {
     });
     wrapper.update();
     expect(wrapper.find('div.ril__errorContainer')).toHaveText(
-      'This image failed to load'
+      'This image failed to load',
     );
   });
   it('Should render the specified error message', () => {
@@ -293,7 +294,27 @@ describe('Error Testing', () => {
     });
     wrapper.update();
     expect(wrapper.find('div.ril__errorContainer')).toContainReact(
-      imageLoadErrorMessage
+      imageLoadErrorMessage,
     );
+  });
+});
+
+describe('Utils', () => {
+  it('translate function return empty string if str param is not passed', () => {
+    expect(translate()).toBe('');
+  });
+  it('getHighestSafeWindowContext function if parent is the same origin', () => {
+    const self = {
+      location: { href: 'http://test.test' },
+      document: { referrer: 'http://test.test' },
+    };
+    expect(getHighestSafeWindowContext(self)).toBe(global.window.top);
+  });
+  it('getHighestSafeWindowContext function if parent is a different origin', () => {
+    const self = {
+      location: { href: 'http://test1.test' },
+      document: { referrer: 'http://test.test' },
+    };
+    expect(getHighestSafeWindowContext(self)).toBe(self);
   });
 });
