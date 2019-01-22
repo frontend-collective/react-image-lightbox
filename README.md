@@ -114,6 +114,7 @@ Play with the code on the [example on CodeSandbox](https://codesandbox.io/s/l9n3
 | zoomInLabel                     | string | `aria-label` set on the 'Zoom In' button. Defaults to `'Zoom in'`.                                                                                            |
 | zoomOutLabel                    | string | `aria-label` set on the 'Zoom Out' button. Defaults to `'Zoom out'`.                                                                                          |
 | closeLabel                      | string | `aria-label` set on the 'Close Lightbox' button. Defaults to `'Close lightbox'`.                                                                              |
+| isRtl                           |  bool  | Set to `true` to render correctly on RTL page.                                                                                                                |
 
 ## Browser Compatibility
 
