@@ -598,6 +598,24 @@ class ReactImageLightbox extends Component {
         this.keyPressed = true;
         this.requestMoveNext(event);
         break;
+        // shft + key zoom in
+       case KEYS.PLUS:
+          var nextZoomLevel = this.state.zoomLevel + ZOOM_BUTTON_INCREMENT_SIZE;
+          this.changeZoom(nextZoomLevel);
+  
+          if (nextZoomLevel === MAX_ZOOM_LEVEL) {
+            this.zoomOutBtn.current.focus();
+          }
+          break;
+        // shift - key zoom out
+       case KEYS.MINUS:
+        var nextZoomLevel = this.state.zoomLevel - ZOOM_BUTTON_INCREMENT_SIZE;
+        this.changeZoom(nextZoomLevel);
+  
+        if (nextZoomLevel === MIN_ZOOM_LEVEL) {
+          this.zoomInBtn.current.focus();
+        }
+          break;
 
       default:
     }
