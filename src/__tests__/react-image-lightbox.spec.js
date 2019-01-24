@@ -74,7 +74,7 @@ describe('Lightbox structure', () => {
       toolbarButtons: [<button type="button" className="my-test-button" />],
     });
     expect(wrapper.find('.ril-toolbar__item .my-test-button').length).toEqual(
-      1,
+      1
     );
   });
 
@@ -85,8 +85,8 @@ describe('Lightbox structure', () => {
 
     expect(
       wrapper.find(
-        '.ril-toolbar-left .ril-toolbar__item__child .my-image-title',
-      ).length,
+        '.ril-toolbar-left .ril-toolbar__item__child .my-image-title'
+      ).length
     ).toEqual(1);
   });
 });
@@ -98,7 +98,7 @@ describe('Events', () => {
   beforeAll(() => {
     originalImageSrcProto = Object.getOwnPropertyDescriptor(
       global.Image.prototype,
-      'src',
+      'src'
     );
 
     Object.defineProperty(global.Image.prototype, 'src', {
@@ -126,7 +126,7 @@ describe('Events', () => {
   };
 
   const wrapper = mount(
-    <Lightbox {...extendedCommonProps} {...mockFns} animationDisabled />,
+    <Lightbox {...extendedCommonProps} {...mockFns} animationDisabled />
   );
 
   // Spy zoomBtn focus
@@ -179,7 +179,7 @@ describe('Events', () => {
         expect(srcType).toEqual('mainSrc');
         expect(image).toBeInstanceOf(Error);
         done();
-      },
+      }
     );
 
     expect(mockFns.onImageLoadError).toHaveBeenCalledTimes(0);
@@ -214,7 +214,7 @@ describe('Key bindings', () => {
       onCloseRequest={mockCloseRequest}
       onMovePrevRequest={mockMovePrevRequest}
       onMoveNextRequest={mockMoveNextRequest}
-    />,
+    />
   );
 
   const simulateKey = keyCode => {
@@ -266,7 +266,7 @@ describe('Snapshot Testing', () => {
       <Lightbox
         {...commonProps}
         reactModalProps={{ appElement: global.document.createElement('div') }}
-      />,
+      />
     );
     expect(wrapper).toMatchSnapshot();
   });
@@ -280,7 +280,7 @@ describe('Error Testing', () => {
     });
     wrapper.update();
     expect(wrapper.find('div.ril__errorContainer')).toHaveText(
-      'This image failed to load',
+      'This image failed to load'
     );
   });
   it('Should render the specified error message', () => {
@@ -294,7 +294,7 @@ describe('Error Testing', () => {
     });
     wrapper.update();
     expect(wrapper.find('div.ril__errorContainer')).toContainReact(
-      imageLoadErrorMessage,
+      imageLoadErrorMessage
     );
   });
 });

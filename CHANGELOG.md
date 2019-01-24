@@ -3,19 +3,16 @@
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
 <a name="5.1.0"></a>
-# [5.1.0](https://github.com/frontend-collective/react-image-lightbox/compare/v5.0.0...v5.1.0) (2018-12-10)
 
+# [5.1.0](https://github.com/frontend-collective/react-image-lightbox/compare/v5.0.0...v5.1.0) (2018-12-10)
 
 ### Bug Fixes
 
-* change focus when zoom buttons becomes disabled to be able to still use arrow keys (fix issue [#132](https://github.com/frontend-collective/react-image-lightbox/issues/132)) ([#135](https://github.com/frontend-collective/react-image-lightbox/issues/135)) ([30ba946](https://github.com/frontend-collective/react-image-lightbox/commit/30ba946))
-
+- change focus when zoom buttons becomes disabled to be able to still use arrow keys (fix issue [#132](https://github.com/frontend-collective/react-image-lightbox/issues/132)) ([#135](https://github.com/frontend-collective/react-image-lightbox/issues/135)) ([30ba946](https://github.com/frontend-collective/react-image-lightbox/commit/30ba946))
 
 ### Features
 
-* typescript declarations files ([#116](https://github.com/frontend-collective/react-image-lightbox/issues/116)) ([357a801](https://github.com/frontend-collective/react-image-lightbox/commit/357a801))
-
-
+- typescript declarations files ([#116](https://github.com/frontend-collective/react-image-lightbox/issues/116)) ([357a801](https://github.com/frontend-collective/react-image-lightbox/commit/357a801))
 
 <a name="5.0.0"></a>
 
