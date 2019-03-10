@@ -1,8 +1,2 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20">
-  <g stroke="#fff" stroke-width="2" stroke-linecap="round">
-    <path d="M1 19l6-6"/>
-    <path d="M9 8h6"/>
-    <path d="M12 5v6"/>
-  </g>
-  <circle cx="12" cy="8" r="7" fill="none" stroke="#fff" stroke-width="2"/>
-</svg>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg fill-rule="evenodd" clip-rule="evenodd" stroke-linejoin="round" stroke-miterlimit="1.414" xmlns="http://www.w3.org/2000/svg" aria-label="zoom-in" viewBox="0 0 32 32" preserveAspectRatio="xMidYMid meet" fill="currentColor" width="48" height="48" title="zoom-in"><g><path fill-rule="evenodd" clip-rule="evenodd" d="M14.25 9.25a5 5 0 1 0 .001 10.001A5 5 0 0 0 14.25 9.25zm-7 5a7 7 0 1 1 13.088 3.456c-.244.431-.212.981.137 1.332l3.984 4.007a1 1 0 1 1-1.418 1.41l-3.97-3.992c-.352-.354-.908-.387-1.341-.138A7 7 0 0 1 7.25 14.25z"></path><path fill-rule="evenodd" clip-rule="evenodd" d="M13.25 11.25a1 1 0 0 1 2 0v2h1.999a1.001 1.001 0 0 1 0 2H15.25v2a1 1 0 0 1-2 0v-2h-2a1.001 1.001 0 0 1 0-2h2v-2z"></path></g></svg>
