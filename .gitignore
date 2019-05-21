@@ -18,3 +18,4 @@ build
 /style.css
 /style.css.map
 .cache
+cypress/videos/**

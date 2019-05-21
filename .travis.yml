@@ -1,5 +1,21 @@
 language: node_js
 node_js:
   - "node"
-script:
-  - npm test -- --coverage && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js
+
+jobs:
+  include:
+    - stage: test
+      script:
+        - npm test -- --coverage && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js
+
+    - stage: test-visual
+      before_script:
+        - google-chrome-stable --product-version
+      script:
+        - npm start & wait-on http://localhost:1234
+        - npm run cypress:open
+        - kill $(jobs -p) || true
+      cache:
+        directories:
+          - node_modules
+          - ~/.cache
