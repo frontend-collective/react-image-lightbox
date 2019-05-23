@@ -1270,6 +1270,7 @@ class ReactImageLightbox extends Component {
       clickOutsideToClose,
       discourageDownloads,
       enableZoom,
+      enableDownload,
       imageTitle,
       nextSrc,
       prevSrc,
@@ -1533,6 +1534,25 @@ class ReactImageLightbox extends Component {
                   </li>
                 ))}
 
+              {enableDownload && (
+                <li className="ril-toolbar__item ril__toolbarItem">
+                  <a
+                    href={
+                      this.getBestImageForType('mainSrc') &&
+                      this.getBestImageForType('mainSrc').src
+                    }
+                    download="image.jpg"
+                  >
+                    <button // Lightbox download button
+                      type="button"
+                      key="download"
+                      aria-label={this.props.closeLabel}
+                      className="ril-download ril-toolbar__item__child ril__toolbarItemChild ril__builtinButton ril__downloadButton"
+                    />
+                  </a>
+                </li>
+              )}
+
               {enableZoom && (
                 <li className="ril-toolbar__item ril__toolbarItem">
                   <button // Lightbox zoom in button
@@ -1747,6 +1767,9 @@ ReactImageLightbox.propTypes = {
   // Set to false to disable zoom functionality and hide zoom buttons
   enableZoom: PropTypes.bool,
 
+  // Set to false to disable download functionality and hide download button
+  enableDownload: PropTypes.bool,
+
   // Override props set on react-modal (https://github.com/reactjs/react-modal)
   reactModalProps: PropTypes.shape({}),
 
@@ -1772,6 +1795,7 @@ ReactImageLightbox.defaultProps = {
   closeLabel: 'Close lightbox',
   discourageDownloads: false,
   enableZoom: true,
+  enableDownload: false,
   imagePadding: 10,
   imageCrossOrigin: null,
   keyRepeatKeyupBonus: 40,
