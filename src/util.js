@@ -27,7 +27,7 @@ export function getWindowHeight() {
 // Get the highest window context that isn't cross-origin
 // (When in an iframe)
 export function getHighestSafeWindowContext(self = global.window.self) {
-  const referrer = self.document.referrer;
+  const { referrer } = self.document;
   // If we reached the top level, return self
   if (self === global.window.top || !referrer) {
     return self;
