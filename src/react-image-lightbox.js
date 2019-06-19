@@ -1615,7 +1615,6 @@ class ReactImageLightbox extends Component {
             </div>
           )}
         </div>
-
         {children}
       </Modal>
     );
