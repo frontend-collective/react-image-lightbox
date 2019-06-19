@@ -13,7 +13,8 @@
     "prepublishOnly": "npm run lint && npm run test && npm run build",
     "test": "jest",
     "test:watch": "jest --watchAll",
-    "deploy": "npm run build:demo && gh-pages -d build"
+    "deploy": "npm run build:demo && gh-pages -d build",
+    "cypress:open": "cypress run"
   },
   "main": "dist/index.cjs.js",
   "module": "dist/index.es.js",
@@ -35,7 +36,9 @@
   ],
   "license": "MIT",
   "jest": {
-    "setupFilesAfterEnv": ["./node_modules/jest-enzyme/lib/index.js"],
+    "setupFilesAfterEnv": [
+      "./node_modules/jest-enzyme/lib/index.js"
+    ],
     "setupFiles": [
       "./test-config/shim.js",
       "./test-config/test-setup.js"
@@ -44,6 +47,9 @@
       "js",
       "jsx",
       "json"
+    ],
+    "roots": [
+      "<rootDir>/src/"
     ],
     "moduleNameMapper": {
       "\\.(css|jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/__mocks__/fileMock.js"
@@ -58,8 +64,10 @@
     "> 1%"
   ],
   "dependencies": {
+    "@applitools/eyes-cypress": "^3.6.15",
     "prop-types": "^15.6.2",
-    "react-modal": "^3.8.1"
+    "react-modal": "^3.8.1",
+    "wait-on": "^3.2.0"
   },
   "peerDependencies": {
     "react": "^16.x",
@@ -74,6 +82,7 @@
     "babel-jest": "^24.0.0",
     "coveralls": "^3.0.2",
     "cross-env": "^5.2.0",
+    "cypress": "^3.3.0",
     "enzyme": "^3.8.0",
     "enzyme-adapter-react-16": "^1.8.0",
     "enzyme-to-json": "^3.3.4",
