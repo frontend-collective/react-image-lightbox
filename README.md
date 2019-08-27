@@ -10,12 +10,12 @@ A flexible lightbox component for displaying images in a React project.
 
 Features
 
-* Keyboard shortcuts (with rate limiting)
-* Image Zoom
-* Flexible rendering using src values assigned on the fly
-* Image preloading for smoother viewing
-* Mobile friendly, with pinch to zoom and swipe (Thanks, [@webcarrot](https://github.com/webcarrot)!)
-* No external CSS
+- Keyboard shortcuts (with rate limiting)
+- Image Zoom
+- Flexible rendering using src values assigned on the fly
+- Image preloading for smoother viewing
+- Mobile friendly, with pinch to zoom and swipe (Thanks, [@webcarrot](https://github.com/webcarrot)!)
+- No external CSS
 
 ## Example
 

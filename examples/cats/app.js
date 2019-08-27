@@ -14,11 +14,6 @@ import image1Thumb from './images/1_thumb.jpg';
 import image2Thumb from './images/2_thumb.jpg';
 import image3Thumb from './images/3_thumb.jpg';
 import image4Thumb from './images/4_thumb.jpg';
-import '../shared/favicon/apple-touch-icon.png';
-import '../shared/favicon/favicon-16x16.png';
-import '../shared/favicon/favicon-32x32.png';
-import '../shared/favicon/favicon.ico';
-import '../shared/favicon/safari-pinned-tab.svg';
 
 const images = [image1, image2, image3, image4];
 const thumbs = [image1Thumb, image2Thumb, image3Thumb, image4Thumb];
@@ -30,39 +25,45 @@ const titles = [
     <a className="creditLink" href="http://flickr.com/photos/titrans/">
       quatre mains
     </a>
-    &nbsp; (<a
+    &nbsp; (
+    <a
       className="creditLink"
       href="http://creativecommons.org/licenses/by/2.0/"
       title="Attribution License"
     >
       Some rights reserved
-    </a>)
+    </a>
+    )
   </span>,
   <span>
     by&nbsp;
     <a className="creditLink" href="http://flickr.com/photos/lachlanrogers/">
       latch.r
     </a>
-    &nbsp; (<a
+    &nbsp; (
+    <a
       className="creditLink"
       href="http://creativecommons.org/licenses/by-sa/2.0/"
       title="Attribution-ShareAlike License"
     >
       Some rights reserved
-    </a>)
+    </a>
+    )
   </span>,
   <span>
     by&nbsp;
     <a className="creditLink" href="http://flickr.com/photos/fazen/">
       fazen
     </a>
-    &nbsp; (<a
+    &nbsp; (
+    <a
       className="creditLink"
       href="http://creativecommons.org/licenses/by/2.0/"
       title="Attribution License"
     >
       Some rights reserved
-    </a>)
+    </a>
+    )
   </span>,
 ];
 
@@ -72,13 +73,20 @@ const captions = [
   <p>
     .. not in the&nbsp;
     <em>mood</em>
-    &nbsp;for games right now<br />
-    ...<br />
-    ...<br />
-    ...<br />
-    ...<br />
-    ...<br />
-    ...<br />
+    &nbsp;for games right now
+    <br />
+    ...
+    <br />
+    ...
+    <br />
+    ...
+    <br />
+    ...
+    <br />
+    ...
+    <br />
+    ...
+    <br />
     C&#39;mon. Seriously.
   </p>,
   '',
@@ -112,13 +120,15 @@ class App extends Component {
   }
 
   moveNext() {
-    this.setState({ index: (this.state.index + 1) % images.length });
+    this.setState(prevState => ({
+      index: (prevState.index + 1) % images.length,
+    }));
   }
 
   movePrev() {
-    this.setState({
-      index: (this.state.index + images.length - 1) % images.length,
-    });
+    this.setState(prevState => ({
+      index: (prevState.index + images.length - 1) % images.length,
+    }));
   }
 
   render() {
@@ -179,7 +189,8 @@ class App extends Component {
             <li>Image preloading for smoother viewing</li>
             <li>
               Mobile friendly, with pinch to zoom and swipe (Thanks,{' '}
-              <a href="https://github.com/webcarrot">@webcarrot</a>!)
+              <a href="https://github.com/webcarrot">@webcarrot</a>
+              !)
             </li>
             <li>No external CSS</li>
           </ul>
@@ -193,7 +204,11 @@ class App extends Component {
               <a href="https://github.com/frontend-collective/react-image-lightbox">
                 React Image Lightbox
               </a>{' '}
-              is maintained by <a href="https://github.com/frontend-collective">Frontend Collective</a>.
+              is maintained by{' '}
+              <a href="https://github.com/frontend-collective">
+                Frontend Collective
+              </a>
+              .
             </span>
 
             <span className="site-footer-credits">
