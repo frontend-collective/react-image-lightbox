@@ -824,6 +824,11 @@ class ReactImageLightbox extends Component {
   }
 
   multiPointerStart(event) {
+    // disable right mouse click
+    if (event.which === 3) {
+      return;
+    }
+
     this.handleEnd(null);
     switch (this.pointerList.length) {
       case 1: {
