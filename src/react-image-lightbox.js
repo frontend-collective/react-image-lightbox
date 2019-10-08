@@ -59,20 +59,6 @@ class ReactImageLightbox extends Component {
     };
   }
 
-  // Request to transition to the previous image
-  static getTransform({ x = 0, y = 0, zoom = 1, width, targetWidth }) {
-    let nextX = x;
-    const windowWidth = getWindowWidth();
-    if (width > windowWidth) {
-      nextX += (windowWidth - width) / 2;
-    }
-    const scaleFactor = zoom * (targetWidth / width);
-
-    return {
-      transform: `translate3d(${nextX}px,${y}px,0) scale3d(${scaleFactor},${scaleFactor},1)`,
-    };
-  }
-
   constructor(props) {
     super(props);
 
@@ -279,6 +265,21 @@ class ReactImageLightbox extends Component {
       this.preventInnerClose = false;
       this.preventInnerCloseTimeout = null;
     }, 100);
+  }
+
+  // Request to transition to the previous image
+  getTransform({ x = 0, y = 0, zoom = 1, width, targetWidth }) {
+    const { discourageDownloads } = this.props;
+    let nextX = x;
+    const windowWidth = getWindowWidth();
+    if (width > windowWidth && !discourageDownloads) {
+      nextX += (windowWidth - width) / 2;
+    }
+    const scaleFactor = zoom * (targetWidth / width);
+
+    return {
+      transform: `translate3d(${nextX}px,${y}px,0) scale3d(${scaleFactor},${scaleFactor},1)`,
+    };
   }
 
   // Get info for the best suited image to display with the given srcType
@@ -1313,7 +1314,7 @@ class ReactImageLightbox extends Component {
 
       const imageStyle = {
         ...transitionStyle,
-        ...ReactImageLightbox.getTransform({
+        ...this.getTransform({
           ...transforms,
           ...bestImageInfo,
         }),
