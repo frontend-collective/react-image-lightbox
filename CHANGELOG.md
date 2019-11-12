@@ -1,6 +1,17 @@
-# Change Log
+# Changelog
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+
+### [5.1.1](https://github.com/frontend-collective/react-image-lightbox/compare/v5.1.0...v5.1.1) (2019-11-12)
+
+
+### Bug Fixes
+
+* allow React.ReactNode as imageTitle and imageCaption in TypeScript projects ([#158](https://github.com/frontend-collective/react-image-lightbox/issues/158)) ([f1858a3](https://github.com/frontend-collective/react-image-lightbox/commit/f1858a3efe25b66b850565b308688669bd7bab66))
+* demo parcel site on github pages ([822140e](https://github.com/frontend-collective/react-image-lightbox/commit/822140ed665f55f664c1a5ea851f6b3aeaed31db))
+* don't prevent default inside a passive listener ([b2b6a79](https://github.com/frontend-collective/react-image-lightbox/commit/b2b6a798671de7027635123baec8584e3fefaaf2))
+* fix getOrigin issue within iFrames ([#175](https://github.com/frontend-collective/react-image-lightbox/issues/175)) ([f290cb3](https://github.com/frontend-collective/react-image-lightbox/commit/f290cb344ac89f6359b39c0fd4ab8fe00bb36205)), closes [#136](https://github.com/frontend-collective/react-image-lightbox/issues/136)
+* fix lint ([c2acf2c](https://github.com/frontend-collective/react-image-lightbox/commit/c2acf2ccd86610ad89f3af497e4eefc911da68ac))
 
 <a name="5.1.0"></a>
 

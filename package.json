@@ -1,6 +1,6 @@
 {
   "name": "react-image-lightbox",
-  "version": "5.1.0",
+  "version": "5.1.1",
   "description": "A lightbox component for React.js",
   "scripts": {
     "build": "rollup -c",
@@ -13,7 +13,8 @@
     "prepublishOnly": "npm run lint && npm run test && npm run build",
     "test": "jest",
     "test:watch": "jest --watchAll",
-    "deploy": "npm run build:demo && gh-pages -d build"
+    "deploy": "npm run build:demo && gh-pages -d build",
+    "release": "standard-version"
   },
   "main": "dist/index.cjs.js",
   "module": "dist/index.es.js",
@@ -35,7 +36,9 @@
   ],
   "license": "MIT",
   "jest": {
-    "setupFilesAfterEnv": ["./node_modules/jest-enzyme/lib/index.js"],
+    "setupFilesAfterEnv": [
+      "./node_modules/jest-enzyme/lib/index.js"
+    ],
     "setupFiles": [
       "./test-config/shim.js",
       "./test-config/test-setup.js"
@@ -95,7 +98,8 @@
     "rollup-plugin-babel": "^4.3.2",
     "rollup-plugin-commonjs": "^9.2.0",
     "rollup-plugin-node-resolve": "^4.0.0",
-    "rollup-plugin-postcss": "^2.0.3"
+    "rollup-plugin-postcss": "^2.0.3",
+    "standard-version": "^7.0.0"
   },
   "keywords": [
     "react",
