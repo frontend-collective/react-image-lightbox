@@ -134,7 +134,8 @@ class ReactImageLightbox extends Component {
     this.requestMovePrev = this.requestMovePrev.bind(this);
   }
 
-  componentWillMount() {
+  // eslint-disable-next-line camelcase
+  UNSAFE_componentWillMount() {
     // Timeouts - always clear it before umount
     this.timeouts = [];
 
@@ -218,7 +219,8 @@ class ReactImageLightbox extends Component {
     this.loadAllImages();
   }
 
-  componentWillReceiveProps(nextProps) {
+  // eslint-disable-next-line camelcase
+  UNSAFE_componentWillReceiveProps(nextProps) {
     // Iterate through the source types for prevProps and nextProps to
     //  determine if any of the sources changed
     let sourcesChanged = false;
