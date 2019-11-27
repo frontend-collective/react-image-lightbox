@@ -216,37 +216,6 @@ class ReactImageLightbox extends Component {
     this.loadAllImages();
   }
 
-  // eslint-disable-next-line camelcase
-  UNSAFE_componentWillReceiveProps(nextProps) {
-    // Iterate through the source types for prevProps and nextProps to
-    //  determine if any of the sources changed
-    let sourcesChanged = false;
-    const prevSrcDict = {};
-    const nextSrcDict = {};
-    this.getSrcTypes().forEach(srcType => {
-      if (this.props[srcType.name] !== nextProps[srcType.name]) {
-        sourcesChanged = true;
-
-        prevSrcDict[this.props[srcType.name]] = true;
-        nextSrcDict[nextProps[srcType.name]] = true;
-      }
-    });
-
-    if (sourcesChanged || this.moveRequested) {
-      // Reset the loaded state for images not rendered next
-      Object.keys(prevSrcDict).forEach(prevSrc => {
-        if (!(prevSrc in nextSrcDict) && prevSrc in this.imageCache) {
-          this.imageCache[prevSrc].loaded = false;
-        }
-      });
-
-      this.moveRequested = false;
-
-      // Load any new images
-      this.loadAllImages(nextProps);
-    }
-  }
-
   shouldComponentUpdate(nextProps) {
     this.getSrcTypes().forEach(srcType => {
       if (this.props[srcType.name] !== nextProps[srcType.name]) {
