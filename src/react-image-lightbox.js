@@ -216,6 +216,7 @@ class ReactImageLightbox extends Component {
       this.windowContext.addEventListener(type, this.listeners[type]);
     });
 
+    document.addEventListener('wheel', this.handleWheel, { passive: false });
     this.loadAllImages();
   }
 
@@ -260,6 +261,7 @@ class ReactImageLightbox extends Component {
     Object.keys(this.listeners).forEach(type => {
       this.windowContext.removeEventListener(type, this.listeners[type]);
     });
+    document.removeEventListener('wheel', this.handleWheel, { passive: false });
     this.timeouts.forEach(tid => clearTimeout(tid));
   }
 
@@ -1024,6 +1026,10 @@ class ReactImageLightbox extends Component {
       y: a.y - (a.y - b.y) / 2,
     };
   }
+
+  handleWheel = event => {
+    event.preventDefault();
+  };
 
   handlePinchStart(pointerList) {
     if (!this.props.enableZoom) {
