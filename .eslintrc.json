@@ -1,13 +1,36 @@
 {
-  "extends": ["airbnb", "prettier", "prettier/react"],
   "env": {
-    "jest": true
+    "browser": true,
+    "es6": true
   },
+  "extends": ["eslint:recommended"],
+  "parser": "babel-eslint",
+  "parserOptions": {
+    "ecmaFeatures": {
+      "experimentalObjectRestSpread": true,
+      "jsx": true
+    },
+    "sourceType": "module"
+  },
+  "plugins": ["react", "jsx-a11y"],
   "rules": {
-    "react/jsx-filename-extension": 0,
-    "react/destructuring-assignment": 0,
-    "react/jsx-props-no-spreading": 0,
-    "jsx-a11y/control-has-associated-label": 0,
-    "react/prop-types": 0
+    "indent": ["warn", 2, { "SwitchCase": 1 }],
+    "linebreak-style": ["warn", "unix"],
+    "quotes": ["warn", "single"],
+    "semi": ["warn", "always"],
+    "no-case-declarations": "warn",
+    "no-cond-assign": "warn",
+    "no-redeclare": "warn",
+    "no-unreachable": "warn",
+    "no-class-assign": "warn",
+    "no-unused-vars": "warn",
+    "no-irregular-whitespace": "warn",
+    "no-console": "warn",
+    "no-useless-escape": "warn",
+    "react/jsx-indent": ["warn", 2],
+    "react/prop-types": "warn",
+    "react/display-name": "warn",
+    "jsx-a11y/anchor-has-content": "off",
+    "jsx-a11y/href-no-hash": "off"
   }
 }
