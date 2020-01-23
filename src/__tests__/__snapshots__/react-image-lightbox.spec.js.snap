@@ -179,6 +179,7 @@ exports[`Snapshot Testing Lightbox renders properly" 1`] = `
                       <button
                         aria-label="Zoom in"
                         class="ril-zoom-in ril__toolbarItemChild ril__builtinButton ril__zoomInButton"
+                        title="Zoom in"
                         type="button"
                       />
                     </li>
@@ -189,6 +190,7 @@ exports[`Snapshot Testing Lightbox renders properly" 1`] = `
                         aria-label="Zoom out"
                         class="ril-zoom-out ril__toolbarItemChild ril__builtinButton ril__zoomOutButton ril__builtinButtonDisabled"
                         disabled=""
+                        title="Zoom out"
                         type="button"
                       />
                     </li>
@@ -198,6 +200,7 @@ exports[`Snapshot Testing Lightbox renders properly" 1`] = `
                       <button
                         aria-label="Close lightbox"
                         class="ril-close ril-toolbar__item__child ril__toolbarItemChild ril__builtinButton ril__closeButton"
+                        title="Close lightbox"
                         type="button"
                       />
                     </li>
@@ -433,6 +436,7 @@ exports[`Snapshot Testing Lightbox renders properly" 1`] = `
                       disabled={false}
                       key="zoom-in"
                       onClick={[Function]}
+                      title="Zoom in"
                       type="button"
                     />
                   </li>
@@ -444,6 +448,7 @@ exports[`Snapshot Testing Lightbox renders properly" 1`] = `
                       className="ril-zoom-out ril__toolbarItemChild ril__builtinButton ril__zoomOutButton ril__builtinButtonDisabled"
                       disabled={true}
                       key="zoom-out"
+                      title="Zoom out"
                       type="button"
                     />
                   </li>
@@ -455,6 +460,7 @@ exports[`Snapshot Testing Lightbox renders properly" 1`] = `
                       className="ril-close ril-toolbar__item__child ril__toolbarItemChild ril__builtinButton ril__closeButton"
                       key="close"
                       onClick={[Function]}
+                      title="Close lightbox"
                       type="button"
                     />
                   </li>
