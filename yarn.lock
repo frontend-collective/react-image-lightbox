@@ -8897,9 +8897,9 @@ send@0.16.2:
     statuses "~1.4.0"
 
 serialize-to-js@^3.0.0:
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/serialize-to-js/-/serialize-to-js-3.0.0.tgz#1fd8736744819a4df29dc85e9d04a44a4984edc3"
-  integrity sha512-WdGgi0jGnWCQXph2p3vkxceDnTfvfyXfYxherQMRcZjSaJzMQdMBAW6i0nojsBKIZ3fFOztZKKVbbm05VbIdRA==
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/serialize-to-js/-/serialize-to-js-3.1.0.tgz#5c5f8e1109af9559fecf582dbd094662c2efec00"
+  integrity sha512-gkRp50uJy1HJ05FON8qRR8evFEgWhvKUiJy5F8qki4EPnpmEb7th9eINsxYy2DQ5Er8VRvRBg5b5qaH1E32CwA==
 
 serve-static@^1.12.4:
   version "1.13.2"
