@@ -1497,7 +1497,7 @@ class ReactImageLightbox extends Component {
               className="ril-prev-button ril__navButtons ril__navButtonPrev"
               key="prev"
               aria-label={this.props.prevLabel}
-              title={this.props.nextLabel}
+              title={this.props.prevLabel}
               onClick={!this.isAnimating() ? this.requestMovePrev : undefined} // Ignore clicks during animation
             />
           )}
