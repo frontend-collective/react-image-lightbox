@@ -237,12 +237,20 @@ describe('Key bindings', () => {
     expect(mockMoveNextRequest).toHaveBeenCalledTimes(0);
   });
 
-  it('Responds to "move to next" key binding when next image available', () => {
-    wrapper.setProps({ nextSrc: '/my/next/src' });
+  it('Responds to "move to next" key binding when next custom content available', () => {
+    wrapper.setProps({ nextSrc: null, nextCustomContent: <div>next content</div> });
 
     // Simulate right arrow key press
     simulateKey(39);
     expect(mockMoveNextRequest).toHaveBeenCalledTimes(1);
+  });
+
+  it('Responds to "move to next" key binding when next image available', () => {
+    wrapper.setProps({ nextSrc: '/my/next/src', nextCustomContent: null });
+
+    // Simulate right arrow key press
+    simulateKey(39);
+    expect(mockMoveNextRequest).toHaveBeenCalledTimes(2);
   });
 
   it('Doesn\'t respond to "move to prev" key binding when no prev image available', () => {
@@ -251,12 +259,20 @@ describe('Key bindings', () => {
     expect(mockMovePrevRequest).toHaveBeenCalledTimes(0);
   });
 
-  it('Responds to "move to prev" key binding', () => {
-    wrapper.setProps({ prevSrc: '/my/prev/src' });
+  it('Responds to "move to prev" key binding with custom content', () => {
+    wrapper.setProps({ prevSrc: null, prevCustomContent: <div>previous content</div> });
 
     // Simulate left arrow key press
     simulateKey(37);
     expect(mockMovePrevRequest).toHaveBeenCalledTimes(1);
+  });
+
+  it('Responds to "move to prev" key binding', () => {
+    wrapper.setProps({ prevSrc: '/my/prev/src', prevCustomContent: null });
+
+    // Simulate left arrow key press
+    simulateKey(37);
+    expect(mockMovePrevRequest).toHaveBeenCalledTimes(2);
   });
 });
 
@@ -266,6 +282,18 @@ describe('Snapshot Testing', () => {
       <Lightbox
         {...commonProps}
         reactModalProps={{ appElement: global.document.createElement('div') }}
+      />
+    );
+    expect(wrapper).toMatchSnapshot();
+  });
+
+  it('Lightbox renders properly with customContent', () => {
+    const wrapper = mount(
+      <Lightbox
+        mainCustomContent={<div>testing</div>}
+        prevCustomContent={<span>could be anything</span>}
+        nextCustomContent={<h1>next component</h1>}
+        onCloseRequest={() => {}}
       />
     );
     expect(wrapper).toMatchSnapshot();
