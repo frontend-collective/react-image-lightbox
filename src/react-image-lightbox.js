@@ -61,6 +61,7 @@ class ReactImageLightbox extends Component {
 
   // Request to transition to the previous image
   static getTransform({ x = 0, y = 0, zoom = 1, width, targetWidth }) {
+    console.log(targetWidth);
     let nextX = x;
     const windowWidth = getWindowWidth();
     if (width > windowWidth) {
@@ -132,6 +133,7 @@ class ReactImageLightbox extends Component {
     this.requestClose = this.requestClose.bind(this);
     this.requestMoveNext = this.requestMoveNext.bind(this);
     this.requestMovePrev = this.requestMovePrev.bind(this);
+    this.requestMoveTo = this.requestMoveTo.bind(this);
   }
 
   // eslint-disable-next-line camelcase
@@ -1219,7 +1221,7 @@ class ReactImageLightbox extends Component {
     this.setTimeout(closeLightbox, this.props.animationDuration);
   }
 
-  requestMove(direction, event) {
+  requestMove(direction, to, event) {
     // Reset the zoom level on image move
     const nextState = {
       zoomLevel: MIN_ZOOM_LEVEL,
@@ -1246,10 +1248,17 @@ class ReactImageLightbox extends Component {
       this.keyCounter -= 1;
       this.setState(nextState);
       this.props.onMovePrevRequest(event);
-    } else {
+    }
+    if (direction === 'next') {
       this.keyCounter += 1;
       this.setState(nextState);
       this.props.onMoveNextRequest(event);
+    }
+    if (direction === 'to') {
+      const diff = to - this.props.index;
+      this.keyCounter += diff;
+      this.setState(nextState);
+      this.props.onIndicatorClick(to);
     }
   }
 
@@ -1261,6 +1270,10 @@ class ReactImageLightbox extends Component {
   // Request to transition to the previous image
   requestMovePrev(event) {
     this.requestMove('prev', event);
+  }
+
+  requestMoveTo(event, to) {
+    this.requestMove('to', to, event);
   }
 
   render() {
@@ -1278,6 +1291,9 @@ class ReactImageLightbox extends Component {
       onAfterOpen,
       imageCrossOrigin,
       reactModalProps,
+      index,
+      length,
+      onIndicatorClick,
     } = this.props;
     const {
       zoomLevel,
@@ -1286,6 +1302,26 @@ class ReactImageLightbox extends Component {
       isClosing,
       loadErrorStatus,
     } = this.state;
+
+    const handleIndicatorClick = index => {
+      onIndicatorClick(index);
+    };
+
+    const renderIndicators = () => {
+      let indicators = [];
+      for (let i = 0; i < length; i++) {
+        indicators.push(
+          <li
+            key={i}
+            onClick={event => {
+              if (!this.isAnimating()) this.requestMoveTo(event, i);
+            }}
+            className={i === index ? 'active' : ''}
+          ></li>
+        );
+      }
+      return indicators;
+    };
 
     const boxSize = this.getLightboxRect();
     let transitionStyle = {};
@@ -1333,7 +1369,7 @@ class ReactImageLightbox extends Component {
       if (bestImageInfo === null && hasTrueValue(loadErrorStatus)) {
         images.push(
           <div
-            className={`${imageClass} ril__image ril-errored`}
+            className={`${imageClass} ril__image ril-errored fade-in`}
             style={imageStyle}
             key={this.props[srcType] + keyEndings[srcType]}
           >
@@ -1412,7 +1448,7 @@ class ReactImageLightbox extends Component {
       x: boxSize.width,
     });
     // Main Image
-    addImage('mainSrc', 'ril-image-current', {
+    addImage('mainSrc', 'ril-image-current fade-in', {
       x: -1 * offsetX,
       y: -1 * offsetY,
       zoom: zoomMultiplier,
@@ -1601,6 +1637,12 @@ class ReactImageLightbox extends Component {
             </ul>
           </div>
 
+          {Number.isInteger(this.props.index) && this.props.length && (
+            <div>
+              <ol className="ril__indicators">{renderIndicators()}</ol>
+            </div>
+          )}
+
           {this.props.imageCaption && (
             // eslint-disable-next-line jsx-a11y/no-static-element-interactions
             <div // Image caption
@@ -1656,6 +1698,11 @@ ReactImageLightbox.propTypes = {
   // Close window event
   // Should change the parent state such that the lightbox is not rendered
   onCloseRequest: PropTypes.func.isRequired,
+
+  // Move to an image that corresponds to the selected index event
+  // Should change the parent state such that props.prevSrc becomes props.mainSrc,
+  //  props.mainSrc becomes props.nextSrc, etc.
+  onIndicatorClick: PropTypes.func,
 
   // Move to previous image event
   // Should change the parent state such that props.prevSrc becomes props.mainSrc,
@@ -1783,6 +1830,7 @@ ReactImageLightbox.defaultProps = {
   onAfterOpen: () => {},
   onImageLoadError: () => {},
   onImageLoad: () => {},
+  onIndicatorClick: () => {},
   onMoveNextRequest: () => {},
   onMovePrevRequest: () => {},
   prevLabel: 'Previous image',

@@ -109,6 +109,7 @@ class App extends Component {
     this.closeLightbox = this.closeLightbox.bind(this);
     this.moveNext = this.moveNext.bind(this);
     this.movePrev = this.movePrev.bind(this);
+    this.moveTo = this.moveTo.bind(this);
   }
 
   openLightbox() {
@@ -120,14 +121,24 @@ class App extends Component {
   }
 
   moveNext() {
+    const val = (this.state.index + 1) % images.length;
+    console.log(val);
     this.setState(prevState => ({
       index: (prevState.index + 1) % images.length,
     }));
   }
 
   movePrev() {
+    const val = (this.state.index + images.length - 1) % images.length;
+    console.log(val);
     this.setState(prevState => ({
       index: (prevState.index + images.length - 1) % images.length,
+    }));
+  }
+
+  moveTo(index) {
+    this.setState(prevState => ({
+      index,
     }));
   }
 
@@ -146,12 +157,17 @@ class App extends Component {
           prevSrcThumbnail={
             thumbs[(this.state.index + images.length - 1) % images.length]
           }
+          onIndicatorClick={this.moveTo}
           onCloseRequest={this.closeLightbox}
           onMovePrevRequest={this.movePrev}
           onMoveNextRequest={this.moveNext}
           onImageLoadError={App.onImageLoadError}
           imageTitle={titles[this.state.index]}
           imageCaption={captions[this.state.index]}
+          imagePadding={150}
+          index={this.state.index}
+          animationDisabled={true}
+          length={images.length}
         />
       );
     }
