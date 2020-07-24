@@ -143,6 +143,7 @@ class App extends Component {
   }
 
   render() {
+    const albumTitle = <div style={{ color: 'green' }}>Folder Example</div>;
     let lightbox;
     if (this.state.isOpen) {
       lightbox = (
@@ -162,7 +163,7 @@ class App extends Component {
           onMovePrevRequest={this.movePrev}
           onMoveNextRequest={this.moveNext}
           onImageLoadError={App.onImageLoadError}
-          imageTitle={titles[this.state.index]}
+          imageTitle={albumTitle}
           imageCaption={captions[this.state.index]}
           imagePadding={150}
           index={this.state.index}

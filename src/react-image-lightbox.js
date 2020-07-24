@@ -61,7 +61,7 @@ class ReactImageLightbox extends Component {
 
   // Request to transition to the previous image
   static getTransform({ x = 0, y = 0, zoom = 1, width, targetWidth }) {
-    console.log(targetWidth);
+    /*console.log(targetWidth);*/
     let nextX = x;
     const windowWidth = getWindowWidth();
     if (width > windowWidth) {
@@ -307,6 +307,7 @@ class ReactImageLightbox extends Component {
     } else {
       return null;
     }
+    //console.log("fitzise", fitSizes);
 
     return {
       src: imageSrc,
@@ -338,7 +339,10 @@ class ReactImageLightbox extends Component {
         height: maxHeight,
       };
     }
-
+    /*console.log("width:", width);
+    console.log("maxWidth:", maxWidth);
+    console.log("height:", height);
+    console.log("operation:", (height * maxWidth) / width);*/
     return {
       width: maxWidth,
       height: (height * maxWidth) / width,
@@ -347,6 +351,7 @@ class ReactImageLightbox extends Component {
 
   getMaxOffsets(zoomLevel = this.state.zoomLevel) {
     const currentImageInfo = this.getBestImageForType('mainSrc');
+    console.log('current', currentImageInfo);
     if (currentImageInfo === null) {
       return { maxX: 0, minX: 0, maxY: 0, minY: 0 };
     }
@@ -1342,13 +1347,20 @@ class ReactImageLightbox extends Component {
 
     // Images to be displayed
     const images = [];
+    let imageMargin = 0;
+    let leftButtonStyle = {
+      left: 0,
+    };
+    let rigthButtonStyle = {
+      right: 0,
+    };
     const addImage = (srcType, imageClass, transforms) => {
       // Ignore types that have no source defined for their full size image
       if (!this.props[srcType]) {
         return;
       }
       const bestImageInfo = this.getBestImageForType(srcType);
-
+      //console.log("bestImageInfo", bestImageInfo);
       const imageStyle = {
         ...transitionStyle,
         ...ReactImageLightbox.getTransform({
@@ -1356,6 +1368,19 @@ class ReactImageLightbox extends Component {
           ...bestImageInfo,
         }),
       };
+
+      const getButtonMarginSize = imageWidth => {
+        const buttonSize = 50;
+        const windowWidth = window.innerWidth;
+        let margin = (windowWidth - imageWidth) / 2;
+        return margin;
+      };
+
+      if (bestImageInfo && srcType === 'mainSrc') {
+        imageMargin = getButtonMarginSize(bestImageInfo.targetWidth);
+        leftButtonStyle.left = imageMargin;
+        rigthButtonStyle.right = imageMargin;
+      }
 
       if (zoomLevel > MIN_ZOOM_LEVEL) {
         imageStyle.cursor = 'move';
@@ -1532,6 +1557,7 @@ class ReactImageLightbox extends Component {
               type="button"
               className="ril-prev-button ril__navButtons ril__navButtonPrev"
               key="prev"
+              style={leftButtonStyle}
               aria-label={this.props.prevLabel}
               onClick={!this.isAnimating() ? this.requestMovePrev : undefined} // Ignore clicks during animation
             />
@@ -1542,6 +1568,7 @@ class ReactImageLightbox extends Component {
               type="button"
               className="ril-next-button ril__navButtons ril__navButtonNext"
               key="next"
+              style={rigthButtonStyle}
               aria-label={this.props.nextLabel}
               onClick={!this.isAnimating() ? this.requestMoveNext : undefined} // Ignore clicks during animation
             />
