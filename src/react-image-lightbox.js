@@ -61,7 +61,6 @@ class ReactImageLightbox extends Component {
 
   // Request to transition to the previous image
   static getTransform({ x = 0, y = 0, zoom = 1, width, targetWidth }) {
-    /*console.log(targetWidth);*/
     let nextX = x;
     const windowWidth = getWindowWidth();
     if (width > windowWidth) {
@@ -307,7 +306,6 @@ class ReactImageLightbox extends Component {
     } else {
       return null;
     }
-    //console.log("fitzise", fitSizes);
 
     return {
       src: imageSrc,
@@ -339,10 +337,6 @@ class ReactImageLightbox extends Component {
         height: maxHeight,
       };
     }
-    /*console.log("width:", width);
-    console.log("maxWidth:", maxWidth);
-    console.log("height:", height);
-    console.log("operation:", (height * maxWidth) / width);*/
     return {
       width: maxWidth,
       height: (height * maxWidth) / width,
@@ -351,7 +345,6 @@ class ReactImageLightbox extends Component {
 
   getMaxOffsets(zoomLevel = this.state.zoomLevel) {
     const currentImageInfo = this.getBestImageForType('mainSrc');
-    console.log('current', currentImageInfo);
     if (currentImageInfo === null) {
       return { maxX: 0, minX: 0, maxY: 0, minY: 0 };
     }
@@ -1358,6 +1351,9 @@ class ReactImageLightbox extends Component {
     let headerStyle = {
       top: 0,
     };
+    let descriptionBoxStyle = {
+      top: 0,
+    };
     const addImage = (srcType, imageClass, transforms) => {
       // Ignore types that have no source defined for their full size image
       if (!this.props[srcType]) {
@@ -1365,18 +1361,12 @@ class ReactImageLightbox extends Component {
       }
 
       const getTop = imageHeight => {
-        return;
+        const headerHeight = 80;
+        const windowHeight = window.innerHeight;
+        const topBlankSpace = (windowHeight - imageHeight) / 2;
+
+        return topBlankSpace - headerHeight - 10;
       };
-      const bestImageInfo = this.getBestImageForType(srcType);
-      console.log('bestImageInfo', bestImageInfo);
-      const imageStyle = {
-        ...transitionStyle,
-        ...ReactImageLightbox.getTransform({
-          ...transforms,
-          ...bestImageInfo,
-        }),
-      };
-      console.log(imageStyle);
 
       const getButtonMarginSize = imageWidth => {
         const buttonSize = 50;
@@ -1392,15 +1382,77 @@ class ReactImageLightbox extends Component {
         return margin;
       };
 
+      const gettopBlankSpace = imageHeight => {
+        let windowHeight = window.innerHeight;
+        return (windowHeight - imageHeight) / 2;
+      };
+
+      const getTopMarginForNavigationButtons = imageHeight => {
+        const top = getTop(imageHeight);
+        const topBlankSpace = gettopBlankSpace(imageHeight);
+        const imageStartsAt = topBlankSpace - top;
+        const buttonHeight = 60;
+
+        return imageStartsAt + imageHeight / 2 - buttonHeight / 2;
+      };
+
+      const getHeightForText = textStartsAt => {
+        const indicatorsHeight = 54;
+        return window.innerHeight - indicatorsHeight - textStartsAt;
+      };
+
+      const bestImageInfo = this.getBestImageForType(srcType);
+      let imageStyle = {};
+
       if (bestImageInfo && srcType === 'mainSrc') {
         imageMargin = Math.floor(
           getButtonMarginSize(bestImageInfo.targetWidth)
         );
-        headerStyle.top = getHeaderMargin(bestImageInfo.targetHeight);
+        const imageTop = getTop(bestImageInfo.targetHeight);
+        const marginForNavigationButtons = getTopMarginForNavigationButtons(
+          bestImageInfo.targetHeight
+        );
+
+        headerStyle.top =
+          getHeaderMargin(bestImageInfo.targetHeight) - imageTop;
         headerStyle.width = bestImageInfo.targetWidth;
         headerStyle.margin = '0 auto';
         leftButtonStyle.left = imageMargin;
+        leftButtonStyle.marginTop = marginForNavigationButtons;
         rigthButtonStyle.right = imageMargin - 1;
+        rigthButtonStyle.marginTop = marginForNavigationButtons;
+        let newTransforms = { ...transforms };
+        newTransforms.y -= imageTop;
+
+        console.log('bestImageInfo.targetHeight', bestImageInfo.targetHeight);
+        console.log(
+          'gettopBlankSpace(bestImageInfo.targetHeight)',
+          gettopBlankSpace(bestImageInfo.targetHeight)
+        );
+        const textStartsAt =
+          gettopBlankSpace(bestImageInfo.targetHeight) -
+          imageTop +
+          bestImageInfo.targetHeight;
+        descriptionBoxStyle.top = textStartsAt;
+        descriptionBoxStyle.width = bestImageInfo.targetWidth;
+        descriptionBoxStyle.margin = '0 auto';
+        descriptionBoxStyle.maxHeight = getHeightForText(textStartsAt);
+        console.log('descriptionBoxStyle', descriptionBoxStyle);
+        imageStyle = {
+          ...transitionStyle,
+          ...ReactImageLightbox.getTransform({
+            ...newTransforms,
+            ...bestImageInfo,
+          }),
+        };
+      } else {
+        imageStyle = {
+          ...transitionStyle,
+          ...ReactImageLightbox.getTransform({
+            ...transforms,
+            ...bestImageInfo,
+          }),
+        };
       }
 
       if (zoomLevel > MIN_ZOOM_LEVEL) {
@@ -1699,6 +1751,7 @@ class ReactImageLightbox extends Component {
               onMouseDown={event => event.stopPropagation()}
               className="ril-caption ril__caption"
               ref={this.caption}
+              style={descriptionBoxStyle}
             >
               <div className="ril-caption-content ril__captionContent">
                 {this.props.imageCaption}

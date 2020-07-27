@@ -165,7 +165,7 @@ class App extends Component {
           onImageLoadError={App.onImageLoadError}
           imageTitle={albumTitle}
           imageCaption={captions[this.state.index]}
-          imagePadding={150}
+          imagePadding={170}
           index={this.state.index}
           animationDisabled={true}
           length={images.length}
