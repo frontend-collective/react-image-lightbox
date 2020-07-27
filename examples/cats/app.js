@@ -169,6 +169,8 @@ class App extends Component {
           index={this.state.index}
           animationDisabled={true}
           length={images.length}
+          enableZoom={false}
+          clickOutsideToClose={false}
         />
       );
     }

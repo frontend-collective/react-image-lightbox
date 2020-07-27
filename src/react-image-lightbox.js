@@ -193,7 +193,7 @@ class ReactImageLightbox extends Component {
 
     // Used to detect a move when all src's remain unchanged (four or more of the same image in a row)
     this.moveRequested = false;
-
+    this.setState({ isClosing: false });
     if (!this.props.animationDisabled) {
       // Make opening animation play
       this.setState({ isClosing: false });
@@ -1209,10 +1209,11 @@ class ReactImageLightbox extends Component {
     // Call the parent close request
     const closeLightbox = () => this.props.onCloseRequest(event);
 
-    if (
+    /*if (
       this.props.animationDisabled ||
       (event.type === 'keydown' && !this.props.animationOnKeyInput)
-    ) {
+    ) {*/
+    if (event.type === 'keydown' && !this.props.animationOnKeyInput) {
       // No animation
       closeLightbox();
       return;
@@ -1354,13 +1355,20 @@ class ReactImageLightbox extends Component {
     let rigthButtonStyle = {
       right: 0,
     };
+    let headerStyle = {
+      top: 0,
+    };
     const addImage = (srcType, imageClass, transforms) => {
       // Ignore types that have no source defined for their full size image
       if (!this.props[srcType]) {
         return;
       }
+
+      const getTop = imageHeight => {
+        return;
+      };
       const bestImageInfo = this.getBestImageForType(srcType);
-      //console.log("bestImageInfo", bestImageInfo);
+      console.log('bestImageInfo', bestImageInfo);
       const imageStyle = {
         ...transitionStyle,
         ...ReactImageLightbox.getTransform({
@@ -1368,6 +1376,7 @@ class ReactImageLightbox extends Component {
           ...bestImageInfo,
         }),
       };
+      console.log(imageStyle);
 
       const getButtonMarginSize = imageWidth => {
         const buttonSize = 50;
@@ -1376,10 +1385,22 @@ class ReactImageLightbox extends Component {
         return margin;
       };
 
+      const getHeaderMargin = imageHeight => {
+        const headerSize = 80;
+        const windowHeight = window.innerHeight;
+        let margin = (windowHeight - imageHeight) / 2 - headerSize;
+        return margin;
+      };
+
       if (bestImageInfo && srcType === 'mainSrc') {
-        imageMargin = getButtonMarginSize(bestImageInfo.targetWidth);
+        imageMargin = Math.floor(
+          getButtonMarginSize(bestImageInfo.targetWidth)
+        );
+        headerStyle.top = getHeaderMargin(bestImageInfo.targetHeight);
+        headerStyle.width = bestImageInfo.targetWidth;
+        headerStyle.margin = '0 auto';
         leftButtonStyle.left = imageMargin;
-        rigthButtonStyle.right = imageMargin;
+        rigthButtonStyle.right = imageMargin - 1;
       }
 
       if (zoomLevel > MIN_ZOOM_LEVEL) {
@@ -1576,6 +1597,7 @@ class ReactImageLightbox extends Component {
 
           <div // Lightbox toolbar
             className="ril-toolbar ril__toolbar"
+            style={headerStyle}
           >
             <ul className="ril-toolbar-left ril__toolbarSide ril__toolbarLeftSide">
               <li className="ril-toolbar__item ril__toolbarItem">
