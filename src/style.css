@@ -122,8 +122,9 @@
 }
 
 .ril__captionContent {
-  padding: 10px 20px;
   color: #fff;
+  width: 100%;
+  margin: 11px 34px 30px 34px;
 }
 
 .ril__toolbar {
@@ -150,6 +151,12 @@
   padding-right: 0;
   flex: 0 0 auto;
   margin-right: -50px;
+}
+
+@media (max-width: 600px) {
+  .ril__toolbarRightSide {
+    margin-right: 0;
+  }
 }
 
 .ril__toolbarItem {
@@ -460,4 +467,33 @@
   100% {
     opacity: 1;
   }
+}
+
+.ril__caption::-webkit-scrollbar {
+  width: 6px;
+  height: 8px;
+}
+
+.ril__caption::-webkit-scrollbar-thumb {
+  background: #949393;
+  border-radius: 4px;
+}
+
+.ril__caption::-webkit-scrollbar-thumb:hover {
+  background: #bebebe;
+  box-shadow: 0 0 2px 1px rgba(0, 0, 0, 0.2);
+}
+
+.ril__caption::-webkit-scrollbar-thumb:active {
+  background-color: #bebebe;
+}
+
+.ril__caption::-webkit-scrollbar-track {
+  background: #101010b3;
+  border-radius: 4px;
+}
+/* Cambiamos el fondo cuando esté en active o hover */
+.ril__caption::-webkit-scrollbar-track:hover,
+.ril__caption::-webkit-scrollbar-track:active {
+  background: #151515;
 }

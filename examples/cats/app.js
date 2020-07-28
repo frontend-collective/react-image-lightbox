@@ -69,7 +69,6 @@ const titles = [
 
 const captions = [
   'Cat in the snow',
-  '',
   <p>
     .. not in the&nbsp;
     <em>mood</em>
@@ -87,9 +86,106 @@ const captions = [
     <br />
     ...
     <br />
+    ...
+    <br />
+    ...
+    <br />
+    ...
+    <br />
+    ...
+    <br />
+    ...
+    <br />
+    ...
+    <br />
+    ...
+    <br />
+    ...
+    <br />
+    ...
+    <br />
+    ...
+    <br />
     C&#39;mon. Seriously.
   </p>,
-  '',
+  <p>
+    .. not in the&nbsp;
+    <em>mood</em>
+    &nbsp;for games right now
+    <br />
+    ...
+    <br />
+    ...
+    <br />
+    ...
+    <br />
+    ...
+    <br />
+    ...
+    <br />
+    ...
+    <br />
+    ...
+    <br />
+    ...
+    <br />
+    ...
+    <br />
+    ...
+    <br />
+    ...
+    <br />
+    ...
+    <br />
+    ...
+    <br />
+    ...
+    <br />
+    ...
+    <br />
+    ...
+    <br />
+    C&#39;mon. Seriously.
+  </p>,
+  <p>
+    .. not in the&nbsp;
+    <em>mood</em>
+    &nbsp;for games right now
+    <br />
+    ...
+    <br />
+    ...
+    <br />
+    ...
+    <br />
+    ...
+    <br />
+    ...
+    <br />
+    ...
+    <br />
+    ...
+    <br />
+    ...
+    <br />
+    ...
+    <br />
+    ...
+    <br />
+    ...
+    <br />
+    ...
+    <br />
+    ...
+    <br />
+    ...
+    <br />
+    ...
+    <br />
+    ...
+    <br />
+    C&#39;mon. Seriously.
+  </p>,
 ];
 
 class App extends Component {
@@ -122,7 +218,6 @@ class App extends Component {
 
   moveNext() {
     const val = (this.state.index + 1) % images.length;
-    console.log(val);
     this.setState(prevState => ({
       index: (prevState.index + 1) % images.length,
     }));
@@ -130,7 +225,6 @@ class App extends Component {
 
   movePrev() {
     const val = (this.state.index + images.length - 1) % images.length;
-    console.log(val);
     this.setState(prevState => ({
       index: (prevState.index + images.length - 1) % images.length,
     }));
@@ -144,6 +238,9 @@ class App extends Component {
 
   render() {
     const albumTitle = <div style={{ color: 'green' }}>Folder Example</div>;
+    const imageName = images[this.state.index].replace(/^.*[\\\/]/, '');
+    console.log(images[this.state.index]);
+    console.log(imageName);
     let lightbox;
     if (this.state.isOpen) {
       lightbox = (
@@ -165,7 +262,7 @@ class App extends Component {
           onImageLoadError={App.onImageLoadError}
           imageTitle={albumTitle}
           imageCaption={captions[this.state.index]}
-          imagePadding={170}
+          imagePadding={100}
           index={this.state.index}
           animationDisabled={true}
           length={images.length}

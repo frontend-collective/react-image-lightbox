@@ -319,8 +319,16 @@ class ReactImageLightbox extends Component {
   // Get sizing for when an image is larger than the window
   getFitSizes(width, height, stretch) {
     const boxSize = this.getLightboxRect();
-    let maxHeight = boxSize.height - this.props.imagePadding * 2;
-    let maxWidth = boxSize.width - this.props.imagePadding * 2;
+    let imageVerticalPadding =
+      this.props.imagePadding < 128 ? 129 : this.props.imagePadding;
+    imageVerticalPadding = boxSize.width > 600 ? 170 : imageVerticalPadding;
+    let widthImagePadding = boxSize.width < 600 ? 15 : this.props.imagePadding;
+
+    let maxHeight = boxSize.height - imageVerticalPadding * 2;
+    let maxWidth = boxSize.width - widthImagePadding * 2;
+
+    maxWidth = boxSize.width > 1340 ? 1000 : maxWidth;
+    maxHeight = boxSize.height > 1071.2 ? 1071.2 : maxHeight;
 
     if (!stretch) {
       maxHeight = Math.min(maxHeight, height);
@@ -1301,6 +1309,7 @@ class ReactImageLightbox extends Component {
       isClosing,
       loadErrorStatus,
     } = this.state;
+    //const imageName = mainSrc;
 
     const handleIndicatorClick = index => {
       onIndicatorClick(index);
@@ -1423,21 +1432,15 @@ class ReactImageLightbox extends Component {
         rigthButtonStyle.marginTop = marginForNavigationButtons;
         let newTransforms = { ...transforms };
         newTransforms.y -= imageTop;
-
-        console.log('bestImageInfo.targetHeight', bestImageInfo.targetHeight);
-        console.log(
-          'gettopBlankSpace(bestImageInfo.targetHeight)',
-          gettopBlankSpace(bestImageInfo.targetHeight)
-        );
         const textStartsAt =
           gettopBlankSpace(bestImageInfo.targetHeight) -
           imageTop +
-          bestImageInfo.targetHeight;
+          bestImageInfo.targetHeight +
+          10;
         descriptionBoxStyle.top = textStartsAt;
         descriptionBoxStyle.width = bestImageInfo.targetWidth;
         descriptionBoxStyle.margin = '0 auto';
         descriptionBoxStyle.maxHeight = getHeightForText(textStartsAt);
-        console.log('descriptionBoxStyle', descriptionBoxStyle);
         imageStyle = {
           ...transitionStyle,
           ...ReactImageLightbox.getTransform({
@@ -1865,6 +1868,12 @@ ReactImageLightbox.propTypes = {
   // Image title
   imageTitle: PropTypes.node,
 
+  // Image Name
+  imageName: PropTypes.string,
+
+  // Image Date
+  imageDate: PropTypes.string,
+
   // Image caption
   imageCaption: PropTypes.node,
 
@@ -1943,6 +1952,8 @@ ReactImageLightbox.defaultProps = {
   zoomInLabel: 'Zoom in',
   zoomOutLabel: 'Zoom out',
   imageLoadErrorMessage: 'This image failed to load',
+  imageName: '',
+  ImageDate: null,
 };
 
 export default ReactImageLightbox;
