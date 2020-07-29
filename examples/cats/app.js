@@ -69,7 +69,6 @@ const titles = [
 
 const captions = [
   'Cat in the snow',
-  '',
   <p>
     .. not in the&nbsp;
     <em>mood</em>
@@ -87,9 +86,106 @@ const captions = [
     <br />
     ...
     <br />
+    ...
+    <br />
+    ...
+    <br />
+    ...
+    <br />
+    ...
+    <br />
+    ...
+    <br />
+    ...
+    <br />
+    ...
+    <br />
+    ...
+    <br />
+    ...
+    <br />
+    ...
+    <br />
     C&#39;mon. Seriously.
   </p>,
-  '',
+  <p>
+    .. not in the&nbsp;
+    <em>mood</em>
+    &nbsp;for games right now
+    <br />
+    ...
+    <br />
+    ...
+    <br />
+    ...
+    <br />
+    ...
+    <br />
+    ...
+    <br />
+    ...
+    <br />
+    ...
+    <br />
+    ...
+    <br />
+    ...
+    <br />
+    ...
+    <br />
+    ...
+    <br />
+    ...
+    <br />
+    ...
+    <br />
+    ...
+    <br />
+    ...
+    <br />
+    ...
+    <br />
+    C&#39;mon. Seriously.
+  </p>,
+  <p>
+    .. not in the&nbsp;
+    <em>mood</em>
+    &nbsp;for games right now
+    <br />
+    ...
+    <br />
+    ...
+    <br />
+    ...
+    <br />
+    ...
+    <br />
+    ...
+    <br />
+    ...
+    <br />
+    ...
+    <br />
+    ...
+    <br />
+    ...
+    <br />
+    ...
+    <br />
+    ...
+    <br />
+    ...
+    <br />
+    ...
+    <br />
+    ...
+    <br />
+    ...
+    <br />
+    ...
+    <br />
+    C&#39;mon. Seriously.
+  </p>,
 ];
 
 class App extends Component {
@@ -109,6 +205,7 @@ class App extends Component {
     this.closeLightbox = this.closeLightbox.bind(this);
     this.moveNext = this.moveNext.bind(this);
     this.movePrev = this.movePrev.bind(this);
+    this.moveTo = this.moveTo.bind(this);
   }
 
   openLightbox() {
@@ -120,18 +217,30 @@ class App extends Component {
   }
 
   moveNext() {
+    const val = (this.state.index + 1) % images.length;
     this.setState(prevState => ({
       index: (prevState.index + 1) % images.length,
     }));
   }
 
   movePrev() {
+    const val = (this.state.index + images.length - 1) % images.length;
     this.setState(prevState => ({
       index: (prevState.index + images.length - 1) % images.length,
     }));
   }
 
+  moveTo(index) {
+    this.setState(prevState => ({
+      index,
+    }));
+  }
+
   render() {
+    const albumTitle = <div style={{ color: 'green' }}>Folder Example</div>;
+    const imageName = images[this.state.index].replace(/^.*[\\\/]/, '');
+    console.log(images[this.state.index]);
+    console.log(imageName);
     let lightbox;
     if (this.state.isOpen) {
       lightbox = (
@@ -146,12 +255,19 @@ class App extends Component {
           prevSrcThumbnail={
             thumbs[(this.state.index + images.length - 1) % images.length]
           }
+          onIndicatorClick={this.moveTo}
           onCloseRequest={this.closeLightbox}
           onMovePrevRequest={this.movePrev}
           onMoveNextRequest={this.moveNext}
           onImageLoadError={App.onImageLoadError}
-          imageTitle={titles[this.state.index]}
+          imageTitle={albumTitle}
           imageCaption={captions[this.state.index]}
+          imagePadding={100}
+          index={this.state.index}
+          animationDisabled={true}
+          length={images.length}
+          enableZoom={false}
+          clickOutsideToClose={false}
         />
       );
     }

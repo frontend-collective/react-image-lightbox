@@ -132,6 +132,7 @@ class ReactImageLightbox extends Component {
     this.requestClose = this.requestClose.bind(this);
     this.requestMoveNext = this.requestMoveNext.bind(this);
     this.requestMovePrev = this.requestMovePrev.bind(this);
+    this.requestMoveTo = this.requestMoveTo.bind(this);
   }
 
   // eslint-disable-next-line camelcase
@@ -191,7 +192,7 @@ class ReactImageLightbox extends Component {
 
     // Used to detect a move when all src's remain unchanged (four or more of the same image in a row)
     this.moveRequested = false;
-
+    this.setState({ isClosing: false });
     if (!this.props.animationDisabled) {
       // Make opening animation play
       this.setState({ isClosing: false });
@@ -318,8 +319,16 @@ class ReactImageLightbox extends Component {
   // Get sizing for when an image is larger than the window
   getFitSizes(width, height, stretch) {
     const boxSize = this.getLightboxRect();
-    let maxHeight = boxSize.height - this.props.imagePadding * 2;
-    let maxWidth = boxSize.width - this.props.imagePadding * 2;
+    let imageVerticalPadding =
+      this.props.imagePadding < 128 ? 129 : this.props.imagePadding;
+    imageVerticalPadding = boxSize.width > 600 ? 170 : imageVerticalPadding;
+    let widthImagePadding = boxSize.width < 600 ? 15 : this.props.imagePadding;
+
+    let maxHeight = boxSize.height - imageVerticalPadding * 2;
+    let maxWidth = boxSize.width - widthImagePadding * 2;
+
+    maxWidth = boxSize.width > 1340 ? 1000 : maxWidth;
+    maxHeight = boxSize.height > 1071.2 ? 1071.2 : maxHeight;
 
     if (!stretch) {
       maxHeight = Math.min(maxHeight, height);
@@ -336,7 +345,6 @@ class ReactImageLightbox extends Component {
         height: maxHeight,
       };
     }
-
     return {
       width: maxWidth,
       height: (height * maxWidth) / width,
@@ -1202,10 +1210,11 @@ class ReactImageLightbox extends Component {
     // Call the parent close request
     const closeLightbox = () => this.props.onCloseRequest(event);
 
-    if (
+    /*if (
       this.props.animationDisabled ||
       (event.type === 'keydown' && !this.props.animationOnKeyInput)
-    ) {
+    ) {*/
+    if (event.type === 'keydown' && !this.props.animationOnKeyInput) {
       // No animation
       closeLightbox();
       return;
@@ -1219,7 +1228,7 @@ class ReactImageLightbox extends Component {
     this.setTimeout(closeLightbox, this.props.animationDuration);
   }
 
-  requestMove(direction, event) {
+  requestMove(direction, to, event) {
     // Reset the zoom level on image move
     const nextState = {
       zoomLevel: MIN_ZOOM_LEVEL,
@@ -1246,10 +1255,17 @@ class ReactImageLightbox extends Component {
       this.keyCounter -= 1;
       this.setState(nextState);
       this.props.onMovePrevRequest(event);
-    } else {
+    }
+    if (direction === 'next') {
       this.keyCounter += 1;
       this.setState(nextState);
       this.props.onMoveNextRequest(event);
+    }
+    if (direction === 'to') {
+      const diff = to - this.props.index;
+      this.keyCounter += diff;
+      this.setState(nextState);
+      this.props.onIndicatorClick(to);
     }
   }
 
@@ -1261,6 +1277,10 @@ class ReactImageLightbox extends Component {
   // Request to transition to the previous image
   requestMovePrev(event) {
     this.requestMove('prev', event);
+  }
+
+  requestMoveTo(event, to) {
+    this.requestMove('to', to, event);
   }
 
   render() {
@@ -1278,6 +1298,9 @@ class ReactImageLightbox extends Component {
       onAfterOpen,
       imageCrossOrigin,
       reactModalProps,
+      index,
+      length,
+      onIndicatorClick,
     } = this.props;
     const {
       zoomLevel,
@@ -1286,6 +1309,27 @@ class ReactImageLightbox extends Component {
       isClosing,
       loadErrorStatus,
     } = this.state;
+    //const imageName = mainSrc;
+
+    const handleIndicatorClick = index => {
+      onIndicatorClick(index);
+    };
+
+    const renderIndicators = () => {
+      let indicators = [];
+      for (let i = 0; i < length; i++) {
+        indicators.push(
+          <li
+            key={i}
+            onClick={event => {
+              if (!this.isAnimating()) this.requestMoveTo(event, i);
+            }}
+            className={i === index ? 'active' : ''}
+          ></li>
+        );
+      }
+      return indicators;
+    };
 
     const boxSize = this.getLightboxRect();
     let transitionStyle = {};
@@ -1306,20 +1350,113 @@ class ReactImageLightbox extends Component {
 
     // Images to be displayed
     const images = [];
+    let imageMargin = 0;
+    let leftButtonStyle = {
+      left: 0,
+    };
+    let rigthButtonStyle = {
+      right: 0,
+    };
+    let headerStyle = {
+      top: 0,
+    };
+    let descriptionBoxStyle = {
+      top: 0,
+    };
     const addImage = (srcType, imageClass, transforms) => {
       // Ignore types that have no source defined for their full size image
       if (!this.props[srcType]) {
         return;
       }
-      const bestImageInfo = this.getBestImageForType(srcType);
 
-      const imageStyle = {
-        ...transitionStyle,
-        ...ReactImageLightbox.getTransform({
-          ...transforms,
-          ...bestImageInfo,
-        }),
+      const getTop = imageHeight => {
+        const headerHeight = 80;
+        const windowHeight = window.innerHeight;
+        const topBlankSpace = (windowHeight - imageHeight) / 2;
+
+        return topBlankSpace - headerHeight - 10;
       };
+
+      const getButtonMarginSize = imageWidth => {
+        const buttonSize = 50;
+        const windowWidth = window.innerWidth;
+        let margin = (windowWidth - imageWidth) / 2;
+        return margin;
+      };
+
+      const getHeaderMargin = imageHeight => {
+        const headerSize = 80;
+        const windowHeight = window.innerHeight;
+        let margin = (windowHeight - imageHeight) / 2 - headerSize;
+        return margin;
+      };
+
+      const gettopBlankSpace = imageHeight => {
+        let windowHeight = window.innerHeight;
+        return (windowHeight - imageHeight) / 2;
+      };
+
+      const getTopMarginForNavigationButtons = imageHeight => {
+        const top = getTop(imageHeight);
+        const topBlankSpace = gettopBlankSpace(imageHeight);
+        const imageStartsAt = topBlankSpace - top;
+        const buttonHeight = 60;
+
+        return imageStartsAt + imageHeight / 2 - buttonHeight / 2;
+      };
+
+      const getHeightForText = textStartsAt => {
+        const indicatorsHeight = 54;
+        return window.innerHeight - indicatorsHeight - textStartsAt;
+      };
+
+      const bestImageInfo = this.getBestImageForType(srcType);
+      let imageStyle = {};
+
+      if (bestImageInfo && srcType === 'mainSrc') {
+        imageMargin = Math.floor(
+          getButtonMarginSize(bestImageInfo.targetWidth)
+        );
+        const imageTop = getTop(bestImageInfo.targetHeight);
+        const marginForNavigationButtons = getTopMarginForNavigationButtons(
+          bestImageInfo.targetHeight
+        );
+
+        headerStyle.top =
+          getHeaderMargin(bestImageInfo.targetHeight) - imageTop;
+        headerStyle.width = bestImageInfo.targetWidth;
+        headerStyle.margin = '0 auto';
+        leftButtonStyle.left = imageMargin;
+        leftButtonStyle.marginTop = marginForNavigationButtons;
+        rigthButtonStyle.right = imageMargin - 1;
+        rigthButtonStyle.marginTop = marginForNavigationButtons;
+        let newTransforms = { ...transforms };
+        newTransforms.y -= imageTop;
+        const textStartsAt =
+          gettopBlankSpace(bestImageInfo.targetHeight) -
+          imageTop +
+          bestImageInfo.targetHeight +
+          10;
+        descriptionBoxStyle.top = textStartsAt;
+        descriptionBoxStyle.width = bestImageInfo.targetWidth;
+        descriptionBoxStyle.margin = '0 auto';
+        descriptionBoxStyle.maxHeight = getHeightForText(textStartsAt);
+        imageStyle = {
+          ...transitionStyle,
+          ...ReactImageLightbox.getTransform({
+            ...newTransforms,
+            ...bestImageInfo,
+          }),
+        };
+      } else {
+        imageStyle = {
+          ...transitionStyle,
+          ...ReactImageLightbox.getTransform({
+            ...transforms,
+            ...bestImageInfo,
+          }),
+        };
+      }
 
       if (zoomLevel > MIN_ZOOM_LEVEL) {
         imageStyle.cursor = 'move';
@@ -1333,7 +1470,7 @@ class ReactImageLightbox extends Component {
       if (bestImageInfo === null && hasTrueValue(loadErrorStatus)) {
         images.push(
           <div
-            className={`${imageClass} ril__image ril-errored`}
+            className={`${imageClass} ril__image ril-errored fade-in`}
             style={imageStyle}
             key={this.props[srcType] + keyEndings[srcType]}
           >
@@ -1412,7 +1549,7 @@ class ReactImageLightbox extends Component {
       x: boxSize.width,
     });
     // Main Image
-    addImage('mainSrc', 'ril-image-current', {
+    addImage('mainSrc', 'ril-image-current fade-in', {
       x: -1 * offsetX,
       y: -1 * offsetY,
       zoom: zoomMultiplier,
@@ -1496,6 +1633,7 @@ class ReactImageLightbox extends Component {
               type="button"
               className="ril-prev-button ril__navButtons ril__navButtonPrev"
               key="prev"
+              style={leftButtonStyle}
               aria-label={this.props.prevLabel}
               onClick={!this.isAnimating() ? this.requestMovePrev : undefined} // Ignore clicks during animation
             />
@@ -1506,6 +1644,7 @@ class ReactImageLightbox extends Component {
               type="button"
               className="ril-next-button ril__navButtons ril__navButtonNext"
               key="next"
+              style={rigthButtonStyle}
               aria-label={this.props.nextLabel}
               onClick={!this.isAnimating() ? this.requestMoveNext : undefined} // Ignore clicks during animation
             />
@@ -1513,6 +1652,7 @@ class ReactImageLightbox extends Component {
 
           <div // Lightbox toolbar
             className="ril-toolbar ril__toolbar"
+            style={headerStyle}
           >
             <ul className="ril-toolbar-left ril__toolbarSide ril__toolbarLeftSide">
               <li className="ril-toolbar__item ril__toolbarItem">
@@ -1601,6 +1741,12 @@ class ReactImageLightbox extends Component {
             </ul>
           </div>
 
+          {Number.isInteger(this.props.index) && this.props.length && (
+            <div>
+              <ol className="ril__indicators">{renderIndicators()}</ol>
+            </div>
+          )}
+
           {this.props.imageCaption && (
             // eslint-disable-next-line jsx-a11y/no-static-element-interactions
             <div // Image caption
@@ -1608,6 +1754,7 @@ class ReactImageLightbox extends Component {
               onMouseDown={event => event.stopPropagation()}
               className="ril-caption ril__caption"
               ref={this.caption}
+              style={descriptionBoxStyle}
             >
               <div className="ril-caption-content ril__captionContent">
                 {this.props.imageCaption}
@@ -1656,6 +1803,11 @@ ReactImageLightbox.propTypes = {
   // Close window event
   // Should change the parent state such that the lightbox is not rendered
   onCloseRequest: PropTypes.func.isRequired,
+
+  // Move to an image that corresponds to the selected index event
+  // Should change the parent state such that props.prevSrc becomes props.mainSrc,
+  //  props.mainSrc becomes props.nextSrc, etc.
+  onIndicatorClick: PropTypes.func,
 
   // Move to previous image event
   // Should change the parent state such that props.prevSrc becomes props.mainSrc,
@@ -1715,6 +1867,12 @@ ReactImageLightbox.propTypes = {
 
   // Image title
   imageTitle: PropTypes.node,
+
+  // Image Name
+  imageName: PropTypes.string,
+
+  // Image Date
+  imageDate: PropTypes.string,
 
   // Image caption
   imageCaption: PropTypes.node,
@@ -1783,6 +1941,7 @@ ReactImageLightbox.defaultProps = {
   onAfterOpen: () => {},
   onImageLoadError: () => {},
   onImageLoad: () => {},
+  onIndicatorClick: () => {},
   onMoveNextRequest: () => {},
   onMovePrevRequest: () => {},
   prevLabel: 'Previous image',
@@ -1793,6 +1952,8 @@ ReactImageLightbox.defaultProps = {
   zoomInLabel: 'Zoom in',
   zoomOutLabel: 'Zoom out',
   imageLoadErrorMessage: 'This image failed to load',
+  imageName: '',
+  ImageDate: null,
 };
 
 export default ReactImageLightbox;
