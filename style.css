@@ -8,7 +8,7 @@
 }
 
 .ril__outer {
-  background-color: rgb(25, 25, 25, 0.95);
+  background-color: rgba(25, 25, 25, 0.95);
   outline: none;
   top: 0;
   left: 0;
@@ -83,14 +83,14 @@
 
 .ril__navButtonPrev {
   left: 0;
-  background: rgb(25, 25, 25, 0.95)
+  background: rgba(25, 25, 25, 0.95)
     url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZlcnNpb249IjEuMSIgd2lkdGg9IjIwIiBoZWlnaHQ9IjM0Ij48cGF0aCBkPSJtIDE5LDMgLTIsLTIgLTE2LDE2IDE2LDE2IDEsLTEgLTE1LC0xNSAxNSwtMTUgeiIgZmlsbD0iI0ZGRiIvPjwvc3ZnPg==')
     no-repeat center;
 }
 
 .ril__navButtonNext {
   right: 0;
-  background: rgb(25, 25, 25, 0.95)
+  background: rgba(25, 25, 25, 0.95)
     url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZlcnNpb249IjEuMSIgd2lkdGg9IjIwIiBoZWlnaHQ9IjM0Ij48cGF0aCBkPSJtIDEsMyAyLC0yIDE2LDE2IC0xNiwxNiAtMSwtMSAxNSwtMTUgLTE1LC0xNSB6IiBmaWxsPSIjRkZGIi8+PC9zdmc+')
     no-repeat center;
 }
