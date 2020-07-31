@@ -415,8 +415,8 @@
   opacity: 100%;
   transition: opacity 0.5s;
   border-radius: 2px;
-  box-shadow: 0px 1px 15px 7px rgb(21 21 21 / 0.75);
-  -webkit-box-shadow: 0px 1px 15px 7px rgb(21 21 21 / 0.75);
+  box-shadow: 0px 1px 15px 7px rgb(21, 21, 21, 0.75);
+  -webkit-box-shadow: 0px 1px 15px 7px rgb(21, 21, 21, 0.75);
 }
 
 .fade-in {
