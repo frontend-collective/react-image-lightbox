@@ -12,6 +12,7 @@ export interface ILightBoxProps {
     onMoveNextRequest?(): void;
     onImageLoad?(): void;
     onImageLoadError?(): void;
+    onImageClick?(): void;
     imageLoadErrorMessage?: React.ReactNode;
     onAfterOpen?(): void;
     discourageDownloads?: boolean;

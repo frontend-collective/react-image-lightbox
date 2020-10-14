@@ -1379,6 +1379,7 @@ class ReactImageLightbox extends Component {
           <div
             className={`${imageClass} ril__image ril__imageDiscourager`}
             onDoubleClick={this.handleImageDoubleClick}
+            onClick={this.handleImageClick}
             onWheel={this.handleImageMouseWheel}
             style={imageStyle}
             key={imageSrc + keyEndings[srcType]}
@@ -1392,6 +1393,7 @@ class ReactImageLightbox extends Component {
             {...(imageCrossOrigin ? { crossOrigin: imageCrossOrigin } : {})}
             className={`${imageClass} ril__image`}
             onDoubleClick={this.handleImageDoubleClick}
+            onClick={this.props.onImageClick}
             onWheel={this.handleImageMouseWheel}
             onDragStart={e => e.preventDefault()}
             style={imageStyle}
@@ -1674,6 +1676,9 @@ ReactImageLightbox.propTypes = {
   // Called when image successfully loads
   onImageLoad: PropTypes.func,
 
+  // Called when the main image clicked event occurred
+  onImageClick: PropTypes.func,
+
   // Open window event
   onAfterOpen: PropTypes.func,
 
@@ -1783,6 +1788,7 @@ ReactImageLightbox.defaultProps = {
   onAfterOpen: () => {},
   onImageLoadError: () => {},
   onImageLoad: () => {},
+  onImageClick: () => {},
   onMoveNextRequest: () => {},
   onMovePrevRequest: () => {},
   prevLabel: 'Previous image',
