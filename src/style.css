@@ -141,7 +141,6 @@
   width: 100%;
   padding-left: 0;
   padding-right: 0;
-  flex: 0 1 auto;
   overflow: hidden;
   text-overflow: ellipsis;
 }
@@ -150,7 +149,9 @@
   padding-left: 0;
   padding-right: 0;
   flex: 0 0 auto;
-  margin-right: -50px;
+  margin-right: -35px;
+  position: fixed;
+  right: 60px;
 }
 
 @media (max-width: 600px) {

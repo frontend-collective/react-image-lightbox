@@ -15,8 +15,22 @@ import image2Thumb from './images/2_thumb.jpg';
 import image3Thumb from './images/3_thumb.jpg';
 import image4Thumb from './images/4_thumb.jpg';
 
-const images = [image1, image2, image3, image4];
-const thumbs = [image1Thumb, image2Thumb, image3Thumb, image4Thumb];
+const images = [
+  image1,
+  image2,
+  image3,
+  image4,
+  'https://news.itu.int/wp-content/uploads/2018/07/citymobility-min-e1530886118305.jpg',
+  'https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/86092a8a-4acf-4f87-b9e7-18724a0b2d37/dbcjao-cc5c110c-43bf-4222-8807-c0c553703ea0.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOiIsImlzcyI6InVybjphcHA6Iiwib2JqIjpbW3sicGF0aCI6IlwvZlwvODYwOTJhOGEtNGFjZi00Zjg3LWI5ZTctMTg3MjRhMGIyZDM3XC9kYmNqYW8tY2M1YzExMGMtNDNiZi00MjIyLTg4MDctYzBjNTUzNzAzZWEwLmpwZyJ9XV0sImF1ZCI6WyJ1cm46c2VydmljZTpmaWxlLmRvd25sb2FkIl19.7qWS9EI0MBfT4mOALrFPGAKCXCe0SSmCO0_tkcocrug',
+];
+const thumbs = [
+  image1Thumb,
+  image2Thumb,
+  image3Thumb,
+  image4Thumb,
+  'https://news.itu.int/wp-content/uploads/2018/07/citymobility-min-e1530886118305.jpg',
+  'https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/86092a8a-4acf-4f87-b9e7-18724a0b2d37/dbcjao-cc5c110c-43bf-4222-8807-c0c553703ea0.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOiIsImlzcyI6InVybjphcHA6Iiwib2JqIjpbW3sicGF0aCI6IlwvZlwvODYwOTJhOGEtNGFjZi00Zjg3LWI5ZTctMTg3MjRhMGIyZDM3XC9kYmNqYW8tY2M1YzExMGMtNDNiZi00MjIyLTg4MDctYzBjNTUzNzAzZWEwLmpwZyJ9XV0sImF1ZCI6WyJ1cm46c2VydmljZTpmaWxlLmRvd25sb2FkIl19.7qWS9EI0MBfT4mOALrFPGAKCXCe0SSmCO0_tkcocrug',
+];
 
 const titles = [
   '',
@@ -45,6 +59,21 @@ const titles = [
       className="creditLink"
       href="http://creativecommons.org/licenses/by-sa/2.0/"
       title="Attribution-ShareAlike License"
+    >
+      Some rights reserved
+    </a>
+    )
+  </span>,
+  <span>
+    by&nbsp;
+    <a className="creditLink" href="http://flickr.com/photos/fazen/">
+      fazen
+    </a>
+    &nbsp; (
+    <a
+      className="creditLink"
+      href="http://creativecommons.org/licenses/by/2.0/"
+      title="Attribution License"
     >
       Some rights reserved
     </a>
@@ -107,6 +136,14 @@ const captions = [
     ...
     <br />
     C&#39;mon. Seriously.
+  </p>,
+  <p>
+    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+    tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+    quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+    consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+    cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat
+    non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
   </p>,
   <p>
     .. not in the&nbsp;
@@ -262,7 +299,7 @@ class App extends Component {
           onImageLoadError={App.onImageLoadError}
           imageTitle={albumTitle}
           imageCaption={captions[this.state.index]}
-          imagePadding={100}
+          imagePadding={0}
           index={this.state.index}
           animationDisabled={true}
           length={images.length}

@@ -318,7 +318,7 @@ class ReactImageLightbox extends Component {
 
   // Get sizing for when an image is larger than the window
   getFitSizes(width, height, stretch) {
-    const boxSize = this.getLightboxRect();
+    /*const boxSize = this.getLightboxRect();
     let imageVerticalPadding =
       this.props.imagePadding < 128 ? 129 : this.props.imagePadding;
     imageVerticalPadding = boxSize.width > 600 ? 170 : imageVerticalPadding;
@@ -345,6 +345,30 @@ class ReactImageLightbox extends Component {
         height: maxHeight,
       };
     }
+    return {
+      width: maxWidth,
+      height: (height * maxWidth) / width,
+    };*/
+    const boxSize = this.getLightboxRect();
+    let maxHeight = boxSize.height - (this.props.imagePadding * 2 + 24);
+    let maxWidth = boxSize.width - (this.props.imagePadding * 2 + 24);
+
+    if (!stretch) {
+      maxHeight = Math.min(maxHeight, height);
+      maxWidth = Math.min(maxWidth, width);
+    }
+
+    const maxRatio = maxWidth / maxHeight;
+    const srcRatio = width / height;
+
+    if (maxRatio > srcRatio) {
+      // height is the constraining dimension of the photo
+      return {
+        width: (width * maxHeight) / height,
+        height: maxHeight,
+      };
+    }
+
     return {
       width: maxWidth,
       height: (height * maxWidth) / width,
@@ -1363,6 +1387,105 @@ class ReactImageLightbox extends Component {
     let descriptionBoxStyle = {
       top: 0,
     };
+    const addImageAlternative = (srcType, imageClass, transforms) => {
+      // Ignore types that have no source defined for their full size image
+      if (!this.props[srcType]) {
+        return;
+      }
+      const bestImageInfo = this.getBestImageForType(srcType);
+
+      const imageStyle = {
+        ...transitionStyle,
+        ...ReactImageLightbox.getTransform({
+          ...transforms,
+          ...bestImageInfo,
+        }),
+      };
+
+      if (zoomLevel > MIN_ZOOM_LEVEL) {
+        imageStyle.cursor = 'move';
+      }
+
+      // support IE 9 and 11
+      const hasTrueValue = object =>
+        Object.keys(object).some(key => object[key]);
+
+      // when error on one of the loads then push custom error stuff
+      if (bestImageInfo === null && hasTrueValue(loadErrorStatus)) {
+        images.push(
+          <div
+            className={`${imageClass} ril__image ril-errored`}
+            style={imageStyle}
+            key={this.props[srcType] + keyEndings[srcType]}
+          >
+            <div className="ril__errorContainer">
+              {this.props.imageLoadErrorMessage}
+            </div>
+          </div>
+        );
+
+        return;
+      }
+      if (bestImageInfo === null) {
+        const loadingIcon = (
+          <div className="ril-loading-circle ril__loadingCircle ril__loadingContainer__icon">
+            {[...new Array(12)].map((_, index) => (
+              <div
+                // eslint-disable-next-line react/no-array-index-key
+                key={index}
+                className="ril-loading-circle-point ril__loadingCirclePoint"
+              />
+            ))}
+          </div>
+        );
+
+        // Fall back to loading icon if the thumbnail has not been loaded
+        images.push(
+          <div
+            className={`${imageClass} ril__image ril-not-loaded`}
+            style={imageStyle}
+            key={this.props[srcType] + keyEndings[srcType]}
+          >
+            <div className="ril__loadingContainer">{loadingIcon}</div>
+          </div>
+        );
+
+        return;
+      }
+
+      const imageSrc = bestImageInfo.src;
+      if (discourageDownloads) {
+        imageStyle.backgroundImage = `url('${imageSrc}')`;
+        images.push(
+          <div
+            className={`${imageClass} ril__image ril__imageDiscourager`}
+            onDoubleClick={this.handleImageDoubleClick}
+            onWheel={this.handleImageMouseWheel}
+            style={imageStyle}
+            key={imageSrc + keyEndings[srcType]}
+          >
+            <div className="ril-download-blocker ril__downloadBlocker" />
+          </div>
+        );
+      } else {
+        images.push(
+          <img
+            {...(imageCrossOrigin ? { crossOrigin: imageCrossOrigin } : {})}
+            className={`${imageClass} ril__image`}
+            onDoubleClick={this.handleImageDoubleClick}
+            onWheel={this.handleImageMouseWheel}
+            onDragStart={e => e.preventDefault()}
+            style={imageStyle}
+            src={imageSrc}
+            key={imageSrc + keyEndings[srcType]}
+            alt={
+              typeof imageTitle === 'string' ? imageTitle : translate('Image')
+            }
+            draggable={false}
+          />
+        );
+      }
+    };
     const addImage = (srcType, imageClass, transforms) => {
       // Ignore types that have no source defined for their full size image
       if (!this.props[srcType]) {
@@ -1422,25 +1545,33 @@ class ReactImageLightbox extends Component {
           bestImageInfo.targetHeight
         );
 
-        headerStyle.top =
-          getHeaderMargin(bestImageInfo.targetHeight) - imageTop;
-        headerStyle.width = bestImageInfo.targetWidth;
-        headerStyle.margin = '0 auto';
+        console.log('bestImageInfo.targetHeight', bestImageInfo.targetHeight);
+        console.log('imageMargin', imageMargin);
+
+        //headerStyle.top =
+        //getHeaderMargin(bestImageInfo.targetHeight) - imageTop;
+        //headerStyle.width = bestImageInfo.targetWidth;
+        headerStyle['width'] = '100%';
+        headerStyle['backgroundColor'] = 'rgba(0,0,0,.5)';
+        //headerStyle.margin = '0 auto';
         leftButtonStyle.left = imageMargin;
-        leftButtonStyle.marginTop = marginForNavigationButtons;
         rigthButtonStyle.right = imageMargin - 1;
-        rigthButtonStyle.marginTop = marginForNavigationButtons;
+        //rigthButtonStyle.marginTop = marginForNavigationButtons;
         let newTransforms = { ...transforms };
-        newTransforms.y -= imageTop;
+        // newTransforms.y -= imageTop;
+        // console.log('newTransforms', newTransforms);
         const textStartsAt =
           gettopBlankSpace(bestImageInfo.targetHeight) -
           imageTop +
           bestImageInfo.targetHeight +
           10;
-        descriptionBoxStyle.top = textStartsAt;
-        descriptionBoxStyle.width = bestImageInfo.targetWidth;
-        descriptionBoxStyle.margin = '0 auto';
-        descriptionBoxStyle.maxHeight = getHeightForText(textStartsAt);
+        console.log('textStartsAt', textStartsAt);
+        descriptionBoxStyle.top = '80%';
+        //descriptionBoxStyle.top = textStartsAt;
+        // //descriptionBoxStyle.width = bestImageInfo.targetWidth;
+        descriptionBoxStyle.width = '100%';
+        // descriptionBoxStyle.margin = '0 auto';
+        //descriptionBoxStyle.maxHeight = getHeightForText(textStartsAt);
         imageStyle = {
           ...transitionStyle,
           ...ReactImageLightbox.getTransform({
@@ -1745,6 +1876,18 @@ class ReactImageLightbox extends Component {
             <div>
               <ol className="ril__indicators">{renderIndicators()}</ol>
             </div>
+          )}
+
+          {this.props.imageCaption && (
+            <div
+              style={{
+                height: '20%',
+                backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                position: 'absolute',
+                bottom: '0',
+                width: '100%',
+              }}
+            ></div>
           )}
 
           {this.props.imageCaption && (
