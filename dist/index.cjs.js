@@ -2036,12 +2036,7 @@ var ReactImageLightbox =
               var imageTop = getTop(bestImageInfo.targetHeight);
               var marginForNavigationButtons = getTopMarginForNavigationButtons(
                 bestImageInfo.targetHeight
-              );
-              console.log(
-                'bestImageInfo.targetHeight',
-                bestImageInfo.targetHeight
-              );
-              console.log('imageMargin', imageMargin); //headerStyle.top =
+              ); //headerStyle.top =
               //getHeaderMargin(bestImageInfo.targetHeight) - imageTop;
               //headerStyle.width = bestImageInfo.targetWidth;
 
@@ -2052,14 +2047,12 @@ var ReactImageLightbox =
               rigthButtonStyle.right = imageMargin - 1; //rigthButtonStyle.marginTop = marginForNavigationButtons;
 
               var newTransforms = _objectSpread2({}, transforms); // newTransforms.y -= imageTop;
-              // console.log('newTransforms', newTransforms);
 
               var textStartsAt =
                 gettopBlankSpace(bestImageInfo.targetHeight) -
                 imageTop +
                 bestImageInfo.targetHeight +
                 10;
-              console.log('textStartsAt', textStartsAt);
               descriptionBoxStyle.top = '80%'; //descriptionBoxStyle.top = textStartsAt;
               // //descriptionBoxStyle.width = bestImageInfo.targetWidth;
 

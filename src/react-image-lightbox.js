@@ -1545,9 +1545,6 @@ class ReactImageLightbox extends Component {
           bestImageInfo.targetHeight
         );
 
-        console.log('bestImageInfo.targetHeight', bestImageInfo.targetHeight);
-        console.log('imageMargin', imageMargin);
-
         //headerStyle.top =
         //getHeaderMargin(bestImageInfo.targetHeight) - imageTop;
         //headerStyle.width = bestImageInfo.targetWidth;
@@ -1559,13 +1556,11 @@ class ReactImageLightbox extends Component {
         //rigthButtonStyle.marginTop = marginForNavigationButtons;
         let newTransforms = { ...transforms };
         // newTransforms.y -= imageTop;
-        // console.log('newTransforms', newTransforms);
         const textStartsAt =
           gettopBlankSpace(bestImageInfo.targetHeight) -
           imageTop +
           bestImageInfo.targetHeight +
           10;
-        console.log('textStartsAt', textStartsAt);
         descriptionBoxStyle.top = '80%';
         //descriptionBoxStyle.top = textStartsAt;
         // //descriptionBoxStyle.width = bestImageInfo.targetWidth;
