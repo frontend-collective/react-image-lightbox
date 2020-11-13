@@ -152,7 +152,7 @@ class ReactImageLightbox extends Component {
     this.preventInnerClose = false;
     this.preventInnerCloseTimeout = null;
 
-    // Used to disable animation when changing props.mainItem|nextItem|prevItem
+    // Used to disable animation when changing props.mainSrc|nextSrc|prevSrc
     this.keyPressed = false;
 
     // Used to store load state / dimensions of images
@@ -224,22 +224,22 @@ class ReactImageLightbox extends Component {
     // Iterate through the source types for prevProps and nextProps to
     //  determine if any of the sources changed
     let sourcesChanged = false;
-    const prevItemDict = {};
-    const nextItemDict = {};
+    const prevSrcDict = {};
+    const nextSrcDict = {};
     this.getSrcTypes().forEach(srcType => {
       if (this.props[srcType.name] !== nextProps[srcType.name]) {
         sourcesChanged = true;
 
-        prevItemDict[this.props[srcType.name]] = true;
-        nextItemDict[nextProps[srcType.name]] = true;
+        prevSrcDict[this.props[srcType.name]] = true;
+        nextSrcDict[nextProps[srcType.name]] = true;
       }
     });
 
     if (sourcesChanged || this.moveRequested) {
       // Reset the loaded state for images not rendered next
-      Object.keys(prevItemDict).forEach(prevItem => {
-        if (!(prevItem in nextItemDict) && prevItem in this.imageCache) {
-          this.imageCache[prevItem].loaded = false;
+      Object.keys(prevSrcDict).forEach(prevSrc => {
+        if (!(prevSrc in nextSrcDict) && prevSrc in this.imageCache) {
+          this.imageCache[prevSrc].loaded = false;
         }
       });
 
@@ -351,7 +351,7 @@ class ReactImageLightbox extends Component {
   }
 
   getMaxOffsets(zoomLevel = this.state.zoomLevel) {
-    const currentImageInfo = this.getBestImageForType('mainItem');
+    const currentImageInfo = this.getBestImageForType('mainSrc');
     if (currentImageInfo === null) {
       return { maxX: 0, minX: 0, maxY: 0, minY: 0 };
     }
@@ -387,27 +387,27 @@ class ReactImageLightbox extends Component {
   getSrcTypes() {
     return [
       {
-        name: 'mainItem',
+        name: 'mainSrc',
         keyEnding: `i${this.keyCounter}`,
       },
       {
-        name: 'mainItemThumbnail',
+        name: 'mainSrcThumbnail',
         keyEnding: `t${this.keyCounter}`,
       },
       {
-        name: 'nextItem',
+        name: 'nextSrc',
         keyEnding: `i${this.keyCounter + 1}`,
       },
       {
-        name: 'nextItemThumbnail',
+        name: 'nextSrcThumbnail',
         keyEnding: `t${this.keyCounter + 1}`,
       },
       {
-        name: 'prevItem',
+        name: 'prevSrc',
         keyEnding: `i${this.keyCounter - 1}`,
       },
       {
-        name: 'prevItemThumbnail',
+        name: 'prevSrcThumbnail',
         keyEnding: `t${this.keyCounter - 1}`,
       },
     ];
@@ -472,7 +472,7 @@ class ReactImageLightbox extends Component {
       return;
     }
 
-    const imageBaseSize = this.getBestImageForType('mainItem');
+    const imageBaseSize = this.getBestImageForType('mainSrc');
     if (imageBaseSize === null) {
       return;
     }
@@ -588,7 +588,7 @@ class ReactImageLightbox extends Component {
 
       // Left arrow key moves to previous image
       case KEYS.LEFT_ARROW:
-        if (!this.props.prevItem) {
+        if (!this.props.prevSrc) {
           return;
         }
 
@@ -599,7 +599,7 @@ class ReactImageLightbox extends Component {
 
       // Right arrow key moves to next image
       case KEYS.RIGHT_ARROW:
-        if (!this.props.nextItem) {
+        if (!this.props.nextSrc) {
           return;
         }
 
@@ -1012,10 +1012,10 @@ class ReactImageLightbox extends Component {
       }
     }
 
-    if (xDiff > 0 && this.props.prevItem) {
+    if (xDiff > 0 && this.props.prevSrc) {
       event.preventDefault();
       this.requestMovePrev();
-    } else if (xDiff < 0 && this.props.nextItem) {
+    } else if (xDiff < 0 && this.props.nextSrc) {
       event.preventDefault();
       this.requestMoveNext();
     }
@@ -1287,8 +1287,8 @@ class ReactImageLightbox extends Component {
       discourageDownloads,
       enableZoom,
       imageTitle,
-      nextItem,
-      prevItem,
+      nextSrc,
+      prevSrc,
       toolbarButtons,
       reactModalStyle,
       onAfterOpen,
@@ -1440,17 +1440,17 @@ class ReactImageLightbox extends Component {
 
     const zoomMultiplier = this.getZoomMultiplier();
     // Next Image (displayed on the right)
-    addImage('nextItem', 'ril-image-next ril__imageNext', {
+    addImage('nextSrc', 'ril-image-next ril__imageNext', {
       x: boxSize.width,
     });
     // Main Image
-    addImage('mainItem', 'ril-image-current', {
+    addImage('mainSrc', 'ril-image-current', {
       x: -1 * offsetX,
       y: -1 * offsetY,
       zoom: zoomMultiplier,
     });
     // Previous Image (displayed on the left)
-    addImage('prevItem', 'ril-image-prev ril__imagePrev', {
+    addImage('prevSrc', 'ril-image-prev ril__imagePrev', {
       x: -1 * boxSize.width,
     });
 
@@ -1523,7 +1523,7 @@ class ReactImageLightbox extends Component {
             {images}
           </div>
 
-          {prevItem && (
+          {prevSrc && (
             <button // Move to previous image button
               type="button"
               className="ril-prev-button ril__navButtons ril__navButtonPrev"
@@ -1533,7 +1533,7 @@ class ReactImageLightbox extends Component {
             />
           )}
 
-          {nextItem && (
+          {nextSrc && (
             <button // Move to next image button
               type="button"
               className="ril-next-button ril__navButtons ril__navButtonNext"
@@ -1658,28 +1658,28 @@ ReactImageLightbox.propTypes = {
   //-----------------------------
 
   // Main display image url
-  mainItem: PropTypes.object.isRequired, // eslint-disable-line react/no-unused-prop-types
+  mainSrc: PropTypes.object.isRequired, // eslint-disable-line react/no-unused-prop-types
 
   // Previous display image url (displayed to the left)
   // If left undefined, movePrev actions will not be performed, and the button not displayed
-  prevItem: PropTypes.object,
+  prevSrc: PropTypes.object,
 
   // Next display image url (displayed to the right)
   // If left undefined, moveNext actions will not be performed, and the button not displayed
-  nextItem: PropTypes.object,
+  nextSrc: PropTypes.object,
 
   //-----------------------------
   // Image thumbnail sources
   //-----------------------------
 
-  // Thumbnail image url corresponding to props.mainItem
-  mainItemThumbnail: PropTypes.string, // eslint-disable-line react/no-unused-prop-types
+  // Thumbnail image url corresponding to props.mainSrc
+  mainSrcThumbnail: PropTypes.string, // eslint-disable-line react/no-unused-prop-types
 
-  // Thumbnail image url corresponding to props.prevItem
-  prevItemThumbnail: PropTypes.string, // eslint-disable-line react/no-unused-prop-types
+  // Thumbnail image url corresponding to props.prevSrc
+  prevSrcThumbnail: PropTypes.string, // eslint-disable-line react/no-unused-prop-types
 
-  // Thumbnail image url corresponding to props.nextItem
-  nextItemThumbnail: PropTypes.string, // eslint-disable-line react/no-unused-prop-types
+  // Thumbnail image url corresponding to props.nextSrc
+  nextSrcThumbnail: PropTypes.string, // eslint-disable-line react/no-unused-prop-types
 
   //-----------------------------
   // Event Handlers
@@ -1690,13 +1690,13 @@ ReactImageLightbox.propTypes = {
   onCloseRequest: PropTypes.func.isRequired,
 
   // Move to previous image event
-  // Should change the parent state such that props.prevItem becomes props.mainItem,
-  //  props.mainItem becomes props.nextItem, etc.
+  // Should change the parent state such that props.prevSrc becomes props.mainSrc,
+  //  props.mainSrc becomes props.nextSrc, etc.
   onMovePrevRequest: PropTypes.func,
 
   // Move to next image event
-  // Should change the parent state such that props.nextItem becomes props.mainItem,
-  //  props.mainItem becomes props.prevItem, etc.
+  // Should change the parent state such that props.nextSrc becomes props.mainSrc,
+  //  props.mainSrc becomes props.prevSrc, etc.
   onMoveNextRequest: PropTypes.func,
 
   // Called when an image fails to load
@@ -1808,18 +1808,18 @@ ReactImageLightbox.defaultProps = {
   imageCrossOrigin: null,
   keyRepeatKeyupBonus: 40,
   keyRepeatLimit: 180,
-  mainItemThumbnail: null,
+  mainSrcThumbnail: null,
   nextLabel: 'Next image',
-  nextItem: null,
-  nextItemThumbnail: null,
+  nextSrc: null,
+  nextSrcThumbnail: null,
   onAfterOpen: () => {},
   onImageLoadError: () => {},
   onImageLoad: () => {},
   onMoveNextRequest: () => {},
   onMovePrevRequest: () => {},
   prevLabel: 'Previous image',
-  prevItem: null,
-  prevItemThumbnail: null,
+  prevSrc: null,
+  prevSrcThumbnail: null,
   reactModalStyle: {},
   wrapperClassName: '',
   zoomInLabel: 'Zoom in',

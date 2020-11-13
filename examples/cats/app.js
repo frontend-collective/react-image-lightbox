@@ -145,9 +145,9 @@ class App extends Component {
     if (this.state.isOpen) {
       lightbox = (
         <Lightbox
-          mainItem={images[this.state.index]}
-          nextItem={images[(this.state.index + 1) % images.length]}
-          prevItem={
+          mainSrc={images[this.state.index]}
+          nextSrc={images[(this.state.index + 1) % images.length]}
+          prevSrc={
             images[(this.state.index + images.length - 1) % images.length]
           }
           mainSrcThumbnail={thumbs[this.state.index]}
