@@ -55,9 +55,9 @@
   },
   "devDependencies": {
     "@babel/cli": "^7.7.0",
-    "@babel/core": "^7.7.2",
-    "@babel/preset-env": "^7.7.1",
-    "@babel/preset-react": "^7.7.0",
+    "@babel/core": "^7.0.0-0",
+    "@babel/preset-env": "^7.12.1",
+    "@babel/preset-react": "^7.12.5",
     "autoprefixer": "^9.4.7",
     "babel-jest": "^24.0.0",
     "coveralls": "^3.0.7",

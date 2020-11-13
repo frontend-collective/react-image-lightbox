@@ -15,7 +15,16 @@ import image2Thumb from './images/2_thumb.jpg';
 import image3Thumb from './images/3_thumb.jpg';
 import image4Thumb from './images/4_thumb.jpg';
 
-const images = [image1, image2, image3, image4];
+const images = [
+  { src: image1, type: 'image' },
+  {
+    src: 'http://help.websico.net/fr/data/rawdata/exemple_pdf.pdf',
+    type: 'iframe',
+  },
+  { src: image2 },
+  { src: image3 },
+  { src: image4 },
+];
 const thumbs = [image1Thumb, image2Thumb, image3Thumb, image4Thumb];
 
 const titles = [
@@ -136,9 +145,9 @@ class App extends Component {
     if (this.state.isOpen) {
       lightbox = (
         <Lightbox
-          mainSrc={images[this.state.index]}
-          nextSrc={images[(this.state.index + 1) % images.length]}
-          prevSrc={
+          mainItem={images[this.state.index]}
+          nextItem={images[(this.state.index + 1) % images.length]}
+          prevItem={
             images[(this.state.index + images.length - 1) % images.length]
           }
           mainSrcThumbnail={thumbs[this.state.index]}
