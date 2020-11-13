@@ -285,33 +285,40 @@ class ReactImageLightbox extends Component {
 
   // Get info for the best suited image to display with the given srcType
   getBestImageForType(srcType) {
-    let imageSrc = this.props[srcType];
+    let item = this.props[srcType];
+    let src = item.src;
     let fitSizes = {};
 
-    if (this.isImageLoaded(imageSrc)) {
+    if (this.isImageLoaded(src)) {
       // Use full-size image if available
       fitSizes = this.getFitSizes(
-        this.imageCache[imageSrc].width,
-        this.imageCache[imageSrc].height
+        this.imageCache[src].width,
+        this.imageCache[src].height
       );
     } else if (this.isImageLoaded(this.props[`${srcType}Thumbnail`])) {
       // Fall back to using thumbnail if the image has not been loaded
-      imageSrc = this.props[`${srcType}Thumbnail`];
+      src = this.props[`${srcType}Thumbnail`];
       fitSizes = this.getFitSizes(
-        this.imageCache[imageSrc].width,
-        this.imageCache[imageSrc].height,
+        this.imageCache[src].width,
+        this.imageCache[src].height,
         true
       );
     } else {
       return null;
     }
 
+    if (item.type === 'iframe') {
+      fitSizes.height = 0.8 * window.innerHeight;
+      fitSizes.width = 0.8 * window.innerWidth;
+    }
+
     return {
-      src: imageSrc,
-      height: this.imageCache[imageSrc].height,
-      width: this.imageCache[imageSrc].width,
+      src: src,
+      height: this.imageCache[src].height,
+      width: this.imageCache[src].width,
       targetHeight: fitSizes.height,
       targetWidth: fitSizes.width,
+      type: item.type ?? 'image',
     };
   }
 
@@ -1117,11 +1124,21 @@ class ReactImageLightbox extends Component {
 
   // Load image from src and call callback with image width and height on load
   loadImage(srcType, imageSrc, done) {
-    // Return the image info if it is already cached
     if (this.isImageLoaded(imageSrc)) {
       this.setTimeout(() => {
         done();
       }, 1);
+      return;
+    }
+
+    if (this.props[srcType].type === 'iframe') {
+      this.imageCache[imageSrc] = {
+        loaded: true,
+        width: window.innerWidth,
+        height: window.innerHeight,
+      };
+
+      done();
       return;
     }
 
@@ -1150,7 +1167,6 @@ class ReactImageLightbox extends Component {
         width: inMemoryImage.width,
         height: inMemoryImage.height,
       };
-
       done();
     };
 
@@ -1190,7 +1206,7 @@ class ReactImageLightbox extends Component {
       if (props[type] && !this.isImageLoaded(props[type])) {
         this.loadImage(
           type,
-          props[type],
+          props[type].src,
           generateLoadDoneCallback(type, props[type])
         );
       }
@@ -1312,7 +1328,6 @@ class ReactImageLightbox extends Component {
         return;
       }
       const bestImageInfo = this.getBestImageForType(srcType);
-
       const imageStyle = {
         ...transitionStyle,
         ...ReactImageLightbox.getTransform({
@@ -1387,22 +1402,39 @@ class ReactImageLightbox extends Component {
           </div>
         );
       } else {
-        images.push(
-          <img
-            {...(imageCrossOrigin ? { crossOrigin: imageCrossOrigin } : {})}
-            className={`${imageClass} ril__image`}
-            onDoubleClick={this.handleImageDoubleClick}
-            onWheel={this.handleImageMouseWheel}
-            onDragStart={e => e.preventDefault()}
-            style={imageStyle}
-            src={imageSrc}
-            key={imageSrc + keyEndings[srcType]}
-            alt={
-              typeof imageTitle === 'string' ? imageTitle : translate('Image')
-            }
-            draggable={false}
-          />
-        );
+        if (this.props[srcType].type === 'iframe') {
+          images.push(
+            <div className={`${imageClass} ril__image ril__imageDiscourager`}>
+              <iframe
+                {...(imageCrossOrigin ? { crossOrigin: imageCrossOrigin } : {})}
+                src={imageSrc}
+                //className={`${imageClass} ril__image`}
+                key={imageSrc + keyEndings[srcType]}
+                style={imageStyle}
+                draggable={false}
+                width="100%"
+                height="100%"
+              ></iframe>
+            </div>
+          );
+        } else {
+          images.push(
+            <img
+              {...(imageCrossOrigin ? { crossOrigin: imageCrossOrigin } : {})}
+              className={`${imageClass} ril__image`}
+              onDoubleClick={this.handleImageDoubleClick}
+              onWheel={this.handleImageMouseWheel}
+              onDragStart={e => e.preventDefault()}
+              style={imageStyle}
+              src={imageSrc}
+              key={imageSrc + keyEndings[srcType]}
+              alt={
+                typeof imageTitle === 'string' ? imageTitle : translate('Image')
+              }
+              draggable={false}
+            />
+          );
+        }
       }
     };
 
@@ -1626,15 +1658,15 @@ ReactImageLightbox.propTypes = {
   //-----------------------------
 
   // Main display image url
-  mainSrc: PropTypes.string.isRequired, // eslint-disable-line react/no-unused-prop-types
+  mainSrc: PropTypes.object.isRequired, // eslint-disable-line react/no-unused-prop-types
 
   // Previous display image url (displayed to the left)
   // If left undefined, movePrev actions will not be performed, and the button not displayed
-  prevSrc: PropTypes.string,
+  prevSrc: PropTypes.object,
 
   // Next display image url (displayed to the right)
   // If left undefined, moveNext actions will not be performed, and the button not displayed
-  nextSrc: PropTypes.string,
+  nextSrc: PropTypes.object,
 
   //-----------------------------
   // Image thumbnail sources
