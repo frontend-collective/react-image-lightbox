@@ -26,6 +26,14 @@ import {
   MIN_SWIPE_DISTANCE,
 } from './constant';
 import './style.css';
+{
+  /** 
+import { Document, Page } from 'react-pdf';
+*/
+}
+import { Document } from 'react-pdf/dist/esm/entry.parcel';
+import { Page } from 'react-pdf';
+import md5 from 'md5';
 
 class ReactImageLightbox extends Component {
   static isTargetMatchImage(target) {
@@ -104,7 +112,10 @@ class ReactImageLightbox extends Component {
       offsetY: 0,
 
       // image load error for srcType
+
       loadErrorStatus: {},
+      documents: [],
+      pdfPageNumber: 1,
     };
 
     // Refs
@@ -132,6 +143,11 @@ class ReactImageLightbox extends Component {
     this.requestClose = this.requestClose.bind(this);
     this.requestMoveNext = this.requestMoveNext.bind(this);
     this.requestMovePrev = this.requestMovePrev.bind(this);
+
+    this.changePage = this.changePage.bind(this);
+    this.previousPdfPage = this.previousPdfPage.bind(this);
+    this.nextPdfPage = this.nextPdfPage.bind(this);
+    this.onDocumentLoadSuccess = this.onDocumentLoadSuccess.bind(this);
   }
 
   // eslint-disable-next-line camelcase
@@ -196,6 +212,33 @@ class ReactImageLightbox extends Component {
       // Make opening animation play
       this.setState({ isClosing: false });
     }
+  }
+
+  onDocumentLoadSuccess({ fingerprint, numPages }) {
+    const documentsState = this.state.documents.filter(
+      doc => doc.fingerprint !== fingerprint
+    );
+    documentsState.push({
+      fingerprint,
+      numPages,
+    });
+
+    this.setState({
+      documents: documentsState,
+    });
+  }
+  changePage(offset) {
+    const prevPageNumber = this.state.pdfPageNumber;
+    this.setState({
+      pdfPageNumber: prevPageNumber + offset,
+    });
+  }
+  previousPdfPage() {
+    this.changePage(-1);
+  }
+
+  nextPdfPage() {
+    this.changePage(1);
   }
 
   componentDidMount() {
@@ -1124,6 +1167,7 @@ class ReactImageLightbox extends Component {
 
   // Load image from src and call callback with image width and height on load
   loadImage(srcType, imageSrc, done) {
+    if (!imageSrc) return;
     if (this.isImageLoaded(imageSrc)) {
       this.setTimeout(() => {
         done();
@@ -1131,7 +1175,10 @@ class ReactImageLightbox extends Component {
       return;
     }
 
-    if (this.props[srcType].type === 'iframe') {
+    if (
+      this.props[srcType].type === 'iframe' ||
+      this.props[srcType].type === 'pdf'
+    ) {
       this.imageCache[imageSrc] = {
         loaded: true,
         width: window.innerWidth,
@@ -1241,6 +1288,7 @@ class ReactImageLightbox extends Component {
       zoomLevel: MIN_ZOOM_LEVEL,
       offsetX: 0,
       offsetY: 0,
+      pdfPageNumber: 1,
     };
 
     // Enable animated states
@@ -1322,6 +1370,7 @@ class ReactImageLightbox extends Component {
 
     // Images to be displayed
     const images = [];
+    var documents = [];
     const addImage = (srcType, imageClass, transforms) => {
       // Ignore types that have no source defined for their full size image
       if (!this.props[srcType]) {
@@ -1404,17 +1453,93 @@ class ReactImageLightbox extends Component {
       } else {
         if (this.props[srcType].type === 'iframe') {
           images.push(
-            <div className={`${imageClass} ril__image ril__imageDiscourager`}>
+            <div
+              className={`${imageClass} ril__image ril__imageDiscourager`}
+              key={imageSrc + keyEndings[srcType]}
+              draggable={false}
+            >
               <iframe
                 {...(imageCrossOrigin ? { crossOrigin: imageCrossOrigin } : {})}
                 src={imageSrc}
-                //className={`${imageClass} ril__image`}
                 key={imageSrc + keyEndings[srcType]}
                 style={imageStyle}
                 draggable={false}
                 width="100%"
                 height="100%"
               ></iframe>
+            </div>
+          );
+        } else if (this.props[srcType].type === 'pdf') {
+          const prevDocType = this.props['prevSrc']?.type;
+          const mainDocType = this.props['mainSrc']?.type;
+          const nextDocType = this.props['nextSrc']?.type;
+
+          var index = 0;
+          if (srcType === 'mainSrc' && nextDocType === 'pdf') {
+            index = this.state.documents.length - 2;
+          } else {
+            index = this.state.documents.length - 1;
+          }
+
+          images.push(
+            <div
+              className={`${imageClass} ril__image ril__imageDiscourager`}
+              key={imageSrc + keyEndings[srcType]}
+              draggable={false}
+              {...(imageCrossOrigin ? { crossOrigin: imageCrossOrigin } : {})}
+              style={{ textAlign: 'center', ...imageStyle }}
+            >
+              <div
+                style={{
+                  display: 'inline-block',
+                  margin: '0 auto',
+                  ...imageStyle,
+                }}
+              >
+                <Document
+                  file={imageSrc}
+                  onLoadSuccess={this.onDocumentLoadSuccess}
+                >
+                  <Page
+                    pageNumber={
+                      srcType === 'mainSrc' ? this.state.pdfPageNumber : 1
+                    }
+                  ></Page>
+                </Document>
+                <div
+                  style={{
+                    position: 'absolute',
+                    bottom: 0,
+                    left: '50%',
+                    transform: 'translate(-50%,100%)',
+                  }}
+                >
+                  <button
+                    style={{ display: 'inline-block', marginRight: '10px' }}
+                    type="button"
+                    disabled={this.state.pdfPageNumber <= 1}
+                    onClick={this.previousPdfPage}
+                  >
+                    {`<`}
+                  </button>
+                  <p style={{ display: 'inline-block', color: '#fff' }}>
+                    {this.state.pdfPageNumber ||
+                      (this.state.documents[index]?.numPages ? 1 : '--')}{' '}
+                    sur {this.state.documents[index]?.numPages || '--'}
+                  </p>
+                  <button
+                    style={{ display: 'inline-block', marginLeft: '10px' }}
+                    type="button"
+                    disabled={
+                      this.state.pdfPageNumber >=
+                      this.state.documents[index]?.numPages
+                    }
+                    onClick={this.nextPdfPage}
+                  >
+                    {`>`}
+                  </button>
+                </div>
+              </div>
             </div>
           );
         } else {
@@ -1439,9 +1564,10 @@ class ReactImageLightbox extends Component {
     };
 
     const zoomMultiplier = this.getZoomMultiplier();
-    // Next Image (displayed on the right)
-    addImage('nextSrc', 'ril-image-next ril__imageNext', {
-      x: boxSize.width,
+
+    // Previous Image (displayed on the left)
+    addImage('prevSrc', 'ril-image-prev ril__imagePrev', {
+      x: -1 * boxSize.width,
     });
     // Main Image
     addImage('mainSrc', 'ril-image-current', {
@@ -1449,9 +1575,9 @@ class ReactImageLightbox extends Component {
       y: -1 * offsetY,
       zoom: zoomMultiplier,
     });
-    // Previous Image (displayed on the left)
-    addImage('prevSrc', 'ril-image-prev ril__imagePrev', {
-      x: -1 * boxSize.width,
+    // Next Image (displayed on the right)
+    addImage('nextSrc', 'ril-image-next ril__imageNext', {
+      x: boxSize.width,
     });
 
     const modalStyle = {

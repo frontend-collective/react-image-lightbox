@@ -46,8 +46,10 @@
     "> 1%"
   ],
   "dependencies": {
+    "md5": "^2.3.0",
     "prop-types": "^15.6.2",
-    "react-modal": "^3.11.1"
+    "react-modal": "^3.11.1",
+    "react-pdf": "^5.0.0"
   },
   "peerDependencies": {
     "react": "^16.x",
