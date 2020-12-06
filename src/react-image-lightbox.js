@@ -26,14 +26,13 @@ import {
   MIN_SWIPE_DISTANCE,
 } from './constant';
 import './style.css';
-{
-  /** 
+
+
 import { Document, Page } from 'react-pdf';
-*/
-}
-import { Document } from 'react-pdf/dist/esm/entry.parcel';
-import { Page } from 'react-pdf';
-import md5 from 'md5';
+
+//import { Document } from 'react-pdf/dist/esm/entry.parcel';
+//import { Page } from 'react-pdf';
+//import md5 from 'md5';
 
 class ReactImageLightbox extends Component {
   static isTargetMatchImage(target) {
@@ -350,7 +349,7 @@ class ReactImageLightbox extends Component {
       return null;
     }
 
-    if (item.type === 'iframe') {
+    if (item.type === 'iframe' && typeof window !== 'undefined') {
       fitSizes.height = 0.8 * window.innerHeight;
       fitSizes.width = 0.8 * window.innerWidth;
     }
@@ -1176,8 +1175,9 @@ class ReactImageLightbox extends Component {
     }
 
     if (
-      this.props[srcType].type === 'iframe' ||
-      this.props[srcType].type === 'pdf'
+      (this.props[srcType].type === 'iframe' ||
+      this.props[srcType].type === 'pdf') &&
+      typeof window !== 'undefined'
     ) {
       this.imageCache[imageSrc] = {
         loaded: true,
