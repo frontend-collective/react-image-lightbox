@@ -160,6 +160,11 @@
   }
 }
 
+.ril__toolbarRightSide > .ril__toolbarItem {
+  width: inherit;
+  margin-right: 10px;
+}
+
 .ril__toolbarItem {
   display: inline-block;
   line-height: 80px;
