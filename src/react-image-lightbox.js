@@ -118,6 +118,8 @@ class ReactImageLightbox extends Component {
     this.outerEl = React.createRef();
     this.zoomInBtn = React.createRef();
     this.zoomOutBtn = React.createRef();
+    this.rotateLeftBtn = React.createRef();
+    this.rotateRightBtn = React.createRef();
     this.caption = React.createRef();
 
     this.closeIfClickInner = this.closeIfClickInner.bind(this);
