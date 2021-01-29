@@ -16,8 +16,11 @@ export const WHEEL_MOVE_X_THRESHOLD = 200;
 // Used to judge the amount of vertical scroll needed to initiate a zoom action
 export const WHEEL_MOVE_Y_THRESHOLD = 1;
 
-// The starting rotation value of the image
-export const INITIAL_ROTATION_VALUE = 0;
+// The minimum rotation value of the image, we should go to MAX_ROTATION_VALUE when going below this value
+export const MIN_ROTATION_VALUE = 0;
+
+// The maximum rotation value of the image, we should reset to 0 when going above this value
+export const MAX_ROTATION_VALUE = 270;
 
 // How much to rotate an image by when the rotation buttons are clicked
 export const ROTATE_BUTTON_INCREMENT_SIZE = 90;
