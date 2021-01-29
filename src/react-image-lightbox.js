@@ -24,6 +24,7 @@ import {
   SOURCE_TOUCH,
   SOURCE_POINTER,
   MIN_SWIPE_DISTANCE,
+  INITIAL_ROITATION_AMOUNT,
 } from './constant';
 import './style.css';
 
@@ -93,6 +94,12 @@ class ReactImageLightbox extends Component {
       //-----------------------------
       // Zoom level of image
       zoomLevel: MIN_ZOOM_LEVEL,
+
+      //-----------------------------
+      // Rotation settings
+      //-----------------------------
+      // Rotation amount of the image
+      rotationAmount: INITIAL_ROITATION_AMOUNT,
 
       //-----------------------------
       // Image position settings

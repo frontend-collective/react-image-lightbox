@@ -16,6 +16,9 @@ export const WHEEL_MOVE_X_THRESHOLD = 200;
 // Used to judge the amount of vertical scroll needed to initiate a zoom action
 export const WHEEL_MOVE_Y_THRESHOLD = 1;
 
+// The starting rotation amount of the image
+export const INITIAL_ROITATION_AMOUNT = 0;
+
 export const KEYS = {
   ESC: 27,
   LEFT_ARROW: 37,
