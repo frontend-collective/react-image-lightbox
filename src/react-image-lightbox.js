@@ -1579,6 +1579,18 @@ class ReactImageLightbox extends Component {
                     type="button"
                     key="rotate-left"
                     aria-label={this.props.rotateLeftLabel}
+                    className={[
+                      'ril__toolbarItemChild',
+                      'ril__builtinButton',
+                      'ril__rotateLeftButton',
+                    ].join(' ')}
+                    ref={this.rotateLeftBtn}
+                    onClick={
+                      !this.isAnimating() &&
+                      rotationValue !== MIN_ROTATION_VALUE
+                        ? this.handleRotateLeftButtonClick
+                        : undefined
+                    }
                   />
                 </li>
               )}
