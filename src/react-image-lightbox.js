@@ -63,7 +63,14 @@ class ReactImageLightbox extends Component {
   }
 
   // Request to transition to the previous image
-  static getTransform({ x = 0, y = 0, zoom = 1, width, targetWidth }) {
+  static getTransform({
+    x = 0,
+    y = 0,
+    zoom = 1,
+    width,
+    targetWidth,
+    rotation = 0,
+  }) {
     let nextX = x;
     const windowWidth = getWindowWidth();
     if (width > windowWidth) {
@@ -71,8 +78,10 @@ class ReactImageLightbox extends Component {
     }
     const scaleFactor = zoom * (targetWidth / width);
 
+    console.log(rotation);
+
     return {
-      transform: `translate3d(${nextX}px,${y}px,0) scale3d(${scaleFactor},${scaleFactor},1)`,
+      transform: `translate3d(${nextX}px,${y}px,0) scale3d(${scaleFactor},${scaleFactor},1) rotate(${rotation}deg)`,
     };
   }
 
@@ -1616,8 +1625,7 @@ class ReactImageLightbox extends Component {
                     ].join(' ')}
                     ref={this.rotateLeftBtn}
                     onClick={
-                      !this.isAnimating() &&
-                      rotationValue !== MIN_ROTATION_VALUE
+                      !this.isAnimating()
                         ? this.handleRotateLeftButtonClick
                         : undefined
                     }
@@ -1639,8 +1647,7 @@ class ReactImageLightbox extends Component {
                     ].join(' ')}
                     ref={this.rotateRightBtn}
                     onClick={
-                      !this.isAnimating() &&
-                      rotationValue !== MIN_ROTATION_VALUE
+                      !this.isAnimating()
                         ? this.handleRotateRightButtonClick
                         : undefined
                     }
