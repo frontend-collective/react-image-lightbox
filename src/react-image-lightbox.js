@@ -543,6 +543,15 @@ class ReactImageLightbox extends Component {
     });
   }
 
+  changeRotation(rotationValue) {
+    // Snap back to center when rotating
+    this.setState({
+      rotationValue: rotationValue,
+      offsetX: 0,
+      offsetY: 0,
+    });
+  }
+
   closeIfClickInner(event) {
     if (
       !this.preventInnerClose &&
@@ -1299,6 +1308,7 @@ class ReactImageLightbox extends Component {
       clickOutsideToClose,
       discourageDownloads,
       enableZoom,
+      enableRotation,
       imageTitle,
       nextSrc,
       prevSrc,
