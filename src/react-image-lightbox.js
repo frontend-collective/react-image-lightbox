@@ -1456,6 +1456,7 @@ class ReactImageLightbox extends Component {
       x: -1 * offsetX,
       y: -1 * offsetY,
       zoom: zoomMultiplier,
+      rotation: rotationValue,
     });
     // Previous Image (displayed on the left)
     addImage('prevSrc', 'ril-image-prev ril__imagePrev', {
@@ -1573,28 +1574,6 @@ class ReactImageLightbox extends Component {
                   </li>
                 ))}
 
-              {enableRotation && (
-                <li className="ril-toolbar__item ril__toolbarItem">
-                  <button
-                    type="button"
-                    key="rotate-left"
-                    aria-label={this.props.rotateLeftLabel}
-                    className={[
-                      'ril__toolbarItemChild',
-                      'ril__builtinButton',
-                      'ril__rotateLeftButton',
-                    ].join(' ')}
-                    ref={this.rotateLeftBtn}
-                    onClick={
-                      !this.isAnimating() &&
-                      rotationValue !== MIN_ROTATION_VALUE
-                        ? this.handleRotateLeftButtonClick
-                        : undefined
-                    }
-                  />
-                </li>
-              )}
-
               {enableZoom && (
                 <li className="ril-toolbar__item ril__toolbarItem">
                   <button // Lightbox zoom out button
@@ -1617,6 +1596,52 @@ class ReactImageLightbox extends Component {
                     onClick={
                       !this.isAnimating() && zoomLevel !== MIN_ZOOM_LEVEL
                         ? this.handleZoomOutButtonClick
+                        : undefined
+                    }
+                  />
+                </li>
+              )}
+
+              {enableRotation && (
+                <li className="ril-toolbar__item ril__toolbarItem">
+                  <button // Lightbox rotate left button
+                    type="button"
+                    key="rotate-left"
+                    aria-label={this.props.rotateLeftLabel}
+                    className={[
+                      'ril-rotate-left',
+                      'ril__toolbarItemChild',
+                      'ril__builtinButton',
+                      'ril__rotateLeftButton',
+                    ].join(' ')}
+                    ref={this.rotateLeftBtn}
+                    onClick={
+                      !this.isAnimating() &&
+                      rotationValue !== MIN_ROTATION_VALUE
+                        ? this.handleRotateLeftButtonClick
+                        : undefined
+                    }
+                  />
+                </li>
+              )}
+
+              {enableRotation && (
+                <li className="ril-toolbar__item ril__toolbarItem">
+                  <button // Lightbox rotate right button
+                    type="button"
+                    key="rotate-right"
+                    aria-label={this.props.rotateRightLabel}
+                    className={[
+                      'ril-rotate-right',
+                      'ril__toolbarItemChild',
+                      'ril__builtinButton',
+                      'ril__rotateRightButton',
+                    ].join(' ')}
+                    ref={this.rotateRightBtn}
+                    onClick={
+                      !this.isAnimating() &&
+                      rotationValue !== MIN_ROTATION_VALUE
+                        ? this.handleRotateRightButtonClick
                         : undefined
                     }
                   />
