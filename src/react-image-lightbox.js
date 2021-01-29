@@ -1573,6 +1573,12 @@ class ReactImageLightbox extends Component {
                   </li>
                 ))}
 
+              {enableRotation && (
+                <li className="ril-toolbar__item ril__toolbarItem">
+                  <button type="button" key="rotate-left" />
+                </li>
+              )}
+
               {enableZoom && (
                 <li className="ril-toolbar__item ril__toolbarItem">
                   <button // Lightbox zoom out button
@@ -1787,6 +1793,9 @@ ReactImageLightbox.propTypes = {
   // Set to false to disable zoom functionality and hide zoom buttons
   enableZoom: PropTypes.bool,
 
+  // When given, rotation will be enabled for the lightbox, and rotate buttons will be shown
+  enableRotation: PropTypes.bool,
+
   // Override props set on react-modal (https://github.com/reactjs/react-modal)
   reactModalProps: PropTypes.shape({}),
 
@@ -1795,6 +1804,8 @@ ReactImageLightbox.propTypes = {
   prevLabel: PropTypes.string,
   zoomInLabel: PropTypes.string,
   zoomOutLabel: PropTypes.string,
+  rotateLeftLabel: PropTypes.string,
+  rotateRightLabel: PropTypes.string,
   closeLabel: PropTypes.string,
 
   imageLoadErrorMessage: PropTypes.node,
@@ -1812,6 +1823,7 @@ ReactImageLightbox.defaultProps = {
   closeLabel: 'Close lightbox',
   discourageDownloads: false,
   enableZoom: true,
+  enableRotation: false,
   imagePadding: 10,
   imageCrossOrigin: null,
   keyRepeatKeyupBonus: 40,
@@ -1832,6 +1844,8 @@ ReactImageLightbox.defaultProps = {
   wrapperClassName: '',
   zoomInLabel: 'Zoom in',
   zoomOutLabel: 'Zoom out',
+  rotateLeftLabel: 'Rotate left',
+  rotateRightLabel: 'Rotate Right',
   imageLoadErrorMessage: 'This image failed to load',
 };
 
