@@ -19,6 +19,9 @@ export const WHEEL_MOVE_Y_THRESHOLD = 1;
 // The starting rotation amount of the image
 export const INITIAL_ROITATION_AMOUNT = 0;
 
+// How much to rotate an image by when the rotation buttons are clicked
+export const ROTATE_BUTTON_INCREMENT_SIZE = 90;
+
 export const KEYS = {
   ESC: 27,
   LEFT_ARROW: 37,
