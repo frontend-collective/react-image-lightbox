@@ -1096,15 +1096,21 @@ class ReactImageLightbox extends Component {
   }
 
   handleRotateLeftButtonClick() {
-    const nextRotationValue =
+    let nextRotationValue =
       this.state.rotationValue - ROTATE_BUTTON_INCREMENT_SIZE;
+    if (nextRotationValue < MIN_ROTATION_VALUE) {
+      nextRotationValue = MAX_ROTATION_VALUE;
+    }
+    this.changeRotation(nextRotationValue);
   }
 
   handleRotateRightButtonClick() {
-    const nextRotationValue =
+    let nextRotationValue =
       this.state.rotationValue + ROTATE_BUTTON_INCREMENT_SIZE;
-    if (nextRotationValue > 360) {
+    if (nextRotationValue > MAX_ROTATION_VALUE) {
+      nextRotationValue = MIN_ROTATION_VALUE;
     }
+    this.changeRotation(nextRotationValue);
   }
 
   handleCaptionMousewheel(event) {
@@ -1304,6 +1310,7 @@ class ReactImageLightbox extends Component {
     } = this.props;
     const {
       zoomLevel,
+      rotationValue,
       offsetX,
       offsetY,
       isClosing,
