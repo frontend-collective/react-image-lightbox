@@ -78,8 +78,6 @@ class ReactImageLightbox extends Component {
     }
     const scaleFactor = zoom * (targetWidth / width);
 
-    console.log(rotation);
-
     return {
       transform: `translate3d(${nextX}px,${y}px,0) scale3d(${scaleFactor},${scaleFactor},1) rotate(${rotation}deg)`,
     };
@@ -149,6 +147,12 @@ class ReactImageLightbox extends Component {
     this.handleWindowResize = this.handleWindowResize.bind(this);
     this.handleZoomInButtonClick = this.handleZoomInButtonClick.bind(this);
     this.handleZoomOutButtonClick = this.handleZoomOutButtonClick.bind(this);
+    this.handleRotateLeftButtonClick = this.handleRotateLeftButtonClick.bind(
+      this
+    );
+    this.handleRotateRightButtonClick = this.handleRotateRightButtonClick.bind(
+      this
+    );
     this.requestClose = this.requestClose.bind(this);
     this.requestMoveNext = this.requestMoveNext.bind(this);
     this.requestMovePrev = this.requestMovePrev.bind(this);
