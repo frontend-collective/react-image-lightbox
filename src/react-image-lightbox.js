@@ -1575,34 +1575,6 @@ class ReactImageLightbox extends Component {
 
               {enableZoom && (
                 <li className="ril-toolbar__item ril__toolbarItem">
-                  <button // Lightbox zoom in button
-                    type="button"
-                    key="zoom-in"
-                    aria-label={this.props.zoomInLabel}
-                    className={[
-                      'ril-zoom-in',
-                      'ril__toolbarItemChild',
-                      'ril__builtinButton',
-                      'ril__zoomInButton',
-                      ...(zoomLevel === MAX_ZOOM_LEVEL
-                        ? ['ril__builtinButtonDisabled']
-                        : []),
-                    ].join(' ')}
-                    ref={this.zoomInBtn}
-                    disabled={
-                      this.isAnimating() || zoomLevel === MAX_ZOOM_LEVEL
-                    }
-                    onClick={
-                      !this.isAnimating() && zoomLevel !== MAX_ZOOM_LEVEL
-                        ? this.handleZoomInButtonClick
-                        : undefined
-                    }
-                  />
-                </li>
-              )}
-
-              {enableZoom && (
-                <li className="ril-toolbar__item ril__toolbarItem">
                   <button // Lightbox zoom out button
                     type="button"
                     key="zoom-out"
@@ -1623,6 +1595,34 @@ class ReactImageLightbox extends Component {
                     onClick={
                       !this.isAnimating() && zoomLevel !== MIN_ZOOM_LEVEL
                         ? this.handleZoomOutButtonClick
+                        : undefined
+                    }
+                  />
+                </li>
+              )}
+
+              {enableZoom && (
+                <li className="ril-toolbar__item ril__toolbarItem">
+                  <button // Lightbox zoom in button
+                    type="button"
+                    key="zoom-in"
+                    aria-label={this.props.zoomInLabel}
+                    className={[
+                      'ril-zoom-in',
+                      'ril__toolbarItemChild',
+                      'ril__builtinButton',
+                      'ril__zoomInButton',
+                      ...(zoomLevel === MAX_ZOOM_LEVEL
+                        ? ['ril__builtinButtonDisabled']
+                        : []),
+                    ].join(' ')}
+                    ref={this.zoomInBtn}
+                    disabled={
+                      this.isAnimating() || zoomLevel === MAX_ZOOM_LEVEL
+                    }
+                    onClick={
+                      !this.isAnimating() && zoomLevel !== MAX_ZOOM_LEVEL
+                        ? this.handleZoomInButtonClick
                         : undefined
                     }
                   />
