@@ -24,7 +24,9 @@ import {
   SOURCE_TOUCH,
   SOURCE_POINTER,
   MIN_SWIPE_DISTANCE,
-  INITIAL_ROTATION_VALUE,
+  MIN_ROTATION_VALUE,
+  MAX_ROTATION_VALUE,
+  ROTATE_BUTTON_INCREMENT_SIZE,
 } from './constant';
 import './style.css';
 
@@ -99,7 +101,7 @@ class ReactImageLightbox extends Component {
       // Rotation settings
       //-----------------------------
       // Rotation value of the image
-      rotationValue: INITIAL_ROTATION_VALUE,
+      rotationValue: MIN_ROTATION_VALUE,
 
       //-----------------------------
       // Image position settings
@@ -1094,10 +1096,16 @@ class ReactImageLightbox extends Component {
   }
 
   handleRotateLeftButtonClick() {
-    const nextRotationValue = this.state.rotationValue;
+    const nextRotationValue =
+      this.state.rotationValue - ROTATE_BUTTON_INCREMENT_SIZE;
   }
 
-  handleRotateRightButtonClick() {}
+  handleRotateRightButtonClick() {
+    const nextRotationValue =
+      this.state.rotationValue + ROTATE_BUTTON_INCREMENT_SIZE;
+    if (nextRotationValue > 360) {
+    }
+  }
 
   handleCaptionMousewheel(event) {
     event.stopPropagation();
