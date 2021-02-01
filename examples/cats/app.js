@@ -152,7 +152,6 @@ class App extends Component {
           onImageLoadError={App.onImageLoadError}
           imageTitle={titles[this.state.index]}
           imageCaption={captions[this.state.index]}
-          enableRotation
         />
       );
     }
