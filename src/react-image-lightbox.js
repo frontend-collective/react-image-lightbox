@@ -1875,7 +1875,7 @@ ReactImageLightbox.defaultProps = {
   closeLabel: 'Close lightbox',
   discourageDownloads: false,
   enableZoom: true,
-  enableRotation: false,
+  enableRotation: true,
   imagePadding: 10,
   imageCrossOrigin: null,
   keyRepeatKeyupBonus: 40,
