@@ -8,6 +8,7 @@ exports[`Snapshot Testing Lightbox renders properly" 1`] = `
   clickOutsideToClose={true}
   closeLabel="Close lightbox"
   discourageDownloads={false}
+  enableRotation={true}
   enableZoom={true}
   imageCaption={null}
   imageCrossOrigin={null}
@@ -38,6 +39,8 @@ exports[`Snapshot Testing Lightbox renders properly" 1`] = `
     }
   }
   reactModalStyle={Object {}}
+  rotateLeftLabel="Rotate left"
+  rotateRightLabel="Rotate Right"
   toolbarButtons={null}
   wrapperClassName=""
   zoomInLabel="Zoom in"
@@ -101,6 +104,7 @@ exports[`Snapshot Testing Lightbox renders properly" 1`] = `
             >
               <div
                 class="ril-outer ril__outer ril__outerAnimating  "
+                style="transition: opacity 300ms; animation-duration: 300ms; animation-direction: reverse;"
                 tabindex="-1"
               >
                 <div
@@ -108,7 +112,7 @@ exports[`Snapshot Testing Lightbox renders properly" 1`] = `
                 >
                   <div
                     class="ril-image-current ril__image ril-not-loaded"
-                    style="transform: translate3d(0px,0px,0) scale3d(NaN,NaN,1);"
+                    style="transform: translate3d(0px,0px,0) scale3d(NaN,NaN,1) rotate(0deg);"
                   >
                     <div
                       class="ril__loadingContainer"
@@ -177,8 +181,9 @@ exports[`Snapshot Testing Lightbox renders properly" 1`] = `
                       class="ril-toolbar__item ril__toolbarItem"
                     >
                       <button
-                        aria-label="Zoom in"
-                        class="ril-zoom-in ril__toolbarItemChild ril__builtinButton ril__zoomInButton"
+                        aria-label="Zoom out"
+                        class="ril-zoom-out ril__toolbarItemChild ril__builtinButton ril__zoomOutButton ril__builtinButtonDisabled"
+                        disabled=""
                         type="button"
                       />
                     </li>
@@ -186,9 +191,26 @@ exports[`Snapshot Testing Lightbox renders properly" 1`] = `
                       class="ril-toolbar__item ril__toolbarItem"
                     >
                       <button
-                        aria-label="Zoom out"
-                        class="ril-zoom-out ril__toolbarItemChild ril__builtinButton ril__zoomOutButton ril__builtinButtonDisabled"
-                        disabled=""
+                        aria-label="Rotate left"
+                        class="ril-rotate-left ril__toolbarItemChild ril__builtinButton ril__rotateLeftButton"
+                        type="button"
+                      />
+                    </li>
+                    <li
+                      class="ril-toolbar__item ril__toolbarItem"
+                    >
+                      <button
+                        aria-label="Rotate Right"
+                        class="ril-rotate-right ril__toolbarItemChild ril__builtinButton ril__rotateRightButton"
+                        type="button"
+                      />
+                    </li>
+                    <li
+                      class="ril-toolbar__item ril__toolbarItem"
+                    >
+                      <button
+                        aria-label="Zoom in"
+                        class="ril-zoom-in ril__toolbarItemChild ril__builtinButton ril__zoomInButton"
                         type="button"
                       />
                     </li>
@@ -345,7 +367,7 @@ exports[`Snapshot Testing Lightbox renders properly" 1`] = `
                   key="/fake/image/src.jpgi0"
                   style={
                     Object {
-                      "transform": "translate3d(0px,0px,0) scale3d(NaN,NaN,1)",
+                      "transform": "translate3d(0px,0px,0) scale3d(NaN,NaN,1) rotate(0deg)",
                     }
                   }
                 >
@@ -428,10 +450,20 @@ exports[`Snapshot Testing Lightbox renders properly" 1`] = `
                     className="ril-toolbar__item ril__toolbarItem"
                   >
                     <button
-                      aria-label="Zoom in"
-                      className="ril-zoom-in ril__toolbarItemChild ril__builtinButton ril__zoomInButton"
-                      disabled={false}
-                      key="zoom-in"
+                      aria-label="Zoom out"
+                      className="ril-zoom-out ril__toolbarItemChild ril__builtinButton ril__zoomOutButton ril__builtinButtonDisabled"
+                      disabled={true}
+                      key="zoom-out"
+                      type="button"
+                    />
+                  </li>
+                  <li
+                    className="ril-toolbar__item ril__toolbarItem"
+                  >
+                    <button
+                      aria-label="Rotate left"
+                      className="ril-rotate-left ril__toolbarItemChild ril__builtinButton ril__rotateLeftButton"
+                      key="rotate-left"
                       onClick={[Function]}
                       type="button"
                     />
@@ -440,10 +472,22 @@ exports[`Snapshot Testing Lightbox renders properly" 1`] = `
                     className="ril-toolbar__item ril__toolbarItem"
                   >
                     <button
-                      aria-label="Zoom out"
-                      className="ril-zoom-out ril__toolbarItemChild ril__builtinButton ril__zoomOutButton ril__builtinButtonDisabled"
-                      disabled={true}
-                      key="zoom-out"
+                      aria-label="Rotate Right"
+                      className="ril-rotate-right ril__toolbarItemChild ril__builtinButton ril__rotateRightButton"
+                      key="rotate-right"
+                      onClick={[Function]}
+                      type="button"
+                    />
+                  </li>
+                  <li
+                    className="ril-toolbar__item ril__toolbarItem"
+                  >
+                    <button
+                      aria-label="Zoom in"
+                      className="ril-zoom-in ril__toolbarItemChild ril__builtinButton ril__zoomInButton"
+                      disabled={false}
+                      key="zoom-in"
+                      onClick={[Function]}
                       type="button"
                     />
                   </li>

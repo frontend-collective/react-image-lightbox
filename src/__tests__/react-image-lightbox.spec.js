@@ -60,6 +60,17 @@ describe('Lightbox structure', () => {
     expect(wrapper.find('.ril-zoom-in').length).toEqual(0);
   });
 
+  it('contains zoom buttons when enableRotation is true (default)', () => {
+    expect(wrapper.find('.ril-rotate-left').length).toEqual(1);
+    expect(wrapper.find('.ril-rotate-right').length).toEqual(1);
+  });
+
+  it('does not contain rotation buttons when enableRotation is false', () => {
+    wrapper.setProps({ enableRotation: false });
+    expect(wrapper.find('.ril-rotate-left').length).toEqual(0);
+    expect(wrapper.find('.ril-rotate-right').length).toEqual(0);
+  });
+
   it('does not contain a caption bar when no caption is supplied', () => {
     expect(wrapper.find('.ril-caption').length).toEqual(0);
   });
