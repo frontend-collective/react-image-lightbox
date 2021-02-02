@@ -127,8 +127,8 @@ class ReactImageLightbox extends Component {
     this.outerEl = React.createRef();
     this.zoomInBtn = React.createRef();
     this.zoomOutBtn = React.createRef();
-    this.rotateLeftBtn = React.createRef();
-    this.rotateRightBtn = React.createRef();
+    this.rotateCounterclockwiseBtn = React.createRef();
+    this.rotateClockwiseBtn = React.createRef();
     this.caption = React.createRef();
 
     this.closeIfClickInner = this.closeIfClickInner.bind(this);
@@ -147,10 +147,10 @@ class ReactImageLightbox extends Component {
     this.handleWindowResize = this.handleWindowResize.bind(this);
     this.handleZoomInButtonClick = this.handleZoomInButtonClick.bind(this);
     this.handleZoomOutButtonClick = this.handleZoomOutButtonClick.bind(this);
-    this.handleRotateLeftButtonClick = this.handleRotateLeftButtonClick.bind(
+    this.handleRotateCounterclockwiseButtonClick = this.handleRotateCounterclockwiseButtonClick.bind(
       this
     );
-    this.handleRotateRightButtonClick = this.handleRotateRightButtonClick.bind(
+    this.handleRotateClockwiseButtonClick = this.handleRotateClockwiseButtonClick.bind(
       this
     );
     this.requestClose = this.requestClose.bind(this);
@@ -1117,7 +1117,7 @@ class ReactImageLightbox extends Component {
     }
   }
 
-  handleRotateLeftButtonClick() {
+  handleRotateCounterclockwiseButtonClick() {
     let nextRotationValue =
       this.state.rotationValue - ROTATE_BUTTON_INCREMENT_SIZE;
     if (nextRotationValue < MIN_ROTATION_VALUE) {
@@ -1126,7 +1126,7 @@ class ReactImageLightbox extends Component {
     this.changeRotation(nextRotationValue);
   }
 
-  handleRotateRightButtonClick() {
+  handleRotateClockwiseButtonClick() {
     let nextRotationValue =
       this.state.rotationValue + ROTATE_BUTTON_INCREMENT_SIZE;
     if (nextRotationValue > MAX_ROTATION_VALUE) {
@@ -1617,20 +1617,20 @@ class ReactImageLightbox extends Component {
 
               {enableRotation && (
                 <li className="ril-toolbar__item ril__toolbarItem">
-                  <button // Lightbox rotate left button
+                  <button // Lightbox rotate counterclockwise button
                     type="button"
-                    key="rotate-left"
-                    aria-label={this.props.rotateLeftLabel}
+                    key="rotate-ccw"
+                    aria-label={this.props.rotateCounterclockwiseLabel}
                     className={[
-                      'ril-rotate-left',
+                      'ril-rotate-ccw',
                       'ril__toolbarItemChild',
                       'ril__builtinButton',
-                      'ril__rotateLeftButton',
+                      'ril__rotateCounterclockwiseButton',
                     ].join(' ')}
-                    ref={this.rotateLeftBtn}
+                    ref={this.rotateCounterclockwiseBtn}
                     onClick={
                       !this.isAnimating()
-                        ? this.handleRotateLeftButtonClick
+                        ? this.handleRotateCounterclockwiseButtonClick
                         : undefined
                     }
                   />
@@ -1639,20 +1639,20 @@ class ReactImageLightbox extends Component {
 
               {enableRotation && (
                 <li className="ril-toolbar__item ril__toolbarItem">
-                  <button // Lightbox rotate right button
+                  <button // Lightbox rotate clockwise button
                     type="button"
-                    key="rotate-right"
-                    aria-label={this.props.rotateRightLabel}
+                    key="rotate-cw"
+                    aria-label={this.props.rotateClockwiseLabel}
                     className={[
-                      'ril-rotate-right',
+                      'ril-rotate-cw',
                       'ril__toolbarItemChild',
                       'ril__builtinButton',
-                      'ril__rotateRightButton',
+                      'ril__rotateClockwiseButton',
                     ].join(' ')}
-                    ref={this.rotateRightBtn}
+                    ref={this.rotateClockwiseBtn}
                     onClick={
                       !this.isAnimating()
-                        ? this.handleRotateRightButtonClick
+                        ? this.handleRotateClockwiseButtonClick
                         : undefined
                     }
                   />
@@ -1856,8 +1856,8 @@ ReactImageLightbox.propTypes = {
   prevLabel: PropTypes.string,
   zoomInLabel: PropTypes.string,
   zoomOutLabel: PropTypes.string,
-  rotateLeftLabel: PropTypes.string,
-  rotateRightLabel: PropTypes.string,
+  rotateCounterclockwiseLabel: PropTypes.string,
+  rotateClockwiseLabel: PropTypes.string,
   closeLabel: PropTypes.string,
 
   imageLoadErrorMessage: PropTypes.node,
@@ -1896,8 +1896,8 @@ ReactImageLightbox.defaultProps = {
   wrapperClassName: '',
   zoomInLabel: 'Zoom in',
   zoomOutLabel: 'Zoom out',
-  rotateLeftLabel: 'Rotate left',
-  rotateRightLabel: 'Rotate Right',
+  rotateCounterclockwiseLabel: 'Rotate counterclockwise',
+  rotateClockwiseLabel: 'Rotate clockwise',
   imageLoadErrorMessage: 'This image failed to load',
 };
 
