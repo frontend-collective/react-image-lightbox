@@ -24,6 +24,9 @@ import {
   SOURCE_TOUCH,
   SOURCE_POINTER,
   MIN_SWIPE_DISTANCE,
+  MIN_ROTATION_VALUE,
+  MAX_ROTATION_VALUE,
+  ROTATE_BUTTON_INCREMENT_SIZE,
 } from './constant';
 import './style.css';
 
@@ -60,7 +63,14 @@ class ReactImageLightbox extends Component {
   }
 
   // Request to transition to the previous image
-  static getTransform({ x = 0, y = 0, zoom = 1, width, targetWidth }) {
+  static getTransform({
+    x = 0,
+    y = 0,
+    zoom = 1,
+    width,
+    targetWidth,
+    rotation = 0,
+  }) {
     let nextX = x;
     const windowWidth = getWindowWidth();
     if (width > windowWidth) {
@@ -69,7 +79,7 @@ class ReactImageLightbox extends Component {
     const scaleFactor = zoom * (targetWidth / width);
 
     return {
-      transform: `translate3d(${nextX}px,${y}px,0) scale3d(${scaleFactor},${scaleFactor},1)`,
+      transform: `translate3d(${nextX}px,${y}px,0) scale3d(${scaleFactor},${scaleFactor},1) rotate(${rotation}deg)`,
     };
   }
 
@@ -95,6 +105,12 @@ class ReactImageLightbox extends Component {
       zoomLevel: MIN_ZOOM_LEVEL,
 
       //-----------------------------
+      // Rotation settings
+      //-----------------------------
+      // Rotation value of the image
+      rotationValue: MIN_ROTATION_VALUE,
+
+      //-----------------------------
       // Image position settings
       //-----------------------------
       // Horizontal offset from center
@@ -111,6 +127,8 @@ class ReactImageLightbox extends Component {
     this.outerEl = React.createRef();
     this.zoomInBtn = React.createRef();
     this.zoomOutBtn = React.createRef();
+    this.rotateCounterclockwiseBtn = React.createRef();
+    this.rotateClockwiseBtn = React.createRef();
     this.caption = React.createRef();
 
     this.closeIfClickInner = this.closeIfClickInner.bind(this);
@@ -129,6 +147,12 @@ class ReactImageLightbox extends Component {
     this.handleWindowResize = this.handleWindowResize.bind(this);
     this.handleZoomInButtonClick = this.handleZoomInButtonClick.bind(this);
     this.handleZoomOutButtonClick = this.handleZoomOutButtonClick.bind(this);
+    this.handleRotateCounterclockwiseButtonClick = this.handleRotateCounterclockwiseButtonClick.bind(
+      this
+    );
+    this.handleRotateClockwiseButtonClick = this.handleRotateClockwiseButtonClick.bind(
+      this
+    );
     this.requestClose = this.requestClose.bind(this);
     this.requestMoveNext = this.requestMoveNext.bind(this);
     this.requestMovePrev = this.requestMovePrev.bind(this);
@@ -529,6 +553,15 @@ class ReactImageLightbox extends Component {
       zoomLevel: nextZoomLevel,
       offsetX: nextOffsetX,
       offsetY: nextOffsetY,
+    });
+  }
+
+  changeRotation(rotationValue) {
+    // Snap back to center when rotating
+    this.setState({
+      rotationValue: rotationValue,
+      offsetX: 0,
+      offsetY: 0,
     });
   }
 
@@ -1084,6 +1117,24 @@ class ReactImageLightbox extends Component {
     }
   }
 
+  handleRotateCounterclockwiseButtonClick() {
+    let nextRotationValue =
+      this.state.rotationValue - ROTATE_BUTTON_INCREMENT_SIZE;
+    if (nextRotationValue < MIN_ROTATION_VALUE) {
+      nextRotationValue = MAX_ROTATION_VALUE;
+    }
+    this.changeRotation(nextRotationValue);
+  }
+
+  handleRotateClockwiseButtonClick() {
+    let nextRotationValue =
+      this.state.rotationValue + ROTATE_BUTTON_INCREMENT_SIZE;
+    if (nextRotationValue > MAX_ROTATION_VALUE) {
+      nextRotationValue = MIN_ROTATION_VALUE;
+    }
+    this.changeRotation(nextRotationValue);
+  }
+
   handleCaptionMousewheel(event) {
     event.stopPropagation();
 
@@ -1270,6 +1321,7 @@ class ReactImageLightbox extends Component {
       clickOutsideToClose,
       discourageDownloads,
       enableZoom,
+      enableRotation,
       imageTitle,
       nextSrc,
       prevSrc,
@@ -1281,6 +1333,7 @@ class ReactImageLightbox extends Component {
     } = this.props;
     const {
       zoomLevel,
+      rotationValue,
       offsetX,
       offsetY,
       isClosing,
@@ -1416,6 +1469,7 @@ class ReactImageLightbox extends Component {
       x: -1 * offsetX,
       y: -1 * offsetY,
       zoom: zoomMultiplier,
+      rotation: rotationValue,
     });
     // Previous Image (displayed on the left)
     addImage('prevSrc', 'ril-image-prev ril__imagePrev', {
@@ -1535,34 +1589,6 @@ class ReactImageLightbox extends Component {
 
               {enableZoom && (
                 <li className="ril-toolbar__item ril__toolbarItem">
-                  <button // Lightbox zoom in button
-                    type="button"
-                    key="zoom-in"
-                    aria-label={this.props.zoomInLabel}
-                    className={[
-                      'ril-zoom-in',
-                      'ril__toolbarItemChild',
-                      'ril__builtinButton',
-                      'ril__zoomInButton',
-                      ...(zoomLevel === MAX_ZOOM_LEVEL
-                        ? ['ril__builtinButtonDisabled']
-                        : []),
-                    ].join(' ')}
-                    ref={this.zoomInBtn}
-                    disabled={
-                      this.isAnimating() || zoomLevel === MAX_ZOOM_LEVEL
-                    }
-                    onClick={
-                      !this.isAnimating() && zoomLevel !== MAX_ZOOM_LEVEL
-                        ? this.handleZoomInButtonClick
-                        : undefined
-                    }
-                  />
-                </li>
-              )}
-
-              {enableZoom && (
-                <li className="ril-toolbar__item ril__toolbarItem">
                   <button // Lightbox zoom out button
                     type="button"
                     key="zoom-out"
@@ -1583,6 +1609,78 @@ class ReactImageLightbox extends Component {
                     onClick={
                       !this.isAnimating() && zoomLevel !== MIN_ZOOM_LEVEL
                         ? this.handleZoomOutButtonClick
+                        : undefined
+                    }
+                  />
+                </li>
+              )}
+
+              {enableRotation && (
+                <li className="ril-toolbar__item ril__toolbarItem">
+                  <button // Lightbox rotate counterclockwise button
+                    type="button"
+                    key="rotate-ccw"
+                    aria-label={this.props.rotateCounterclockwiseLabel}
+                    className={[
+                      'ril-rotate-ccw',
+                      'ril__toolbarItemChild',
+                      'ril__builtinButton',
+                      'ril__rotateCounterclockwiseButton',
+                    ].join(' ')}
+                    ref={this.rotateCounterclockwiseBtn}
+                    onClick={
+                      !this.isAnimating()
+                        ? this.handleRotateCounterclockwiseButtonClick
+                        : undefined
+                    }
+                  />
+                </li>
+              )}
+
+              {enableRotation && (
+                <li className="ril-toolbar__item ril__toolbarItem">
+                  <button // Lightbox rotate clockwise button
+                    type="button"
+                    key="rotate-cw"
+                    aria-label={this.props.rotateClockwiseLabel}
+                    className={[
+                      'ril-rotate-cw',
+                      'ril__toolbarItemChild',
+                      'ril__builtinButton',
+                      'ril__rotateClockwiseButton',
+                    ].join(' ')}
+                    ref={this.rotateClockwiseBtn}
+                    onClick={
+                      !this.isAnimating()
+                        ? this.handleRotateClockwiseButtonClick
+                        : undefined
+                    }
+                  />
+                </li>
+              )}
+
+              {enableZoom && (
+                <li className="ril-toolbar__item ril__toolbarItem">
+                  <button // Lightbox zoom in button
+                    type="button"
+                    key="zoom-in"
+                    aria-label={this.props.zoomInLabel}
+                    className={[
+                      'ril-zoom-in',
+                      'ril__toolbarItemChild',
+                      'ril__builtinButton',
+                      'ril__zoomInButton',
+                      ...(zoomLevel === MAX_ZOOM_LEVEL
+                        ? ['ril__builtinButtonDisabled']
+                        : []),
+                    ].join(' ')}
+                    ref={this.zoomInBtn}
+                    disabled={
+                      this.isAnimating() || zoomLevel === MAX_ZOOM_LEVEL
+                    }
+                    onClick={
+                      !this.isAnimating() && zoomLevel !== MAX_ZOOM_LEVEL
+                        ? this.handleZoomInButtonClick
                         : undefined
                     }
                   />
@@ -1747,6 +1845,9 @@ ReactImageLightbox.propTypes = {
   // Set to false to disable zoom functionality and hide zoom buttons
   enableZoom: PropTypes.bool,
 
+  // When given, rotation will be enabled for the lightbox, and rotate buttons will be shown
+  enableRotation: PropTypes.bool,
+
   // Override props set on react-modal (https://github.com/reactjs/react-modal)
   reactModalProps: PropTypes.shape({}),
 
@@ -1755,6 +1856,8 @@ ReactImageLightbox.propTypes = {
   prevLabel: PropTypes.string,
   zoomInLabel: PropTypes.string,
   zoomOutLabel: PropTypes.string,
+  rotateCounterclockwiseLabel: PropTypes.string,
+  rotateClockwiseLabel: PropTypes.string,
   closeLabel: PropTypes.string,
 
   imageLoadErrorMessage: PropTypes.node,
@@ -1772,6 +1875,7 @@ ReactImageLightbox.defaultProps = {
   closeLabel: 'Close lightbox',
   discourageDownloads: false,
   enableZoom: true,
+  enableRotation: true,
   imagePadding: 10,
   imageCrossOrigin: null,
   keyRepeatKeyupBonus: 40,
@@ -1792,6 +1896,8 @@ ReactImageLightbox.defaultProps = {
   wrapperClassName: '',
   zoomInLabel: 'Zoom in',
   zoomOutLabel: 'Zoom out',
+  rotateCounterclockwiseLabel: 'Rotate counterclockwise',
+  rotateClockwiseLabel: 'Rotate clockwise',
   imageLoadErrorMessage: 'This image failed to load',
 };
 
