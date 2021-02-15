@@ -1278,6 +1278,7 @@ class ReactImageLightbox extends Component {
       onAfterOpen,
       imageCrossOrigin,
       reactModalProps,
+      loader
     } = this.props;
     const {
       zoomLevel,
@@ -1346,7 +1347,7 @@ class ReactImageLightbox extends Component {
         return;
       }
       if (bestImageInfo === null) {
-        const loadingIcon = (
+        let loadingIcon = (
           <div className="ril-loading-circle ril__loadingCircle ril__loadingContainer__icon">
             {[...new Array(12)].map((_, index) => (
               <div
@@ -1357,6 +1358,11 @@ class ReactImageLightbox extends Component {
             ))}
           </div>
         );
+
+        // custom loader
+        if(loader) {
+          loadingIcon = loader;
+        }
 
         // Fall back to loading icon if the thumbnail has not been loaded
         images.push(
@@ -1758,6 +1764,9 @@ ReactImageLightbox.propTypes = {
   closeLabel: PropTypes.string,
 
   imageLoadErrorMessage: PropTypes.node,
+
+  // custom loader
+  loader: PropTypes.node
 };
 
 ReactImageLightbox.defaultProps = {
@@ -1793,6 +1802,7 @@ ReactImageLightbox.defaultProps = {
   zoomInLabel: 'Zoom in',
   zoomOutLabel: 'Zoom out',
   imageLoadErrorMessage: 'This image failed to load',
+  loader: null,
 };
 
 export default ReactImageLightbox;
