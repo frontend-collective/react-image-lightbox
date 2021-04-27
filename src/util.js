@@ -33,11 +33,20 @@ export function getHighestSafeWindowContext(self = global.window.self) {
     return self;
   }
 
-  const getOrigin = href => href.match(/(.*\/\/.*?)(\/|$)/)[1];
+  const isCrossOriginFrame = () => {
+    try {
+      return (
+        global.document.location.hostname !==
+        global.window.parent.location.hostname
+      );
+    } catch (e) {
+      return true;
+    }
+  };
 
   // If parent is the same origin, we can move up one context
   // Reference: https://stackoverflow.com/a/21965342/1601953
-  if (getOrigin(self.location.href) === getOrigin(referrer)) {
+  if (!isCrossOriginFrame()) {
     return getHighestSafeWindowContext(self.parent);
   }
 
