@@ -50,8 +50,8 @@
     "react-modal": "^3.11.1"
   },
   "peerDependencies": {
-    "react": "^16.x",
-    "react-dom": "^16.x"
+    "react": "^16.x < 17",
+    "react-dom": "^16.x < 17"
   },
   "devDependencies": {
     "@babel/cli": "^7.7.0",
