@@ -1,6 +1,8 @@
 # React Image Lightbox
 
-[![NPM](https://nodei.co/npm/react-image-lightbox.png)](https://npmjs.org/package/react-image-lightbox) [![Build Status](https://travis-ci.org/frontend-collective/react-image-lightbox.svg?branch=master)](https://travis-ci.org/frontend-collective/react-image-lightbox) [![Coverage Status](https://coveralls.io/repos/github/frontend-collective/react-image-lightbox/badge.svg?branch=master)](https://coveralls.io/github/frontend-collective/react-image-lightbox?branch=master)
+[![NPM](https://nodei.co/npm/react-image-lightbox.png)](https://npmjs.org/package/react-image-lightbox)
+[![Build Status](https://github.com/frontend-collective/react-image-lightbox/actions/workflows/ci.yml/badge.svg)](https://github.com/frontend-collective/react-image-lightbox/actions?query=workflow%3ACI)
+[![Coverage Status](https://coveralls.io/repos/github/frontend-collective/react-image-lightbox/badge.svg?branch=master)](https://coveralls.io/github/frontend-collective/react-image-lightbox?branch=master)
 
 [![RIL Snapshot](https://user-images.githubusercontent.com/4413963/31209033-78f60df0-a9c3-11e7-8f83-69998d46973e.png)](https://frontend-collective.github.io/react-image-lightbox/)
 
@@ -109,11 +111,11 @@ Play with the code on the [example on CodeSandbox](https://codesandbox.io/s/l9n3
 | clickOutsideToClose             |  bool  | When `true`, clicks outside of the image close the lightbox. Defaults to `true`.                                                                              |
 | enableZoom                      |  bool  | Set to `false` to disable zoom functionality and hide zoom buttons. Defaults to `true`.                                                                       |
 | wrapperClassName                | string | Class name which will be applied to root element after React Modal                                                                                            |
-| nextLabel                       | string | `aria-label` set on the 'Next' button. Defaults to `'Next image'`.                                                                                            |
-| prevLabel                       | string | `aria-label` set on the 'Previous' button. Defaults to `'Previous image'`.                                                                                    |
-| zoomInLabel                     | string | `aria-label` set on the 'Zoom In' button. Defaults to `'Zoom in'`.                                                                                            |
-| zoomOutLabel                    | string | `aria-label` set on the 'Zoom Out' button. Defaults to `'Zoom out'`.                                                                                          |
-| closeLabel                      | string | `aria-label` set on the 'Close Lightbox' button. Defaults to `'Close lightbox'`.                                                                              |
+| nextLabel                       | string | `aria-label` and `title` set on the 'Next' button. Defaults to `'Next image'`.                                                                                |
+| prevLabel                       | string | `aria-label` and `title` set on the 'Previous' button. Defaults to `'Previous image'`.                                                                        |
+| zoomInLabel                     | string | `aria-label` and `title` set on the 'Zoom In' button. Defaults to `'Zoom in'`.                                                                                |
+| zoomOutLabel                    | string | `aria-label` and `title` set on the 'Zoom Out' button. Defaults to `'Zoom out'`.                                                                              |
+| closeLabel                      | string | `aria-label` and `title` set on the 'Close Lightbox' button. Defaults to `'Close lightbox'`.                                                                  |
 | loader                          |  node  | Custom Loading indicator for loading                                                                                                                                |
 
 ## Browser Compatibility
