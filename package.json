@@ -14,7 +14,8 @@
     "test": "jest",
     "test:watch": "jest --watchAll",
     "deploy": "yarn run build:demo && gh-pages -d build",
-    "release": "standard-version"
+    "release": "standard-version",
+    "prepare": "husky install"
   },
   "main": "dist/index.cjs.js",
   "module": "dist/index.es.js",
@@ -35,11 +36,6 @@
     "Chris Fritz"
   ],
   "license": "MIT",
-  "husky": {
-    "hooks": {
-      "pre-commit": "pretty-quick --staged"
-    }
-  },
   "browserslist": [
     "IE >= 11",
     "last 2 versions",
@@ -73,7 +69,7 @@
     "eslint-plugin-react": "^7.16.0",
     "eslint-plugin-react-hooks": "^4.2.0",
     "gh-pages": "^3.2.3",
-    "husky": "^7.0.1",
+    "husky": "^7.0.0",
     "jest": "^27.0.6",
     "jest-enzyme": "^7.1.2",
     "parcel-bundler": "^1.12.4",
