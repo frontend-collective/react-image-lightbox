@@ -71,7 +71,7 @@
     "eslint-plugin-import": "^2.18.2",
     "eslint-plugin-jsx-a11y": "^6.2.3",
     "eslint-plugin-react": "^7.16.0",
-    "gh-pages": "^2.0.1",
+    "gh-pages": "^3.2.3",
     "husky": "^3.0.9",
     "jest": "^24.9.0",
     "jest-enzyme": "^7.0.1",
