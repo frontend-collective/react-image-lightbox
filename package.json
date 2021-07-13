@@ -1,6 +1,6 @@
 {
   "name": "react-image-lightbox",
-  "version": "5.1.1",
+  "version": "5.1.2",
   "description": "A lightbox component for React.js",
   "scripts": {
     "build": "rollup -c",
