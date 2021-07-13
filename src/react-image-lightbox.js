@@ -1497,6 +1497,7 @@ class ReactImageLightbox extends Component {
               className="ril-prev-button ril__navButtons ril__navButtonPrev"
               key="prev"
               aria-label={this.props.prevLabel}
+              title={this.props.prevLabel}
               onClick={!this.isAnimating() ? this.requestMovePrev : undefined} // Ignore clicks during animation
             />
           )}
@@ -1507,6 +1508,7 @@ class ReactImageLightbox extends Component {
               className="ril-next-button ril__navButtons ril__navButtonNext"
               key="next"
               aria-label={this.props.nextLabel}
+              title={this.props.nextLabel}
               onClick={!this.isAnimating() ? this.requestMoveNext : undefined} // Ignore clicks during animation
             />
           )}
@@ -1539,6 +1541,7 @@ class ReactImageLightbox extends Component {
                     type="button"
                     key="zoom-in"
                     aria-label={this.props.zoomInLabel}
+                    title={this.props.zoomInLabel}
                     className={[
                       'ril-zoom-in',
                       'ril__toolbarItemChild',
@@ -1567,6 +1570,7 @@ class ReactImageLightbox extends Component {
                     type="button"
                     key="zoom-out"
                     aria-label={this.props.zoomOutLabel}
+                    title={this.props.zoomOutLabel}
                     className={[
                       'ril-zoom-out',
                       'ril__toolbarItemChild',
@@ -1594,6 +1598,7 @@ class ReactImageLightbox extends Component {
                   type="button"
                   key="close"
                   aria-label={this.props.closeLabel}
+                  title={this.props.closeLabel}
                   className="ril-close ril-toolbar__item__child ril__toolbarItemChild ril__builtinButton ril__closeButton"
                   onClick={!this.isAnimating() ? this.requestClose : undefined} // Ignore clicks during animation
                 />
