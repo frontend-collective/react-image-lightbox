@@ -764,7 +764,10 @@ class ReactImageLightbox extends Component {
     if (this.shouldHandleEvent(SOURCE_POINTER)) {
       switch (event.type) {
         case 'pointerdown':
-          if (ReactImageLightbox.isTargetMatchImage(event.target)) {
+          if (
+            (event.which !== 3 || event.button !== 2) &&
+            ReactImageLightbox.isTargetMatchImage(event.target)
+          ) {
             this.addPointer(ReactImageLightbox.parsePointerEvent(event));
             this.multiPointerStart(event);
           }
