@@ -1377,37 +1377,25 @@ class ReactImageLightbox extends Component {
       }
 
       const imageSrc = bestImageInfo.src;
-      if (discourageDownloads) {
-        imageStyle.backgroundImage = `url('${imageSrc}')`;
-        images.push(
-          <div
-            className={`${imageClass} ril__image ril__imageDiscourager`}
-            onDoubleClick={this.handleImageDoubleClick}
-            onWheel={this.handleImageMouseWheel}
-            style={imageStyle}
-            key={imageSrc + keyEndings[srcType]}
-          >
-            <div className="ril-download-blocker ril__downloadBlocker" />
-          </div>
-        );
-      } else {
-        images.push(
-          <img
-            {...(imageCrossOrigin ? { crossOrigin: imageCrossOrigin } : {})}
-            className={`${imageClass} ril__image`}
-            onDoubleClick={this.handleImageDoubleClick}
-            onWheel={this.handleImageMouseWheel}
-            onDragStart={e => e.preventDefault()}
-            style={imageStyle}
-            src={imageSrc}
-            key={imageSrc + keyEndings[srcType]}
-            alt={
-              typeof imageTitle === 'string' ? imageTitle : translate('Image')
+      images.push(
+        <img
+          {...(imageCrossOrigin && { crossOrigin: imageCrossOrigin })}
+          className={`${imageClass} ril__image`}
+          onDoubleClick={this.handleImageDoubleClick}
+          onContextMenu={e => {
+            if (discourageDownloads) {
+              e.preventDefault();
             }
-            draggable={false}
-          />
-        );
-      }
+          }}
+          onWheel={this.handleImageMouseWheel}
+          onDragStart={e => e.preventDefault()}
+          style={imageStyle}
+          src={imageSrc}
+          key={imageSrc + keyEndings[srcType]}
+          alt={typeof imageTitle === 'string' ? imageTitle : translate('Image')}
+          draggable={false}
+        />
+      );
     };
 
     const zoomMultiplier = this.getZoomMultiplier();
