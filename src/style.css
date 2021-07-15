@@ -51,12 +51,6 @@
   touch-action: none;
 }
 
-.ril__imageDiscourager {
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: contain;
-}
-
 .ril__navButtons {
   border: none;
   position: absolute;
@@ -88,16 +82,6 @@
   background: rgba(0, 0, 0, 0.2)
     url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZlcnNpb249IjEuMSIgd2lkdGg9IjIwIiBoZWlnaHQ9IjM0Ij48cGF0aCBkPSJtIDEsMyAyLC0yIDE2LDE2IC0xNiwxNiAtMSwtMSAxNSwtMTUgLTE1LC0xNSB6IiBmaWxsPSIjRkZGIi8+PC9zdmc+')
     no-repeat center;
-}
-
-.ril__downloadBlocker {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-image: url('data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7');
-  background-size: cover;
 }
 
 .ril__caption,
