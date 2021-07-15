@@ -20,6 +20,8 @@ export const KEYS = {
   ESC: 27,
   LEFT_ARROW: 37,
   RIGHT_ARROW: 39,
+  PLUS:187,
+  MINUS:189,
 };
 
 // Actions
