@@ -10,6 +10,7 @@ export interface ILightBoxProps {
     onCloseRequest(): void;
     onMovePrevRequest?(): void;
     onMoveNextRequest?(): void;
+    onImageRotate?():void;
     onImageLoad?(): void;
     onImageLoadError?(): void;
     imageLoadErrorMessage?: React.ReactNode;
@@ -28,6 +29,7 @@ export interface ILightBoxProps {
     reactModalProps?: any;
     imagePadding?: number;
     clickOutsideToClose?: boolean;
+    enableRotate?:boolean;
     enableZoom?: boolean;
     wrapperClassName?: string;
     nextLabel?: string;
