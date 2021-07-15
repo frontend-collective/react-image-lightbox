@@ -603,6 +603,9 @@ class ReactImageLightbox extends Component {
 
       default:
     }
+    if (this.outerEl.current) {
+      this.outerEl.current.focus();
+    }
   }
 
   /**
