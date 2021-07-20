@@ -2,7 +2,7 @@ import { mount } from 'enzyme';
 import React from 'react';
 import Modal from 'react-modal';
 import Lightbox from '../index';
-import { translate, getHighestSafeWindowContext } from '../util';
+import { getHighestSafeWindowContext } from '../util';
 import {
   MAX_ZOOM_LEVEL,
   MIN_ZOOM_LEVEL,
@@ -305,9 +305,6 @@ describe('Error Testing', () => {
 });
 
 describe('Utils', () => {
-  it('translate function return empty string if str param is not passed', () => {
-    expect(translate()).toBe('');
-  });
   it('getHighestSafeWindowContext function if parent is the same origin', () => {
     const self = {
       location: { href: 'http://test.test' },

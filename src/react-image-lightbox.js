@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Modal from 'react-modal';
 import {
-  translate,
   getWindowWidth,
   getWindowHeight,
   getHighestSafeWindowContext,
@@ -1401,9 +1400,7 @@ class ReactImageLightbox extends Component {
             style={imageStyle}
             src={imageSrc}
             key={imageSrc + keyEndings[srcType]}
-            alt={
-              typeof imageTitle === 'string' ? imageTitle : translate('Image')
-            }
+            alt={typeof imageTitle === 'string' ? imageTitle : 'Image'}
             draggable={false}
           />
         );
@@ -1459,7 +1456,7 @@ class ReactImageLightbox extends Component {
           onAfterOpen();
         }}
         style={modalStyle}
-        contentLabel={translate('Lightbox')}
+        contentLabel="Lightbox"
         appElement={
           typeof global.window !== 'undefined'
             ? global.window.document.body
