@@ -1,7 +1,6 @@
 import { mount } from 'enzyme';
 import React from 'react';
-import Modal from 'react-modal';
-import Lightbox from '../index';
+import Lightbox from '..';
 import { getHighestSafeWindowContext } from '../util';
 import {
   MAX_ZOOM_LEVEL,
@@ -26,10 +25,6 @@ const extendedCommonProps = {
 
 describe('Lightbox structure', () => {
   const wrapper = mount(<Lightbox {...commonProps} />);
-
-  it('contains react-modal', () => {
-    expect(wrapper.find(Modal).length).toEqual(1);
-  });
 
   it('does not contain prev button when no prevSrc supplied', () => {
     expect(wrapper.find('.ril-prev-button').length).toEqual(0);
