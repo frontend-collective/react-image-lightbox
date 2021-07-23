@@ -1,6 +1,6 @@
 import { mount } from 'enzyme';
 import React from 'react';
-import Lightbox from '..';
+import Lightbox from '../index.ts';
 import { getHighestSafeWindowContext } from '../util';
 import {
   MAX_ZOOM_LEVEL,
