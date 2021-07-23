@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, CSSProperties } from 'react';
 import PropTypes from 'prop-types';
 import Modal from 'react-modal';
 import {
@@ -14,52 +14,283 @@ import {
   WHEEL_MOVE_X_THRESHOLD,
   WHEEL_MOVE_Y_THRESHOLD,
   ZOOM_BUTTON_INCREMENT_SIZE,
-  ACTION_NONE,
-  ACTION_MOVE,
-  ACTION_SWIPE,
-  ACTION_PINCH,
-  SOURCE_ANY,
-  SOURCE_MOUSE,
-  SOURCE_TOUCH,
-  SOURCE_POINTER,
   MIN_SWIPE_DISTANCE,
+  EventSource,
+  Gesture,
 } from './constant';
 import './style.css';
 
-class ReactImageLightbox extends Component {
-  static isTargetMatchImage(target) {
-    return target && /ril-image-current/.test(target.className);
+type MoveRequestEvent =
+  | React.MouseEvent
+  | React.WheelEvent
+  | React.KeyboardEvent;
+type PointerlikeEvent =
+  | React.TouchEvent
+  | React.PointerEvent
+  | React.MouseEvent;
+
+type LightboxProps = typeof ReactImageLightbox.defaultProps & {
+  //-----------------------------
+  // Image sources
+  //-----------------------------
+
+  // Main display image url
+  mainSrc: string;
+
+  // Previous display image url (displayed to the left)
+  // If left undefined, movePrev actions will not be performed, and the button not displayed
+  prevSrc?: string;
+
+  // Next display image url (displayed to the right)
+  // If left undefined, moveNext actions will not be performed, and the button not displayed
+  nextSrc?: string;
+
+  //-----------------------------
+  // Image thumbnail sources
+  //-----------------------------
+
+  // Thumbnail image url corresponding to props.mainSrc
+  mainSrcThumbnail?: string;
+
+  // Thumbnail image url corresponding to props.prevSrc
+  prevSrcThumbnail?: string;
+
+  // Thumbnail image url corresponding to props.nextSrc
+  nextSrcThumbnail?: string;
+
+  //-----------------------------
+  // Event Handlers
+  //-----------------------------
+
+  // Close window event
+  // Should change the parent state such that the lightbox is not rendered
+  onCloseRequest: (event: React.MouseEvent | React.KeyboardEvent) => void;
+
+  // Move to previous image event
+  // Should change the parent state such that props.prevSrc becomes props.mainSrc,
+  //  props.mainSrc becomes props.nextSrc, etc.
+  onMovePrevRequest?: (event?: MoveRequestEvent) => void;
+
+  // Move to next image event
+  // Should change the parent state such that props.nextSrc becomes props.mainSrc,
+  //  props.mainSrc becomes props.prevSrc, etc.
+  onMoveNextRequest?: (event?: MoveRequestEvent) => void;
+
+  // Called when an image fails to load
+  onImageLoadError?: (
+    imageSrc: string,
+    srcType: string,
+    errorEvent: Event | string
+  ) => void;
+
+  // Called when image successfully loads
+  onImageLoad?: (imageSrc: string, srcType: string, image: object) => void;
+
+  // Open window event
+  onAfterOpen?: () => void;
+
+  //-----------------------------
+  // Download discouragement settings
+  //-----------------------------
+
+  // Enable download discouragement (prevents [right-click -> Save Image As...])
+  discourageDownloads?: boolean;
+
+  //-----------------------------
+  // Animation settings
+  //-----------------------------
+
+  // Disable all animation
+  animationDisabled?: boolean;
+
+  // Disable animation on actions performed with keyboard shortcuts
+  animationOnKeyInput?: boolean;
+
+  // Animation duration (ms)
+  animationDuration?: number;
+
+  //-----------------------------
+  // Keyboard shortcut settings
+  //-----------------------------
+
+  // Required interval of time (ms) between key actions
+  // (prevents excessively fast navigation of images)
+  keyRepeatLimit?: number;
+
+  // Amount of time (ms) restored after each keyup
+  // (makes rapid key presses slightly faster than holding down the key to navigate images)
+  keyRepeatKeyupBonus?: number;
+
+  //-----------------------------
+  // Image info
+  //-----------------------------
+
+  /** Image title (Descriptive element above image) */
+  imageTitle?: React.ReactNode;
+
+  /** Image caption (Descriptive element below image) */
+  imageCaption?: React.ReactNode;
+
+  /**
+   * `crossorigin` attribute to append to `img` elements
+   * {@link https://developer.mozilla.org/en-US/docs/Web/HTML/Element/img#attr-crossorigin}
+   */
+  imageCrossOrigin?: React.ComponentProps<'img'>['crossOrigin'] | null;
+
+  //-----------------------------
+  // Lightbox style
+  //-----------------------------
+
+  /**
+   * Set z-index style, etc., for the parent react-modal
+   * {@link https://github.com/reactjs/react-modal#styles}
+   */
+  reactModalStyle?: Modal.Styles;
+
+  // Padding (px) between the edge of the window and the lightbox
+  imagePadding?: number;
+
+  wrapperClassName?: string;
+
+  //-----------------------------
+  // Other
+  //-----------------------------
+
+  // Array of custom toolbar buttons
+  toolbarButtons?: React.ReactNode[];
+
+  // When true, clicks outside of the image close the lightbox
+  clickOutsideToClose?: boolean;
+
+  // Set to false to disable zoom functionality and hide zoom buttons
+  enableZoom?: boolean;
+
+  /**
+   * Override props set on react-modal
+   * {@link https://github.com/reactjs/react-modal}
+   */
+  reactModalProps?: Partial<Modal.Props>;
+
+  // Aria-labels
+  /** `aria-label` and `title` set on the 'Next' button. Defaults to `'Next image'`.                                                                                | */
+  nextLabel?: string;
+  /** `aria-label` and `title` set on the 'Previous' button. Defaults to `'Previous image'`.                                                                        | */
+  prevLabel?: string;
+  /** `aria-label` and `title` set on the 'Zoom In' button. Defaults to `'Zoom in'`.                                                                                | */
+  zoomInLabel?: string;
+  /** `aria-label` and `title` set on the 'Zoom Out' button. Defaults to `'Zoom out'`.                                                                              | */
+  zoomOutLabel?: string;
+  /** `aria-label` and `title` set on the 'Close Lightbox' button. Defaults to `'Close lightbox'`.                                                                  | */
+  closeLabel?: string;
+
+  imageLoadErrorMessage?: React.ReactNode;
+
+  /** Custom Loading indicator shown while loading images */
+  loader?: React.ReactNode;
+};
+
+interface LightboxState {
+  //-----------------------------
+  // Animation
+  //-----------------------------
+
+  // Lightbox is closing
+  // When Lightbox is mounted, if animation is enabled it will open with the reverse of the closing animation
+  isClosing: boolean;
+
+  // Component parts should animate (e.g., when images are moving, or image is being zoomed)
+  shouldAnimate: boolean;
+
+  //-----------------------------
+  // Zoom settings
+  //-----------------------------
+  // Zoom level of image
+  zoomLevel: number;
+
+  //-----------------------------
+  // Image position settings
+  //-----------------------------
+  // Horizontal offset from center
+  offsetX: number;
+
+  // Vertical offset from center
+  offsetY: number;
+
+  // image load error for srcType
+  loadErrorStatus: { [srcType in SrcTypePlusThumbnails]?: Error };
+}
+
+interface Pointer {
+  id: number | string;
+  source: EventSource;
+  x: number;
+  y: number;
+}
+type PinchTouch = Pick<Pointer, 'id' | 'x' | 'y'>;
+
+interface ImageCacheEntry {
+  loaded: boolean;
+  width: number;
+  height: number;
+}
+
+type SrcType = 'mainSrc' | 'prevSrc' | 'nextSrc';
+type SrcTypePlusThumbnails =
+  | SrcType
+  | 'mainSrcThumbnail'
+  | 'prevSrcThumbnail'
+  | 'nextSrcThumbnail';
+
+class ReactImageLightbox extends Component<LightboxProps, LightboxState> {
+  static isTargetMatchImage(target: unknown) {
+    return (
+      !!target &&
+      target instanceof HTMLElement &&
+      /ril-image-current/.test(target.className)
+    );
   }
 
-  static parseMouseEvent(mouseEvent) {
+  static parseMouseEvent(mouseEvent: React.MouseEvent): Pointer {
     return {
       id: 'mouse',
-      source: SOURCE_MOUSE,
-      x: parseInt(mouseEvent.clientX, 10),
-      y: parseInt(mouseEvent.clientY, 10),
+      source: EventSource.Mouse,
+      x: Math.floor(mouseEvent.clientX),
+      y: Math.floor(mouseEvent.clientY),
     };
   }
 
-  static parseTouchPointer(touchPointer) {
+  static parseTouchPointer(touchPointer: React.Touch): Pointer {
     return {
       id: touchPointer.identifier,
-      source: SOURCE_TOUCH,
-      x: parseInt(touchPointer.clientX, 10),
-      y: parseInt(touchPointer.clientY, 10),
+      source: EventSource.Touch,
+      x: Math.floor(touchPointer.clientX),
+      y: Math.floor(touchPointer.clientY),
     };
   }
 
-  static parsePointerEvent(pointerEvent) {
+  static parsePointerEvent(pointerEvent: React.PointerEvent): Pointer {
     return {
       id: pointerEvent.pointerId,
-      source: SOURCE_POINTER,
-      x: parseInt(pointerEvent.clientX, 10),
-      y: parseInt(pointerEvent.clientY, 10),
+      source: EventSource.Pointer,
+      x: Math.floor(pointerEvent.clientX),
+      y: Math.floor(pointerEvent.clientY),
     };
   }
 
   // Request to transition to the previous image
-  static getTransform({ x = 0, y = 0, zoom = 1, width, targetWidth }) {
+  static getTransform({
+    x = 0,
+    y = 0,
+    zoom = 1,
+    width = 1,
+    targetWidth = 1,
+  }: {
+    x?: number;
+    y?: number;
+    zoom?: number;
+    width?: number;
+    targetWidth?: number;
+  }) {
     let nextX = x;
     const windowWidth = getWindowWidth();
     if (width > windowWidth) {
@@ -72,45 +303,274 @@ class ReactImageLightbox extends Component {
     };
   }
 
-  constructor(props) {
+  static defaultProps = {
+    imageTitle: null,
+    imageCaption: null,
+    reactModalProps: {},
+    animationDisabled: false,
+    animationDuration: 300,
+    animationOnKeyInput: false,
+    clickOutsideToClose: true,
+    closeLabel: 'Close lightbox',
+    discourageDownloads: false,
+    enableZoom: true,
+    imagePadding: 10,
+    keyRepeatKeyupBonus: 40,
+    keyRepeatLimit: 180,
+    nextLabel: 'Next image',
+    onAfterOpen: () => {},
+    onImageLoadError: () => {},
+    onImageLoad: () => {},
+    onMoveNextRequest: () => {},
+    onMovePrevRequest: () => {},
+    prevLabel: 'Previous image',
+    reactModalStyle: {},
+    wrapperClassName: '',
+    zoomInLabel: 'Zoom in',
+    zoomOutLabel: 'Zoom out',
+    imageLoadErrorMessage: 'This image failed to load',
+    loader: undefined,
+  };
+
+  static propTypes = {
+    //-----------------------------
+    // Image sources
+    //-----------------------------
+
+    // Main display image url
+    mainSrc: PropTypes.string.isRequired, // eslint-disable-line react/no-unused-prop-types
+
+    // Previous display image url (displayed to the left)
+    // If left undefined, movePrev actions will not be performed, and the button not displayed
+    prevSrc: PropTypes.string,
+
+    // Next display image url (displayed to the right)
+    // If left undefined, moveNext actions will not be performed, and the button not displayed
+    nextSrc: PropTypes.string,
+
+    //-----------------------------
+    // Image thumbnail sources
+    //-----------------------------
+
+    // Thumbnail image url corresponding to props.mainSrc
+    mainSrcThumbnail: PropTypes.string, // eslint-disable-line react/no-unused-prop-types
+
+    // Thumbnail image url corresponding to props.prevSrc
+    prevSrcThumbnail: PropTypes.string, // eslint-disable-line react/no-unused-prop-types
+
+    // Thumbnail image url corresponding to props.nextSrc
+    nextSrcThumbnail: PropTypes.string, // eslint-disable-line react/no-unused-prop-types
+
+    //-----------------------------
+    // Event Handlers
+    //-----------------------------
+
+    // Close window event
+    // Should change the parent state such that the lightbox is not rendered
+    onCloseRequest: PropTypes.func.isRequired,
+
+    // Move to previous image event
+    // Should change the parent state such that props.prevSrc becomes props.mainSrc,
+    //  props.mainSrc becomes props.nextSrc, etc.
+    onMovePrevRequest: PropTypes.func,
+
+    // Move to next image event
+    // Should change the parent state such that props.nextSrc becomes props.mainSrc,
+    //  props.mainSrc becomes props.prevSrc, etc.
+    onMoveNextRequest: PropTypes.func,
+
+    // Called when an image fails to load
+    // (imageSrc: string, srcType: string, errorEvent: object): void
+    onImageLoadError: PropTypes.func,
+
+    // Called when image successfully loads
+    onImageLoad: PropTypes.func,
+
+    // Open window event
+    onAfterOpen: PropTypes.func,
+
+    //-----------------------------
+    // Download discouragement settings
+    //-----------------------------
+
+    // Enable download discouragement (prevents [right-click -> Save Image As...])
+    discourageDownloads: PropTypes.bool,
+
+    //-----------------------------
+    // Animation settings
+    //-----------------------------
+
+    // Disable all animation
+    animationDisabled: PropTypes.bool,
+
+    // Disable animation on actions performed with keyboard shortcuts
+    animationOnKeyInput: PropTypes.bool,
+
+    // Animation duration (ms)
+    animationDuration: PropTypes.number,
+
+    //-----------------------------
+    // Keyboard shortcut settings
+    //-----------------------------
+
+    // Required interval of time (ms) between key actions
+    // (prevents excessively fast navigation of images)
+    keyRepeatLimit: PropTypes.number,
+
+    // Amount of time (ms) restored after each keyup
+    // (makes rapid key presses slightly faster than holding down the key to navigate images)
+    keyRepeatKeyupBonus: PropTypes.number,
+
+    //-----------------------------
+    // Image info
+    //-----------------------------
+
+    // Image title
+    imageTitle: PropTypes.node,
+
+    // Image caption
+    imageCaption: PropTypes.node,
+
+    // Optional crossOrigin attribute
+    imageCrossOrigin: PropTypes.string,
+
+    //-----------------------------
+    // Lightbox style
+    //-----------------------------
+
+    // Set z-index style, etc., for the parent react-modal (format: https://github.com/reactjs/react-modal#styles )
+    reactModalStyle: PropTypes.shape({}),
+
+    // Padding (px) between the edge of the window and the lightbox
+    imagePadding: PropTypes.number,
+
+    wrapperClassName: PropTypes.string,
+
+    //-----------------------------
+    // Other
+    //-----------------------------
+
+    // Array of custom toolbar buttons
+    toolbarButtons: PropTypes.arrayOf(PropTypes.node),
+
+    // When true, clicks outside of the image close the lightbox
+    clickOutsideToClose: PropTypes.bool,
+
+    // Set to false to disable zoom functionality and hide zoom buttons
+    enableZoom: PropTypes.bool,
+
+    // Override props set on react-modal (https://github.com/reactjs/react-modal)
+    reactModalProps: PropTypes.shape({}),
+
+    // Aria-labels
+    nextLabel: PropTypes.string,
+    prevLabel: PropTypes.string,
+    zoomInLabel: PropTypes.string,
+    zoomOutLabel: PropTypes.string,
+    closeLabel: PropTypes.string,
+
+    imageLoadErrorMessage: PropTypes.node,
+
+    // custom loader
+    loader: PropTypes.node,
+  };
+
+  pointerList: Pointer[] = [];
+  timeouts: NodeJS.Timeout[] = [];
+  outerEl: React.RefObject<HTMLDivElement> = React.createRef();
+  zoomInBtn: React.RefObject<HTMLButtonElement> = React.createRef();
+  zoomOutBtn: React.RefObject<HTMLButtonElement> = React.createRef();
+  caption: React.RefObject<HTMLDivElement> = React.createRef();
+
+  // Current action
+  currentAction = Gesture.None;
+
+  // Events source
+  eventsSource = EventSource.Any;
+
+  // Prevent inner close
+  preventInnerClose = false;
+  preventInnerCloseTimeout: NodeJS.Timeout | null = null;
+
+  // Used to disable animation when changing props.mainSrc|nextSrc|prevSrc
+  keyPressed = false;
+
+  // Used to store load state / dimensions of images
+  imageCache: { [imageSrc: string]: ImageCacheEntry } = {};
+
+  // Time the last keydown event was called (used in keyboard action rate limiting)
+  lastKeyDownTime = 0;
+
+  // Used for debouncing window resize event
+  resizeTimeout: NodeJS.Timeout | null = null;
+
+  // Used to determine when actions are triggered by the scroll wheel
+  wheelActionTimeout: NodeJS.Timeout | null = null;
+  resetScrollTimeout: NodeJS.Timeout | null = null;
+  scrollX = 0;
+  scrollY = 0;
+
+  // Used in panning zoomed images
+  moveStartX = 0;
+  moveStartY = 0;
+  moveStartOffsetX = 0;
+  moveStartOffsetY = 0;
+
+  // Used to swipe
+  swipeStartX = 0;
+  swipeStartY = 0;
+  swipeEndX = 0;
+  swipeEndY = 0;
+
+  // Used to pinch¥
+  pinchTouchList: PinchTouch[] | null = null;
+  pinchDistance = 0;
+
+  // Used to differentiate between images with identical src
+  keyCounter = 0;
+
+  // Used to detect a move when all src's remain unchanged (four or more of the same image in a row)
+  moveRequested = false;
+
+  didUnmount = false;
+
+  windowContext: Window = window;
+
+  listeners: { [name: string]: React.EventHandler<any> } = {};
+
+  state = {
+    //-----------------------------
+    // Animation
+    //-----------------------------
+
+    // Lightbox is closing
+    // When Lightbox is mounted, if animation is enabled it will open with the reverse of the closing animation
+    isClosing: !this.props.animationDisabled,
+
+    // Component parts should animate (e.g., when images are moving, or image is being zoomed)
+    shouldAnimate: false,
+
+    //-----------------------------
+    // Zoom settings
+    //-----------------------------
+    // Zoom level of image
+    zoomLevel: MIN_ZOOM_LEVEL,
+
+    //-----------------------------
+    // Image position settings
+    //-----------------------------
+    // Horizontal offset from center
+    offsetX: 0,
+
+    // Vertical offset from center
+    offsetY: 0,
+
+    // image load error for srcType
+    loadErrorStatus: {} as { [k in SrcTypePlusThumbnails]?: Error },
+  };
+
+  constructor(props: LightboxProps) {
     super(props);
-
-    this.state = {
-      //-----------------------------
-      // Animation
-      //-----------------------------
-
-      // Lightbox is closing
-      // When Lightbox is mounted, if animation is enabled it will open with the reverse of the closing animation
-      isClosing: !props.animationDisabled,
-
-      // Component parts should animate (e.g., when images are moving, or image is being zoomed)
-      shouldAnimate: false,
-
-      //-----------------------------
-      // Zoom settings
-      //-----------------------------
-      // Zoom level of image
-      zoomLevel: MIN_ZOOM_LEVEL,
-
-      //-----------------------------
-      // Image position settings
-      //-----------------------------
-      // Horizontal offset from center
-      offsetX: 0,
-
-      // Vertical offset from center
-      offsetY: 0,
-
-      // image load error for srcType
-      loadErrorStatus: {},
-    };
-
-    // Refs
-    this.outerEl = React.createRef();
-    this.zoomInBtn = React.createRef();
-    this.zoomOutBtn = React.createRef();
-    this.caption = React.createRef();
 
     this.closeIfClickInner = this.closeIfClickInner.bind(this);
     this.handleImageDoubleClick = this.handleImageDoubleClick.bind(this);
@@ -131,62 +591,6 @@ class ReactImageLightbox extends Component {
     this.requestClose = this.requestClose.bind(this);
     this.requestMoveNext = this.requestMoveNext.bind(this);
     this.requestMovePrev = this.requestMovePrev.bind(this);
-
-    // Timeouts - always clear it before umount
-    this.timeouts = [];
-
-    // Current action
-    this.currentAction = ACTION_NONE;
-
-    // Events source
-    this.eventsSource = SOURCE_ANY;
-
-    // Empty pointers list
-    this.pointerList = [];
-
-    // Prevent inner close
-    this.preventInnerClose = false;
-    this.preventInnerCloseTimeout = null;
-
-    // Used to disable animation when changing props.mainSrc|nextSrc|prevSrc
-    this.keyPressed = false;
-
-    // Used to store load state / dimensions of images
-    this.imageCache = {};
-
-    // Time the last keydown event was called (used in keyboard action rate limiting)
-    this.lastKeyDownTime = 0;
-
-    // Used for debouncing window resize event
-    this.resizeTimeout = null;
-
-    // Used to determine when actions are triggered by the scroll wheel
-    this.wheelActionTimeout = null;
-    this.resetScrollTimeout = null;
-    this.scrollX = 0;
-    this.scrollY = 0;
-
-    // Used in panning zoomed images
-    this.moveStartX = 0;
-    this.moveStartY = 0;
-    this.moveStartOffsetX = 0;
-    this.moveStartOffsetY = 0;
-
-    // Used to swipe
-    this.swipeStartX = 0;
-    this.swipeStartY = 0;
-    this.swipeEndX = 0;
-    this.swipeEndY = 0;
-
-    // Used to pinch
-    this.pinchTouchList = null;
-    this.pinchDistance = 0;
-
-    // Used to differentiate between images with identical src
-    this.keyCounter = 0;
-
-    // Used to detect a move when all src's remain unchanged (four or more of the same image in a row)
-    this.moveRequested = false;
   }
 
   componentDidMount() {
@@ -215,7 +619,7 @@ class ReactImageLightbox extends Component {
     this.loadAllImages();
   }
 
-  shouldComponentUpdate(nextProps) {
+  shouldComponentUpdate(nextProps: LightboxProps) {
     this.getSrcTypes().forEach(srcType => {
       if (this.props[srcType.name] !== nextProps[srcType.name]) {
         this.moveRequested = false;
@@ -226,16 +630,16 @@ class ReactImageLightbox extends Component {
     return !this.moveRequested;
   }
 
-  componentDidUpdate(prevProps) {
+  componentDidUpdate(prevProps: LightboxProps) {
     let sourcesChanged = false;
-    const prevSrcDict = {};
-    const nextSrcDict = {};
+    const prevSrcDict: { [src: string]: true } = {};
+    const nextSrcDict: { [src: string]: true } = {};
     this.getSrcTypes().forEach(srcType => {
       if (prevProps[srcType.name] !== this.props[srcType.name]) {
         sourcesChanged = true;
 
-        prevSrcDict[prevProps[srcType.name]] = true;
-        nextSrcDict[this.props[srcType.name]] = true;
+        prevSrcDict[prevProps[srcType.name]!] = true;
+        nextSrcDict[this.props[srcType.name]!] = true;
       }
     });
 
@@ -262,7 +666,7 @@ class ReactImageLightbox extends Component {
     this.timeouts.forEach(tid => clearTimeout(tid));
   }
 
-  setTimeout(func, time) {
+  setTimeout(func: Function, time: number) {
     const id = setTimeout(() => {
       this.timeouts = this.timeouts.filter(tid => tid !== id);
       func();
@@ -283,19 +687,23 @@ class ReactImageLightbox extends Component {
   }
 
   // Get info for the best suited image to display with the given srcType
-  getBestImageForType(srcType) {
+  getBestImageForType(srcType: SrcType) {
     let imageSrc = this.props[srcType];
-    let fitSizes = {};
+    if (!imageSrc) {
+      return null;
+    }
 
+    let fitSizes = { width: 1, height: 1 };
+    const thumbnailSrc = this.props[`${srcType}Thumbnail` as const];
     if (this.isImageLoaded(imageSrc)) {
       // Use full-size image if available
       fitSizes = this.getFitSizes(
         this.imageCache[imageSrc].width,
         this.imageCache[imageSrc].height
       );
-    } else if (this.isImageLoaded(this.props[`${srcType}Thumbnail`])) {
+    } else if (thumbnailSrc && this.isImageLoaded(thumbnailSrc)) {
       // Fall back to using thumbnail if the image has not been loaded
-      imageSrc = this.props[`${srcType}Thumbnail`];
+      imageSrc = thumbnailSrc;
       fitSizes = this.getFitSizes(
         this.imageCache[imageSrc].width,
         this.imageCache[imageSrc].height,
@@ -315,7 +723,7 @@ class ReactImageLightbox extends Component {
   }
 
   // Get sizing for when an image is larger than the window
-  getFitSizes(width, height, stretch) {
+  getFitSizes(width: number, height: number, stretch = false) {
     const boxSize = this.getLightboxRect();
     let maxHeight = boxSize.height - this.props.imagePadding * 2;
     let maxWidth = boxSize.width - this.props.imagePadding * 2;
@@ -402,7 +810,7 @@ class ReactImageLightbox extends Component {
         name: 'prevSrcThumbnail',
         keyEnding: `t${this.keyCounter - 1}`,
       },
-    ];
+    ] as const;
   }
 
   /**
@@ -430,13 +838,13 @@ class ReactImageLightbox extends Component {
     };
   }
 
-  clearTimeout(id) {
+  clearTimeout(id: NodeJS.Timeout) {
     this.timeouts = this.timeouts.filter(tid => tid !== id);
     clearTimeout(id);
   }
 
   // Change zoom level
-  changeZoom(zoomLevel, clientX, clientY) {
+  changeZoom(zoomLevel: number, clientX?: number, clientY?: number) {
     // Ignore if zoom disabled
     if (!this.props.enableZoom) {
       return;
@@ -510,7 +918,7 @@ class ReactImageLightbox extends Component {
     let nextOffsetY = nextImageOffsetY - nextImageRealOffsetY;
 
     // When zooming out, limit the offset so things don't get left askew
-    if (this.currentAction !== ACTION_PINCH) {
+    if (this.currentAction !== Gesture.Pinch) {
       const maxOffsets = this.getMaxOffsets();
       if (this.state.zoomLevel > nextZoomLevel) {
         nextOffsetX = Math.max(
@@ -531,9 +939,10 @@ class ReactImageLightbox extends Component {
     });
   }
 
-  closeIfClickInner(event) {
+  closeIfClickInner(event: React.MouseEvent<HTMLDivElement>) {
     if (
       !this.preventInnerClose &&
+      event.target instanceof HTMLDivElement &&
       event.target.className.search(/\bril-inner\b/) > -1
     ) {
       this.requestClose(event);
@@ -543,7 +952,7 @@ class ReactImageLightbox extends Component {
   /**
    * Handle user keyboard actions
    */
-  handleKeyInput(event) {
+  handleKeyInput(event: React.KeyboardEvent) {
     event.stopPropagation();
 
     // Ignore key input during animations
@@ -607,7 +1016,7 @@ class ReactImageLightbox extends Component {
   /**
    * Handle a mouse wheel event over the lightbox container
    */
-  handleOuterMousewheel(event) {
+  handleOuterMousewheel(event: React.WheelEvent) {
     // Prevent scrolling of the background
     event.stopPropagation();
 
@@ -615,7 +1024,9 @@ class ReactImageLightbox extends Component {
     let actionDelay = 0;
     const imageMoveDelay = 500;
 
-    this.clearTimeout(this.resetScrollTimeout);
+    if (this.resetScrollTimeout) {
+      this.clearTimeout(this.resetScrollTimeout);
+    }
     this.resetScrollTimeout = this.setTimeout(() => {
       this.scrollX = 0;
       this.scrollY = 0;
@@ -657,7 +1068,7 @@ class ReactImageLightbox extends Component {
     }
   }
 
-  handleImageMouseWheel(event) {
+  handleImageMouseWheel(event: React.WheelEvent) {
     const yThreshold = WHEEL_MOVE_Y_THRESHOLD;
 
     if (Math.abs(event.deltaY) >= Math.abs(event.deltaX)) {
@@ -681,7 +1092,7 @@ class ReactImageLightbox extends Component {
   /**
    * Handle a double click on the current image
    */
-  handleImageDoubleClick(event) {
+  handleImageDoubleClick(event: React.MouseEvent) {
     if (this.state.zoomLevel > MIN_ZOOM_LEVEL) {
       // A double click when zoomed in zooms all the way out
       this.changeZoom(MIN_ZOOM_LEVEL, event.clientX, event.clientY);
@@ -695,24 +1106,24 @@ class ReactImageLightbox extends Component {
     }
   }
 
-  shouldHandleEvent(source) {
+  shouldHandleEvent(source: EventSource) {
     if (this.eventsSource === source) {
       return true;
     }
-    if (this.eventsSource === SOURCE_ANY) {
+    if (this.eventsSource === EventSource.Any) {
       this.eventsSource = source;
       return true;
     }
     switch (source) {
-      case SOURCE_MOUSE:
+      case EventSource.Mouse:
         return false;
-      case SOURCE_TOUCH:
-        this.eventsSource = SOURCE_TOUCH;
+      case EventSource.Touch:
+        this.eventsSource = EventSource.Touch;
         this.filterPointersBySource();
         return true;
-      case SOURCE_POINTER:
-        if (this.eventsSource === SOURCE_MOUSE) {
-          this.eventsSource = SOURCE_POINTER;
+      case EventSource.Pointer:
+        if (this.eventsSource === EventSource.Mouse) {
+          this.eventsSource = EventSource.Pointer;
           this.filterPointersBySource();
           return true;
         }
@@ -722,11 +1133,11 @@ class ReactImageLightbox extends Component {
     }
   }
 
-  addPointer(pointer) {
+  addPointer(pointer: Pointer) {
     this.pointerList.push(pointer);
   }
 
-  removePointer(pointer) {
+  removePointer(pointer: Pointer) {
     this.pointerList = this.pointerList.filter(({ id }) => id !== pointer.id);
   }
 
@@ -736,9 +1147,9 @@ class ReactImageLightbox extends Component {
     );
   }
 
-  handleMouseDown(event) {
+  handleMouseDown(event: React.MouseEvent<HTMLDivElement>) {
     if (
-      this.shouldHandleEvent(SOURCE_MOUSE) &&
+      this.shouldHandleEvent(EventSource.Mouse) &&
       ReactImageLightbox.isTargetMatchImage(event.target)
     ) {
       this.addPointer(ReactImageLightbox.parseMouseEvent(event));
@@ -746,21 +1157,21 @@ class ReactImageLightbox extends Component {
     }
   }
 
-  handleMouseMove(event) {
-    if (this.shouldHandleEvent(SOURCE_MOUSE)) {
+  handleMouseMove(event: React.MouseEvent) {
+    if (this.shouldHandleEvent(EventSource.Mouse)) {
       this.multiPointerMove(event, [ReactImageLightbox.parseMouseEvent(event)]);
     }
   }
 
-  handleMouseUp(event) {
-    if (this.shouldHandleEvent(SOURCE_MOUSE)) {
+  handleMouseUp(event: React.MouseEvent) {
+    if (this.shouldHandleEvent(EventSource.Mouse)) {
       this.removePointer(ReactImageLightbox.parseMouseEvent(event));
       this.multiPointerEnd(event);
     }
   }
 
-  handlePointerEvent(event) {
-    if (this.shouldHandleEvent(SOURCE_POINTER)) {
+  handlePointerEvent(event: React.PointerEvent<any>) {
+    if (this.shouldHandleEvent(EventSource.Pointer)) {
       switch (event.type) {
         case 'pointerdown':
           if (ReactImageLightbox.isTargetMatchImage(event.target)) {
@@ -784,9 +1195,9 @@ class ReactImageLightbox extends Component {
     }
   }
 
-  handleTouchStart(event) {
+  handleTouchStart(event: React.TouchEvent) {
     if (
-      this.shouldHandleEvent(SOURCE_TOUCH) &&
+      this.shouldHandleEvent(EventSource.Touch) &&
       ReactImageLightbox.isTargetMatchImage(event.target)
     ) {
       [].forEach.call(event.changedTouches, eventTouch =>
@@ -796,19 +1207,21 @@ class ReactImageLightbox extends Component {
     }
   }
 
-  handleTouchMove(event) {
-    if (this.shouldHandleEvent(SOURCE_TOUCH)) {
-      this.multiPointerMove(
-        event,
-        [].map.call(event.changedTouches, eventTouch =>
-          ReactImageLightbox.parseTouchPointer(eventTouch)
-        )
-      );
+  handleTouchMove(event: React.TouchEvent) {
+    if (this.shouldHandleEvent(EventSource.Touch)) {
+      const pointers = [];
+      for (let index = 0; index < event.changedTouches.length; index++) {
+        pointers.push(
+          ReactImageLightbox.parseTouchPointer(event.changedTouches[index])
+        );
+      }
+
+      this.multiPointerMove(event, pointers);
     }
   }
 
-  handleTouchEnd(event) {
-    if (this.shouldHandleEvent(SOURCE_TOUCH)) {
+  handleTouchEnd(event: React.TouchEvent) {
+    if (this.shouldHandleEvent(EventSource.Touch)) {
       [].map.call(event.changedTouches, touch =>
         this.removePointer(ReactImageLightbox.parseTouchPointer(touch))
       );
@@ -816,7 +1229,7 @@ class ReactImageLightbox extends Component {
     }
   }
 
-  decideMoveOrSwipe(pointer) {
+  decideMoveOrSwipe(pointer: Pointer) {
     if (this.state.zoomLevel <= MIN_ZOOM_LEVEL) {
       this.handleSwipeStart(pointer);
     } else {
@@ -824,7 +1237,7 @@ class ReactImageLightbox extends Component {
     }
   }
 
-  multiPointerStart(event) {
+  multiPointerStart(event: PointerlikeEvent) {
     this.handleEnd(null);
     switch (this.pointerList.length) {
       case 1: {
@@ -842,19 +1255,19 @@ class ReactImageLightbox extends Component {
     }
   }
 
-  multiPointerMove(event, pointerList) {
+  multiPointerMove(event: PointerlikeEvent, pointerList: Pointer[]) {
     switch (this.currentAction) {
-      case ACTION_MOVE: {
+      case Gesture.Move: {
         event.preventDefault();
         this.handleMove(pointerList[0]);
         break;
       }
-      case ACTION_SWIPE: {
+      case Gesture.Swipe: {
         event.preventDefault();
         this.handleSwipe(pointerList[0]);
         break;
       }
-      case ACTION_PINCH: {
+      case Gesture.Pinch: {
         event.preventDefault();
         this.handlePinch(pointerList);
         break;
@@ -864,14 +1277,14 @@ class ReactImageLightbox extends Component {
     }
   }
 
-  multiPointerEnd(event) {
-    if (this.currentAction !== ACTION_NONE) {
+  multiPointerEnd(event: PointerlikeEvent) {
+    if (this.currentAction !== Gesture.None) {
       this.setPreventInnerClose();
       this.handleEnd(event);
     }
     switch (this.pointerList.length) {
       case 0: {
-        this.eventsSource = SOURCE_ANY;
+        this.eventsSource = EventSource.Any;
         break;
       }
       case 1: {
@@ -889,16 +1302,16 @@ class ReactImageLightbox extends Component {
     }
   }
 
-  handleEnd(event) {
+  handleEnd(event: PointerlikeEvent | null) {
     switch (this.currentAction) {
-      case ACTION_MOVE:
-        this.handleMoveEnd(event);
+      case Gesture.Move:
+        this.handleMoveEnd();
         break;
-      case ACTION_SWIPE:
+      case Gesture.Swipe:
         this.handleSwipeEnd(event);
         break;
-      case ACTION_PINCH:
-        this.handlePinchEnd(event);
+      case Gesture.Pinch:
+        this.handlePinchEnd();
         break;
       default:
         break;
@@ -909,11 +1322,11 @@ class ReactImageLightbox extends Component {
   // This happens:
   // - On a mouseDown event
   // - On a touchstart event
-  handleMoveStart({ x: clientX, y: clientY }) {
+  handleMoveStart({ x: clientX, y: clientY }: Pointer) {
     if (!this.props.enableZoom) {
       return;
     }
-    this.currentAction = ACTION_MOVE;
+    this.currentAction = Gesture.Move;
     this.moveStartX = clientX;
     this.moveStartY = clientY;
     this.moveStartOffsetX = this.state.offsetX;
@@ -924,7 +1337,7 @@ class ReactImageLightbox extends Component {
   // This happens:
   // - After a mouseDown and before a mouseUp event
   // - After a touchstart and before a touchend event
-  handleMove({ x: clientX, y: clientY }) {
+  handleMove({ x: clientX, y: clientY }: Pointer) {
     const newOffsetX = this.moveStartX - clientX + this.moveStartOffsetX;
     const newOffsetY = this.moveStartY - clientY + this.moveStartOffsetY;
     if (
@@ -939,7 +1352,7 @@ class ReactImageLightbox extends Component {
   }
 
   handleMoveEnd() {
-    this.currentAction = ACTION_NONE;
+    this.currentAction = Gesture.None;
     this.moveStartX = 0;
     this.moveStartY = 0;
     this.moveStartOffsetX = 0;
@@ -969,25 +1382,25 @@ class ReactImageLightbox extends Component {
     }
   }
 
-  handleSwipeStart({ x: clientX, y: clientY }) {
-    this.currentAction = ACTION_SWIPE;
+  handleSwipeStart({ x: clientX, y: clientY }: Pointer) {
+    this.currentAction = Gesture.Swipe;
     this.swipeStartX = clientX;
     this.swipeStartY = clientY;
     this.swipeEndX = clientX;
     this.swipeEndY = clientY;
   }
 
-  handleSwipe({ x: clientX, y: clientY }) {
+  handleSwipe({ x: clientX, y: clientY }: Pointer) {
     this.swipeEndX = clientX;
     this.swipeEndY = clientY;
   }
 
-  handleSwipeEnd(event) {
+  handleSwipeEnd(event: PointerlikeEvent | null) {
     const xDiff = this.swipeEndX - this.swipeStartX;
     const xDiffAbs = Math.abs(xDiff);
     const yDiffAbs = Math.abs(this.swipeEndY - this.swipeStartY);
 
-    this.currentAction = ACTION_NONE;
+    this.currentAction = Gesture.None;
     this.swipeStartX = 0;
     this.swipeStartY = 0;
     this.swipeEndX = 0;
@@ -1013,28 +1426,28 @@ class ReactImageLightbox extends Component {
     }
   }
 
-  calculatePinchDistance([a, b] = this.pinchTouchList) {
+  calculatePinchDistance([a, b]: PinchTouch[]) {
     return Math.sqrt((a.x - b.x) ** 2 + (a.y - b.y) ** 2);
   }
 
-  calculatePinchCenter([a, b] = this.pinchTouchList) {
+  calculatePinchCenter([a, b]: PinchTouch[]) {
     return {
       x: a.x - (a.x - b.x) / 2,
       y: a.y - (a.y - b.y) / 2,
     };
   }
 
-  handlePinchStart(pointerList) {
+  handlePinchStart(pointerList: Pointer[]) {
     if (!this.props.enableZoom) {
       return;
     }
-    this.currentAction = ACTION_PINCH;
+    this.currentAction = Gesture.Pinch;
     this.pinchTouchList = pointerList.map(({ id, x, y }) => ({ id, x, y }));
-    this.pinchDistance = this.calculatePinchDistance();
+    this.pinchDistance = this.calculatePinchDistance(this.pinchTouchList);
   }
 
-  handlePinch(pointerList) {
-    this.pinchTouchList = this.pinchTouchList.map(oldPointer => {
+  handlePinch(pointerList: Pointer[]) {
+    this.pinchTouchList = (this.pinchTouchList || []).map(oldPointer => {
       for (let i = 0; i < pointerList.length; i += 1) {
         if (pointerList[i].id === oldPointer.id) {
           return pointerList[i];
@@ -1044,7 +1457,7 @@ class ReactImageLightbox extends Component {
       return oldPointer;
     });
 
-    const newDistance = this.calculatePinchDistance();
+    const newDistance = this.calculatePinchDistance(this.pinchTouchList);
 
     const zoomLevel = this.state.zoomLevel + newDistance - this.pinchDistance;
 
@@ -1056,14 +1469,16 @@ class ReactImageLightbox extends Component {
   }
 
   handlePinchEnd() {
-    this.currentAction = ACTION_NONE;
+    this.currentAction = Gesture.None;
     this.pinchTouchList = null;
     this.pinchDistance = 0;
   }
 
   // Handle the window resize event
   handleWindowResize() {
-    this.clearTimeout(this.resizeTimeout);
+    if (this.resizeTimeout !== null) {
+      this.clearTimeout(this.resizeTimeout);
+    }
     this.resizeTimeout = this.setTimeout(this.forceUpdate.bind(this), 100);
   }
 
@@ -1071,7 +1486,7 @@ class ReactImageLightbox extends Component {
     const nextZoomLevel = this.state.zoomLevel + ZOOM_BUTTON_INCREMENT_SIZE;
     this.changeZoom(nextZoomLevel);
     if (nextZoomLevel === MAX_ZOOM_LEVEL) {
-      this.zoomOutBtn.current.focus();
+      this.zoomOutBtn.current?.focus();
     }
   }
 
@@ -1079,11 +1494,11 @@ class ReactImageLightbox extends Component {
     const nextZoomLevel = this.state.zoomLevel - ZOOM_BUTTON_INCREMENT_SIZE;
     this.changeZoom(nextZoomLevel);
     if (nextZoomLevel === MIN_ZOOM_LEVEL) {
-      this.zoomInBtn.current.focus();
+      this.zoomInBtn.current?.focus();
     }
   }
 
-  handleCaptionMousewheel(event) {
+  handleCaptionMousewheel(event: React.WheelEvent) {
     event.stopPropagation();
 
     if (!this.caption.current) {
@@ -1106,16 +1521,20 @@ class ReactImageLightbox extends Component {
   }
 
   // Check if image is loaded
-  isImageLoaded(imageSrc) {
+  isImageLoaded(imageSrc: string | undefined) {
     return (
-      imageSrc &&
+      !!imageSrc &&
       imageSrc in this.imageCache &&
       this.imageCache[imageSrc].loaded
     );
   }
 
   // Load image from src and call callback with image width and height on load
-  loadImage(srcType, imageSrc, done) {
+  loadImage(
+    srcType: SrcTypePlusThumbnails,
+    imageSrc: string,
+    done: (error?: string | Event) => void
+  ) {
     // Return the image info if it is already cached
     if (this.isImageLoaded(imageSrc)) {
       this.setTimeout(() => {
@@ -1158,7 +1577,10 @@ class ReactImageLightbox extends Component {
 
   // Load all images and their thumbnails
   loadAllImages(props = this.props) {
-    const generateLoadDoneCallback = (srcType, imageSrc) => err => {
+    const generateLoadDoneCallback = (
+      srcType: SrcTypePlusThumbnails,
+      imageSrc: string
+    ) => (err?: string | Event) => {
       // Give up showing image on error
       if (err) {
         return;
@@ -1177,27 +1599,28 @@ class ReactImageLightbox extends Component {
     // Load the images
     this.getSrcTypes().forEach(srcType => {
       const type = srcType.name;
+      const srcToLoad = props[type];
 
       // there is no error when we try to load it initially
-      if (props[type] && this.state.loadErrorStatus[type]) {
+      if (srcToLoad && this.state.loadErrorStatus[type]) {
         this.setState(prevState => ({
           loadErrorStatus: { ...prevState.loadErrorStatus, [type]: false },
         }));
       }
 
       // Load unloaded images
-      if (props[type] && !this.isImageLoaded(props[type])) {
+      if (srcToLoad && !this.isImageLoaded(srcToLoad)) {
         this.loadImage(
           type,
-          props[type],
-          generateLoadDoneCallback(type, props[type])
+          srcToLoad,
+          generateLoadDoneCallback(type, srcToLoad)
         );
       }
     });
   }
 
   // Request that the lightbox be closed
-  requestClose(event) {
+  requestClose(event: React.MouseEvent | React.KeyboardEvent) {
     // Call the parent close request
     const closeLightbox = () => this.props.onCloseRequest(event);
 
@@ -1218,25 +1641,28 @@ class ReactImageLightbox extends Component {
     this.setTimeout(closeLightbox, this.props.animationDuration);
   }
 
-  requestMove(direction, event) {
-    // Reset the zoom level on image move
-    const nextState = {
-      zoomLevel: MIN_ZOOM_LEVEL,
-      offsetX: 0,
-      offsetY: 0,
-    };
-
+  requestMove(direction: 'prev' | 'next', event?: MoveRequestEvent) {
+    let shouldAnimate: boolean = false;
     // Enable animated states
     if (
       !this.props.animationDisabled &&
       (!this.keyPressed || this.props.animationOnKeyInput)
     ) {
-      nextState.shouldAnimate = true;
+      shouldAnimate = true;
       this.setTimeout(
         () => this.setState({ shouldAnimate: false }),
         this.props.animationDuration
       );
     }
+
+    // Reset the zoom level on image move
+    const nextState = {
+      zoomLevel: MIN_ZOOM_LEVEL,
+      offsetX: 0,
+      offsetY: 0,
+      ...(shouldAnimate ? ({ shouldAnimate: true } as {}) : {}),
+    };
+
     this.keyPressed = false;
 
     this.moveRequested = true;
@@ -1253,12 +1679,12 @@ class ReactImageLightbox extends Component {
   }
 
   // Request to transition to the next image
-  requestMoveNext(event) {
+  requestMoveNext(event?: MoveRequestEvent) {
     this.requestMove('next', event);
   }
 
   // Request to transition to the previous image
-  requestMovePrev(event) {
+  requestMovePrev(event?: MoveRequestEvent) {
     this.requestMove('prev', event);
   }
 
@@ -1288,32 +1714,35 @@ class ReactImageLightbox extends Component {
     } = this.state;
 
     const boxSize = this.getLightboxRect();
-    let transitionStyle = {};
+    let transitionStyle: { transition?: string } = {};
 
     // Transition settings for sliding animations
     if (!animationDisabled && this.isAnimating()) {
       transitionStyle = {
-        ...transitionStyle,
         transition: `transform ${animationDuration}ms`,
       };
     }
 
     // Key endings to differentiate between images with the same src
-    const keyEndings = {};
+    const keyEndings: { [srcType in SrcTypePlusThumbnails]?: string } = {};
     this.getSrcTypes().forEach(({ name, keyEnding }) => {
       keyEndings[name] = keyEnding;
     });
 
     // Images to be displayed
-    const images = [];
-    const addImage = (srcType, imageClass, transforms) => {
+    const images: JSX.Element[] = [];
+    const addImage = (
+      srcType: SrcType,
+      imageClass: string,
+      transforms: { x?: number; y?: number; zoom?: number }
+    ) => {
       // Ignore types that have no source defined for their full size image
       if (!this.props[srcType]) {
         return;
       }
       const bestImageInfo = this.getBestImageForType(srcType);
 
-      const imageStyle = {
+      const imageStyle: CSSProperties = {
         ...transitionStyle,
         ...ReactImageLightbox.getTransform({
           ...transforms,
@@ -1325,17 +1754,18 @@ class ReactImageLightbox extends Component {
         imageStyle.cursor = 'move';
       }
 
-      // support IE 9 and 11
-      const hasTrueValue = object =>
-        Object.keys(object).some(key => object[key]);
-
       // when error on one of the loads then push custom error stuff
-      if (bestImageInfo === null && hasTrueValue(loadErrorStatus)) {
+      if (
+        bestImageInfo === null &&
+        (Object.keys(loadErrorStatus) as SrcTypePlusThumbnails[]).some(
+          key => loadErrorStatus[key]
+        )
+      ) {
         images.push(
           <div
             className={`${imageClass} ril__image ril-errored`}
             style={imageStyle}
-            key={this.props[srcType] + keyEndings[srcType]}
+            key={(this.props[srcType] || '') + keyEndings[srcType]}
           >
             <div className="ril__errorContainer">
               {this.props.imageLoadErrorMessage}
@@ -1366,7 +1796,7 @@ class ReactImageLightbox extends Component {
           <div
             className={`${imageClass} ril__image ril-not-loaded`}
             style={imageStyle}
-            key={this.props[srcType] + keyEndings[srcType]}
+            key={(this.props[srcType] || '') + keyEndings[srcType]}
           >
             <div className="ril__loadingContainer">{loadingIcon}</div>
           </div>
@@ -1400,7 +1830,11 @@ class ReactImageLightbox extends Component {
             style={imageStyle}
             src={imageSrc}
             key={imageSrc + keyEndings[srcType]}
-            alt={typeof imageTitle === 'string' ? imageTitle : 'Image'}
+            alt={
+              typeof imageTitle === 'string'
+                ? imageTitle || undefined
+                : undefined
+            }
             draggable={false}
           />
         );
@@ -1480,7 +1914,7 @@ class ReactImageLightbox extends Component {
           onMouseDown={this.handleMouseDown}
           onTouchStart={this.handleTouchStart}
           onTouchMove={this.handleTouchMove}
-          tabIndex="-1" // Enables key handlers on div
+          tabIndex={-1} // Enables key handlers on div
           onKeyDown={this.handleKeyInput}
           onKeyUp={this.handleKeyInput}
         >
@@ -1625,184 +2059,5 @@ class ReactImageLightbox extends Component {
     );
   }
 }
-
-ReactImageLightbox.propTypes = {
-  //-----------------------------
-  // Image sources
-  //-----------------------------
-
-  // Main display image url
-  mainSrc: PropTypes.string.isRequired, // eslint-disable-line react/no-unused-prop-types
-
-  // Previous display image url (displayed to the left)
-  // If left undefined, movePrev actions will not be performed, and the button not displayed
-  prevSrc: PropTypes.string,
-
-  // Next display image url (displayed to the right)
-  // If left undefined, moveNext actions will not be performed, and the button not displayed
-  nextSrc: PropTypes.string,
-
-  //-----------------------------
-  // Image thumbnail sources
-  //-----------------------------
-
-  // Thumbnail image url corresponding to props.mainSrc
-  mainSrcThumbnail: PropTypes.string, // eslint-disable-line react/no-unused-prop-types
-
-  // Thumbnail image url corresponding to props.prevSrc
-  prevSrcThumbnail: PropTypes.string, // eslint-disable-line react/no-unused-prop-types
-
-  // Thumbnail image url corresponding to props.nextSrc
-  nextSrcThumbnail: PropTypes.string, // eslint-disable-line react/no-unused-prop-types
-
-  //-----------------------------
-  // Event Handlers
-  //-----------------------------
-
-  // Close window event
-  // Should change the parent state such that the lightbox is not rendered
-  onCloseRequest: PropTypes.func.isRequired,
-
-  // Move to previous image event
-  // Should change the parent state such that props.prevSrc becomes props.mainSrc,
-  //  props.mainSrc becomes props.nextSrc, etc.
-  onMovePrevRequest: PropTypes.func,
-
-  // Move to next image event
-  // Should change the parent state such that props.nextSrc becomes props.mainSrc,
-  //  props.mainSrc becomes props.prevSrc, etc.
-  onMoveNextRequest: PropTypes.func,
-
-  // Called when an image fails to load
-  // (imageSrc: string, srcType: string, errorEvent: object): void
-  onImageLoadError: PropTypes.func,
-
-  // Called when image successfully loads
-  onImageLoad: PropTypes.func,
-
-  // Open window event
-  onAfterOpen: PropTypes.func,
-
-  //-----------------------------
-  // Download discouragement settings
-  //-----------------------------
-
-  // Enable download discouragement (prevents [right-click -> Save Image As...])
-  discourageDownloads: PropTypes.bool,
-
-  //-----------------------------
-  // Animation settings
-  //-----------------------------
-
-  // Disable all animation
-  animationDisabled: PropTypes.bool,
-
-  // Disable animation on actions performed with keyboard shortcuts
-  animationOnKeyInput: PropTypes.bool,
-
-  // Animation duration (ms)
-  animationDuration: PropTypes.number,
-
-  //-----------------------------
-  // Keyboard shortcut settings
-  //-----------------------------
-
-  // Required interval of time (ms) between key actions
-  // (prevents excessively fast navigation of images)
-  keyRepeatLimit: PropTypes.number,
-
-  // Amount of time (ms) restored after each keyup
-  // (makes rapid key presses slightly faster than holding down the key to navigate images)
-  keyRepeatKeyupBonus: PropTypes.number,
-
-  //-----------------------------
-  // Image info
-  //-----------------------------
-
-  // Image title
-  imageTitle: PropTypes.node,
-
-  // Image caption
-  imageCaption: PropTypes.node,
-
-  // Optional crossOrigin attribute
-  imageCrossOrigin: PropTypes.string,
-
-  //-----------------------------
-  // Lightbox style
-  //-----------------------------
-
-  // Set z-index style, etc., for the parent react-modal (format: https://github.com/reactjs/react-modal#styles )
-  reactModalStyle: PropTypes.shape({}),
-
-  // Padding (px) between the edge of the window and the lightbox
-  imagePadding: PropTypes.number,
-
-  wrapperClassName: PropTypes.string,
-
-  //-----------------------------
-  // Other
-  //-----------------------------
-
-  // Array of custom toolbar buttons
-  toolbarButtons: PropTypes.arrayOf(PropTypes.node),
-
-  // When true, clicks outside of the image close the lightbox
-  clickOutsideToClose: PropTypes.bool,
-
-  // Set to false to disable zoom functionality and hide zoom buttons
-  enableZoom: PropTypes.bool,
-
-  // Override props set on react-modal (https://github.com/reactjs/react-modal)
-  reactModalProps: PropTypes.shape({}),
-
-  // Aria-labels
-  nextLabel: PropTypes.string,
-  prevLabel: PropTypes.string,
-  zoomInLabel: PropTypes.string,
-  zoomOutLabel: PropTypes.string,
-  closeLabel: PropTypes.string,
-
-  imageLoadErrorMessage: PropTypes.node,
-
-  // custom loader
-  loader: PropTypes.node,
-};
-
-ReactImageLightbox.defaultProps = {
-  imageTitle: null,
-  imageCaption: null,
-  toolbarButtons: null,
-  reactModalProps: {},
-  animationDisabled: false,
-  animationDuration: 300,
-  animationOnKeyInput: false,
-  clickOutsideToClose: true,
-  closeLabel: 'Close lightbox',
-  discourageDownloads: false,
-  enableZoom: true,
-  imagePadding: 10,
-  imageCrossOrigin: null,
-  keyRepeatKeyupBonus: 40,
-  keyRepeatLimit: 180,
-  mainSrcThumbnail: null,
-  nextLabel: 'Next image',
-  nextSrc: null,
-  nextSrcThumbnail: null,
-  onAfterOpen: () => {},
-  onImageLoadError: () => {},
-  onImageLoad: () => {},
-  onMoveNextRequest: () => {},
-  onMovePrevRequest: () => {},
-  prevLabel: 'Previous image',
-  prevSrc: null,
-  prevSrcThumbnail: null,
-  reactModalStyle: {},
-  wrapperClassName: '',
-  zoomInLabel: 'Zoom in',
-  zoomOutLabel: 'Zoom out',
-  imageLoadErrorMessage: 'This image failed to load',
-  loader: undefined,
-};
 
 export default ReactImageLightbox;

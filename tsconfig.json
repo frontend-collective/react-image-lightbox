@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "module": "commonjs",
+    "allowJs": true,
+    "jsx": "react-jsx",
+    "declaration": true,
+    // "declarationMap": true,
+    "sourceMap": true,
+    // "outFile": "./",
+    "outDir": "./dist",
+    // "rootDir": "./",
+    // "downlevelIteration": true,
+    "strict": true,
+    "noUnusedLocals": true,
+    // "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    // "noUncheckedIndexedAccess": true,
+    // "noImplicitOverride": true,
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "skipLibCheck": false,
+    "forceConsistentCasingInFileNames": true
+  }
+}
