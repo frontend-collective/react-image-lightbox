@@ -288,11 +288,20 @@ class ReactImageLightbox extends Component {
     let imageSrc = this.props[srcType];
     let fitSizes = {};
 
-    if (this.isImageLoaded(imageSrc)) {
+    if (srcType === 'mainSrc' && this.isImageLoaded(this.props.originalSrc)) {
+      imageSrc = this.props.originalSrc;
+      // Use hi-res image if available
+      fitSizes = this.getFitSizes(
+        this.imageCache[imageSrc].width,
+        this.imageCache[imageSrc].height,
+        true
+      );
+    } else if (this.isImageLoaded(imageSrc)) {
       // Use full-size image if available
       fitSizes = this.getFitSizes(
         this.imageCache[imageSrc].width,
-        this.imageCache[imageSrc].height
+        this.imageCache[imageSrc].height,
+        true
       );
     } else if (this.isImageLoaded(this.props[`${srcType}Thumbnail`])) {
       // Fall back to using thumbnail if the image has not been loaded
@@ -380,28 +389,39 @@ class ReactImageLightbox extends Component {
   getSrcTypes() {
     return [
       {
+        name: 'originalSrc',
+        keyEnding: `o${this.keyCounter}`,
+        autoload: false,
+      },
+      {
         name: 'mainSrc',
         keyEnding: `i${this.keyCounter}`,
+        autoload: true,
       },
       {
         name: 'mainSrcThumbnail',
         keyEnding: `t${this.keyCounter}`,
+        autoload: true,
       },
       {
         name: 'nextSrc',
         keyEnding: `i${this.keyCounter + 1}`,
+        autoload: true,
       },
       {
         name: 'nextSrcThumbnail',
         keyEnding: `t${this.keyCounter + 1}`,
+        autoload: true,
       },
       {
         name: 'prevSrc',
         keyEnding: `i${this.keyCounter - 1}`,
+        autoload: true,
       },
       {
         name: 'prevSrcThumbnail',
         keyEnding: `t${this.keyCounter - 1}`,
+        autoload: true,
       },
     ];
   }
@@ -464,6 +484,10 @@ class ReactImageLightbox extends Component {
 
       return;
     }
+
+    this.loadImage('originalSrc', this.props.originalSrc, () => {
+      this.forceUpdate();
+    });
 
     const imageBaseSize = this.getBestImageForType('mainSrc');
     if (imageBaseSize === null) {
@@ -1117,6 +1141,9 @@ class ReactImageLightbox extends Component {
 
   // Load image from src and call callback with image width and height on load
   loadImage(srcType, imageSrc, done) {
+    if (!imageSrc) {
+      return;
+    }
     // Return the image info if it is already cached
     if (this.isImageLoaded(imageSrc)) {
       this.setTimeout(() => {
@@ -1177,6 +1204,9 @@ class ReactImageLightbox extends Component {
 
     // Load the images
     this.getSrcTypes().forEach(srcType => {
+      if (!srcType.autoload) {
+        return;
+      }
       const type = srcType.name;
 
       // there is no error when we try to load it initially
@@ -1637,6 +1667,9 @@ ReactImageLightbox.propTypes = {
   // Main display image url
   mainSrc: PropTypes.string.isRequired, // eslint-disable-line react/no-unused-prop-types
 
+  // Hi-res image src, will be used on zoom
+  originalSrc: PropTypes.string,
+
   // Previous display image url (displayed to the left)
   // If left undefined, movePrev actions will not be performed, and the button not displayed
   prevSrc: PropTypes.string,
@@ -1789,6 +1822,7 @@ ReactImageLightbox.defaultProps = {
   keyRepeatKeyupBonus: 40,
   keyRepeatLimit: 180,
   mainSrcThumbnail: null,
+  originalSrc: null,
   nextLabel: 'Next image',
   nextSrc: null,
   nextSrcThumbnail: null,
