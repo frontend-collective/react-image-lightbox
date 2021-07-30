@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [5.2.0](https://github.com/frontend-collective/react-image-lightbox/compare/v5.1.4...v5.2.0) (2021-07-30)
+
+
+### Features
+
+* **zoom:** add originalSrc image which is used for zooming ([ee9b1a4](https://github.com/frontend-collective/react-image-lightbox/commit/ee9b1a40a8f47dfc15bc0eb7e570aac91335ada7))
+
 ### [5.1.4](https://github.com/frontend-collective/react-image-lightbox/compare/v5.1.3...v5.1.4) (2021-07-13)
 
 ### [5.1.3](https://github.com/frontend-collective/react-image-lightbox/compare/v5.1.2...v5.1.3) (2021-07-13)
