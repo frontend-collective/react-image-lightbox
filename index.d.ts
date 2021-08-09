@@ -14,6 +14,9 @@ export interface ILightBoxProps {
     onImageLoadError?(): void;
     imageLoadErrorMessage?: React.ReactNode;
     onAfterOpen?(): void;
+    index?: number;
+    length?: number;
+    onIndicatorClick?: (index: number) => void;
     discourageDownloads?: boolean;
     animationDisabled?: boolean;
     animationOnKeyInput?: boolean;
