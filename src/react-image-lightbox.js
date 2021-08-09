@@ -530,6 +530,7 @@ class ReactImageLightbox extends Component {
       offsetX: nextOffsetX,
       offsetY: nextOffsetY,
     });
+    this.onChangeZoom(zoomLevel);
   }
 
   closeIfClickInner(event) {
@@ -1683,6 +1684,9 @@ ReactImageLightbox.propTypes = {
   // Called when image successfully loads
   onImageLoad: PropTypes.func,
 
+  // Called when image zoomed in or out
+  onChangeZoom: PropTypes.func,
+
   // Open window event
   onAfterOpen: PropTypes.func,
 
@@ -1795,6 +1799,7 @@ ReactImageLightbox.defaultProps = {
   onAfterOpen: () => {},
   onImageLoadError: () => {},
   onImageLoad: () => {},
+  onChangeZoom:() => {},
   onMoveNextRequest: () => {},
   onMovePrevRequest: () => {},
   prevLabel: 'Previous image',
