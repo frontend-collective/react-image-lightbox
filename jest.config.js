@@ -7,4 +7,5 @@ module.exports = {
       '<rootDir>/__mocks__/fileMock.js',
   },
   snapshotSerializers: ['enzyme-to-json/serializer'],
+  testEnvironment: 'jsdom',
 };

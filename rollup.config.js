@@ -9,14 +9,16 @@ export default {
   input: './src/index.js',
   output: [
     {
-      file: pkg.main,
+      entryFileNames: pkg.main,
       format: 'cjs',
       exports: 'named',
+      dir: __dirname,
     },
     {
-      file: pkg.module,
+      entryFileNames: pkg.module,
       format: 'esm',
       exports: 'named',
+      dir: __dirname,
     },
   ],
   external: [
@@ -25,7 +27,7 @@ export default {
   ],
   plugins: [
     nodeResolve(),
-    postcss({ extract: './style.css' }),
+    postcss({ extract: 'style.css' }),
     commonjs({
       include: 'node_modules/**',
     }),

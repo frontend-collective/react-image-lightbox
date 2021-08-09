@@ -308,7 +308,6 @@ class App extends Component {
               <a href="https://github.com/webcarrot">@webcarrot</a>
               !)
             </li>
-            <li>No external CSS</li>
           </ul>
 
           <a href="https://github.com/frontend-collective/react-image-lightbox">
