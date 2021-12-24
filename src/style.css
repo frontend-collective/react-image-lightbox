@@ -122,8 +122,26 @@
 }
 
 .ril__toolbar {
+  top: -10px;
+  height: 50px;
+  opacity: 0;
+  transition-duration: 0.2s;
+  -webkit-transition-duration: 0.2s;
+}
+.ril__toolbar:hover {
+  top: 0px;
+  height: 50px;
+  opacity: 1;
+  transition-duration: 0.2s;
+  -webkit-transition-duration: 0.2s;
+}
+
+.ril__outer:hover .ril__toolbar {
   top: 0;
   height: 50px;
+  opacity: 1;
+  transition-duration: 0.2s;
+  -webkit-transition-duration: 0.2s;
 }
 
 .ril__toolbarSide {
