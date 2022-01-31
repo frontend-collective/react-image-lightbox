@@ -17,7 +17,6 @@ Features
 - Flexible rendering using src values assigned on the fly
 - Image preloading for smoother viewing
 - Mobile friendly, with pinch to zoom and swipe (Thanks, [@webcarrot](https://github.com/webcarrot)!)
-- No external CSS
 
 ## Example
 
@@ -116,7 +115,7 @@ Play with the code on the [example on CodeSandbox](https://codesandbox.io/s/l9n3
 | zoomInLabel                     | string | `aria-label` and `title` set on the 'Zoom In' button. Defaults to `'Zoom in'`.                                                                                |
 | zoomOutLabel                    | string | `aria-label` and `title` set on the 'Zoom Out' button. Defaults to `'Zoom out'`.                                                                              |
 | closeLabel                      | string | `aria-label` and `title` set on the 'Close Lightbox' button. Defaults to `'Close lightbox'`.                                                                  |
-| loader                          |  node  | Custom Loading indicator for loading                                                                                                                                |
+| loader                          |  node  | Custom Loading indicator for loading                                                                                                                          |
 
 ## Browser Compatibility
 

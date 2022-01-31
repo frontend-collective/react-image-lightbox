@@ -1278,7 +1278,7 @@ class ReactImageLightbox extends Component {
       onAfterOpen,
       imageCrossOrigin,
       reactModalProps,
-      loader
+      loader,
     } = this.props;
     const {
       zoomLevel,
@@ -1347,22 +1347,20 @@ class ReactImageLightbox extends Component {
         return;
       }
       if (bestImageInfo === null) {
-        let loadingIcon = (
-          <div className="ril-loading-circle ril__loadingCircle ril__loadingContainer__icon">
-            {[...new Array(12)].map((_, index) => (
-              <div
-                // eslint-disable-next-line react/no-array-index-key
-                key={index}
-                className="ril-loading-circle-point ril__loadingCirclePoint"
-              />
-            ))}
-          </div>
-        );
-
-        // custom loader
-        if(loader) {
-          loadingIcon = loader;
-        }
+        const loadingIcon =
+          loader !== undefined ? (
+            loader
+          ) : (
+            <div className="ril-loading-circle ril__loadingCircle ril__loadingContainer__icon">
+              {[...new Array(12)].map((_, index) => (
+                <div
+                  // eslint-disable-next-line react/no-array-index-key
+                  key={index}
+                  className="ril-loading-circle-point ril__loadingCirclePoint"
+                />
+              ))}
+            </div>
+          );
 
         // Fall back to loading icon if the thumbnail has not been loaded
         images.push(
@@ -1771,7 +1769,7 @@ ReactImageLightbox.propTypes = {
   imageLoadErrorMessage: PropTypes.node,
 
   // custom loader
-  loader: PropTypes.node
+  loader: PropTypes.node,
 };
 
 ReactImageLightbox.defaultProps = {
@@ -1807,7 +1805,7 @@ ReactImageLightbox.defaultProps = {
   zoomInLabel: 'Zoom in',
   zoomOutLabel: 'Zoom out',
   imageLoadErrorMessage: 'This image failed to load',
-  loader: null,
+  loader: undefined,
 };
 
 export default ReactImageLightbox;

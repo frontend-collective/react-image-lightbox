@@ -1,6 +1,6 @@
 {
   "name": "react-image-lightbox",
-  "version": "5.1.1",
+  "version": "5.1.4",
   "description": "A lightbox component for React.js",
   "scripts": {
     "build": "rollup -c",
@@ -46,8 +46,8 @@
     "react-modal": "^3.11.1"
   },
   "peerDependencies": {
-    "react": "^16.x",
-    "react-dom": "^16.x"
+    "react": "16.x || 17.x",
+    "react-dom": "16.x || 17.x"
   },
   "devDependencies": {
     "@babel/cli": "^7.7.4",

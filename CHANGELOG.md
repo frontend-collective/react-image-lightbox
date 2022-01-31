@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [5.1.4](https://github.com/frontend-collective/react-image-lightbox/compare/v5.1.3...v5.1.4) (2021-07-13)
+
+### [5.1.3](https://github.com/frontend-collective/react-image-lightbox/compare/v5.1.2...v5.1.3) (2021-07-13)
+
+### [5.1.2](https://github.com/frontend-collective/react-image-lightbox/compare/v5.1.1...v5.1.2) (2021-07-13)
+
+
+### Bug Fixes
+
+* fix cross origin iframe detection ([6683a29](https://github.com/frontend-collective/react-image-lightbox/commit/6683a29639f0df2609849d9c71f7da0fa08a4882))
+
 ### [5.1.1](https://github.com/frontend-collective/react-image-lightbox/compare/v5.1.0...v5.1.1) (2019-11-12)
 
 
