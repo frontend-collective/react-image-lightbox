@@ -191,6 +191,8 @@ class ReactImageLightbox extends Component {
   }
 
   componentDidMount() {
+    this.didUnmount = false;
+
     if (!this.props.animationDisabled) {
       // Make opening animation play
       this.setState({ isClosing: false });
