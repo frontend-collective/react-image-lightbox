@@ -1,0 +1,64 @@
+name: Release new version on PR merge
+
+on:
+  pull_request:
+    types:
+      - closed
+    branches:
+      - master
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    # Run if merged and has a version specifying label
+    if: >-
+      github.event.pull_request.merged &&
+      (
+        contains(github.event.pull_request.labels.*.name, 'version:major') ||
+        contains(github.event.pull_request.labels.*.name, 'version:minor') ||
+        contains(github.event.pull_request.labels.*.name, 'version:patch')
+      )
+    steps:
+      - name: Extract version bump target (major|minor|patch)
+        run: |
+          version=$(echo "$PR_LABELS" | sed -n -e 's/.*version:\([^|]*\).*/\1/p')
+          echo "BUMP_TARGET=${version}" >> $GITHUB_ENV
+        env:
+          PR_LABELS: ${{ join(github.event.pull_request.labels.*.name, '|') }}
+
+      - name: Checkout the repository
+        uses: actions/checkout@v3
+        with:
+          # A separate token is needed because the master branch is protected.
+          token: ${{ secrets.FRONTEND_BUILD_TOKEN }}
+          # Whether to configure the token or SSH key with the local git config
+          persist-credentials: true
+
+      - name: Add Git user information
+        run: |
+          git config user.email "github-action@users.noreply.github.com"
+          git config user.name "GitHub Action"
+
+      - name: Read NodeJS version from .nvmrc
+        id: node-version
+        uses: juliangruber/read-file-action@v1
+        with:
+          path: ./.nvmrc
+          trim: true
+
+      - name: Setup NodeJS using the obtained nvm version
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ steps.node-version.outputs.content }}
+
+      - name: Bump version
+        run: |
+          yarn version --new-version "${{ env.BUMP_TARGET }}" --non-interactive --frozen-lockfile
+          [[ -z $(git status -s) ]] || { echo 'Version bump failed!'; exit 1; }
+          git push --follow-tags # Push latest commit and tag
+
+      - name: Publish package
+        run: |
+          yarn publish --registry "https://npm.pkg.github.com/catawiki"
+        env:
+          NODE_AUTH_TOKEN: ${{ env.CW_TOKEN }}

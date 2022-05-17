@@ -1,0 +1,25 @@
+name: "PR: Add default 'version:no release' label"
+
+on:
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - labeled
+
+jobs:
+  label:
+    runs-on: ubuntu-latest
+    # Run if there is no version related label on the PR
+    if: >-
+      !(
+        contains(github.event.pull_request.labels.*.name, 'version:major') ||
+        contains(github.event.pull_request.labels.*.name, 'version:minor') ||
+        contains(github.event.pull_request.labels.*.name, 'version:patch') ||
+        contains(github.event.pull_request.labels.*.name, 'version:no release')
+      )
+    steps:
+      - uses: actions-ecosystem/action-add-labels@v1
+        with:
+          github_token: ${{ secrets.github_token }}
+          labels: 'version:no release'
