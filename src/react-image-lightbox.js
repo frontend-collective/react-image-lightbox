@@ -105,6 +105,8 @@ class ReactImageLightbox extends Component {
 
       // image load error for srcType
       loadErrorStatus: {},
+
+      dragging: false,
     };
 
     // Refs
@@ -114,6 +116,7 @@ class ReactImageLightbox extends Component {
     this.caption = React.createRef();
 
     this.closeIfClickInner = this.closeIfClickInner.bind(this);
+    this.handleImageClick = this.handleImageClick.bind(this);
     this.handleImageDoubleClick = this.handleImageDoubleClick.bind(this);
     this.handleImageMouseWheel = this.handleImageMouseWheel.bind(this);
     this.handleKeyInput = this.handleKeyInput.bind(this);
@@ -696,6 +699,16 @@ class ReactImageLightbox extends Component {
     }
   }
 
+  /**
+   * Handle a click on the current image
+   */
+  handleImageClick(event) {
+    if (!this.props.zoomOnClick) return;
+    if (this.state.dragging) return;
+
+    this.handleImageDoubleClick(event);
+  }
+
   shouldHandleEvent(source) {
     if (this.eventsSource === source) {
       return true;
@@ -738,6 +751,8 @@ class ReactImageLightbox extends Component {
   }
 
   handleMouseDown(event) {
+    this.setState({ dragging: false });
+
     if (
       this.shouldHandleEvent(SOURCE_MOUSE) &&
       ReactImageLightbox.isTargetMatchImage(event.target)
@@ -748,6 +763,8 @@ class ReactImageLightbox extends Component {
   }
 
   handleMouseMove(event) {
+    this.setState({ dragging: true });
+
     if (this.shouldHandleEvent(SOURCE_MOUSE)) {
       this.multiPointerMove(event, [ReactImageLightbox.parseMouseEvent(event)]);
     }
@@ -764,12 +781,16 @@ class ReactImageLightbox extends Component {
     if (this.shouldHandleEvent(SOURCE_POINTER)) {
       switch (event.type) {
         case 'pointerdown':
+          this.setState({ dragging: false });
+
           if (ReactImageLightbox.isTargetMatchImage(event.target)) {
             this.addPointer(ReactImageLightbox.parsePointerEvent(event));
             this.multiPointerStart(event);
           }
           break;
         case 'pointermove':
+          this.setState({ dragging: true });
+
           this.multiPointerMove(event, [
             ReactImageLightbox.parsePointerEvent(event),
           ]);
@@ -1395,6 +1416,7 @@ class ReactImageLightbox extends Component {
           <img
             {...(imageCrossOrigin ? { crossOrigin: imageCrossOrigin } : {})}
             className={`${imageClass} ril__image`}
+            onClick={this.handleImageClick}
             onDoubleClick={this.handleImageDoubleClick}
             onWheel={this.handleImageMouseWheel}
             onDragStart={e => e.preventDefault()}
