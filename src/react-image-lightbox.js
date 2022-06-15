@@ -1461,8 +1461,8 @@ class ReactImageLightbox extends Component {
         style={modalStyle}
         contentLabel={translate('Lightbox')}
         appElement={
-          typeof global.window !== 'undefined'
-            ? global.window.document.body
+          typeof globalThis.window !== 'undefined'
+            ? globalThis.window.document.body
             : undefined
         }
         {...reactModalProps}

@@ -313,7 +313,7 @@ describe('Utils', () => {
       location: { href: 'http://test.test' },
       document: { referrer: 'http://test.test' },
     };
-    expect(getHighestSafeWindowContext(self)).toBe(global.window.top);
+    expect(getHighestSafeWindowContext(self)).toBe(globalThis.window.top);
   });
   it.skip('getHighestSafeWindowContext function if parent is a different origin', () => {
     const self = {
