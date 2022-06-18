@@ -132,29 +132,25 @@ class App extends Component {
   }
 
   render() {
-    let lightbox;
-    if (this.state.isOpen) {
-      lightbox = (
-        <Lightbox
-          mainSrc={images[this.state.index]}
-          nextSrc={images[(this.state.index + 1) % images.length]}
-          prevSrc={
-            images[(this.state.index + images.length - 1) % images.length]
-          }
-          mainSrcThumbnail={thumbs[this.state.index]}
-          nextSrcThumbnail={thumbs[(this.state.index + 1) % images.length]}
-          prevSrcThumbnail={
-            thumbs[(this.state.index + images.length - 1) % images.length]
-          }
-          onCloseRequest={this.closeLightbox}
-          onMovePrevRequest={this.movePrev}
-          onMoveNextRequest={this.moveNext}
-          onImageLoadError={App.onImageLoadError}
-          imageTitle={titles[this.state.index]}
-          imageCaption={captions[this.state.index]}
-        />
-      );
-    }
+    let lightbox = (
+      <Lightbox
+        isOpen={this.state.isOpen}
+        mainSrc={images[this.state.index]}
+        nextSrc={images[(this.state.index + 1) % images.length]}
+        prevSrc={images[(this.state.index + images.length - 1) % images.length]}
+        mainSrcThumbnail={thumbs[this.state.index]}
+        nextSrcThumbnail={thumbs[(this.state.index + 1) % images.length]}
+        prevSrcThumbnail={
+          thumbs[(this.state.index + images.length - 1) % images.length]
+        }
+        onCloseRequest={this.closeLightbox}
+        onMovePrevRequest={this.movePrev}
+        onMoveNextRequest={this.moveNext}
+        onImageLoadError={App.onImageLoadError}
+        imageTitle={titles[this.state.index]}
+        imageCaption={captions[this.state.index]}
+      />
+    );
 
     return (
       <div>

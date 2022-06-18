@@ -14,6 +14,7 @@ exports[`Snapshot Testing Lightbox renders properly" 1`] = `
   imageLoadErrorMessage="This image failed to load"
   imagePadding={10}
   imageTitle={null}
+  isOpen={true}
   keyRepeatKeyupBonus={40}
   keyRepeatLimit={180}
   mainSrc="/fake/image/src.jpg"

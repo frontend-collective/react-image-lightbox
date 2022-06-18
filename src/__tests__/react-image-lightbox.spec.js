@@ -15,6 +15,7 @@ Lightbox.loadStyles = jest.fn();
 
 const commonProps = {
   mainSrc: '/fake/image/src.jpg',
+  isOpen: true,
   onCloseRequest: () => {},
 };
 
