@@ -13,7 +13,6 @@
     "prepublishOnly": "yarn run lint && yarn run test && yarn run build",
     "test": "jest",
     "test:watch": "jest --watchAll",
-    "release": "standard-version",
     "prepare": "husky install"
   },
   "main": "dist/index.cjs.js",
@@ -80,8 +79,7 @@
     "rollup-plugin-babel": "^4.3.3",
     "rollup-plugin-commonjs": "^10.1.0",
     "rollup-plugin-node-resolve": "^5.2.0",
-    "rollup-plugin-postcss": "^4.0.0",
-    "standard-version": "^9.3.0"
+    "rollup-plugin-postcss": "^4.0.0"
   },
   "keywords": [
     "react",
