@@ -88,5 +88,8 @@
     "react-component",
     "image",
     "lightbox"
-  ]
+  ],
+  "publishConfig": {
+    "@kunai-consulting:registry": "https://npm.pkg.github.com"
+  }
 }
