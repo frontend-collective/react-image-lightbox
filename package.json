@@ -13,7 +13,6 @@
     "prepublishOnly": "yarn run lint && yarn run test && yarn run build",
     "test": "jest",
     "test:watch": "jest --watchAll",
-    "deploy": "yarn run build:demo && gh-pages -d build",
     "release": "standard-version",
     "prepare": "husky install"
   },
