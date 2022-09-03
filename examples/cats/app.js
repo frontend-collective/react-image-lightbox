@@ -15,6 +15,10 @@ import image2Thumb from './images/2_thumb.jpg';
 import image3Thumb from './images/3_thumb.jpg';
 import image4Thumb from './images/4_thumb.jpg';
 
+import LeftArrow from './leftArrowCarousel.svg';
+import RightArrow from './rightArrowCarousel.svg';
+import Close from './close.svg';
+
 const images = [image1, image2, image3, image4];
 const thumbs = [image1Thumb, image2Thumb, image3Thumb, image4Thumb];
 
@@ -151,7 +155,10 @@ class App extends Component {
           onMoveNextRequest={this.moveNext}
           onImageLoadError={App.onImageLoadError}
           imageTitle={titles[this.state.index]}
-          imageCaption={captions[this.state.index]}
+          enableZoom={false}
+          nextButtonImage={RightArrow}
+          prevButtonImage={LeftArrow}
+          closeButtonImage={Close}
         />
       );
     }
