@@ -1,6 +1,6 @@
 {
-  "name": "react-image-lightbox",
-  "version": "5.1.4",
+  "name": "@kunai-consulting/fork-react-image-lightbox",
+  "version": "5.2.0-alpha",
   "description": "A lightbox component for React.js",
   "scripts": {
     "build": "rollup -c",
@@ -13,8 +13,6 @@
     "prepublishOnly": "yarn run lint && yarn run test && yarn run build",
     "test": "jest",
     "test:watch": "jest --watchAll",
-    "deploy": "yarn run build:demo && gh-pages -d build",
-    "release": "standard-version",
     "prepare": "husky install"
   },
   "main": "dist/index.cjs.js",
@@ -28,10 +26,8 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/frontend-collective/react-image-lightbox.git"
+    "url": "https://github.com/kunai-consulting/fork-react-image-lightbox.git"
   },
-  "homepage": "https://frontend-collective.github.io/react-image-lightbox",
-  "bugs": "https://github.com/frontend-collective/react-image-lightbox/issues",
   "authors": [
     "Chris Fritz"
   ],
@@ -83,13 +79,15 @@
     "rollup-plugin-babel": "^4.3.3",
     "rollup-plugin-commonjs": "^10.1.0",
     "rollup-plugin-node-resolve": "^5.2.0",
-    "rollup-plugin-postcss": "^4.0.0",
-    "standard-version": "^9.3.0"
+    "rollup-plugin-postcss": "^4.0.0"
   },
   "keywords": [
     "react",
     "react-component",
     "image",
     "lightbox"
-  ]
+  ],
+  "publishConfig": {
+    "@kunai-consulting:registry": "https://npm.pkg.github.com"
+  }
 }
