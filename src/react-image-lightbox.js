@@ -1505,10 +1505,14 @@ class ReactImageLightbox extends Component {
               aria-label={this.props.prevLabel}
               title={this.props.prevLabel}
               onClick={!this.isAnimating() ? this.requestMovePrev : undefined} // Ignore clicks during animation
-              style={{
-                left: 0,
-                background: `url('${this.props.prevButtonImage}') no-repeat center`,
-              }}
+              style={
+                this.props.prevButtonImage
+                  ? {
+                      left: 0,
+                      background: `url('${this.props.prevButtonImage}') no-repeat center`,
+                    }
+                  : {}
+              }
             />
           )}
 
@@ -1522,10 +1526,14 @@ class ReactImageLightbox extends Component {
               aria-label={this.props.nextLabel}
               title={this.props.nextLabel}
               onClick={!this.isAnimating() ? this.requestMoveNext : undefined} // Ignore clicks during animation
-              style={{
-                right: 0,
-                background: `url('${this.props.nextButtonImage}') no-repeat center`,
-              }}
+              style={
+                this.props.nextButtonImage
+                  ? {
+                      right: 0,
+                      background: `url('${this.props.nextButtonImage}') no-repeat center`,
+                    }
+                  : {}
+              }
             />
           )}
 
@@ -1619,9 +1627,13 @@ class ReactImageLightbox extends Component {
                     this.props.closeButtonImage ? '' : 'ril__closeButton'
                   }`}
                   onClick={!this.isAnimating() ? this.requestClose : undefined} // Ignore clicks during animation
-                  style={{
-                    background: `url('${this.props.closeButtonImage}') no-repeat center`,
-                  }}
+                  style={
+                    this.props.closeButtonImage
+                      ? {
+                          background: `url('${this.props.closeButtonImage}') no-repeat center`,
+                        }
+                      : {}
+                  }
                 />
               </li>
             </ul>
