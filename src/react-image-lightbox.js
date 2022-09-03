@@ -1498,22 +1498,34 @@ class ReactImageLightbox extends Component {
           {prevSrc && (
             <button // Move to previous image button
               type="button"
-              className="ril-prev-button ril__navButtons ril__navButtonPrev"
+              className={`ril-prev-button ril__navButtons ${
+                this.props.prevButtonImage ? '' : 'ril__navButtonPrev'
+              }`}
               key="prev"
               aria-label={this.props.prevLabel}
               title={this.props.prevLabel}
               onClick={!this.isAnimating() ? this.requestMovePrev : undefined} // Ignore clicks during animation
+              style={{
+                left: 0,
+                background: `url('${this.props.prevButtonImage}') no-repeat center`,
+              }}
             />
           )}
 
           {nextSrc && (
             <button // Move to next image button
               type="button"
-              className="ril-next-button ril__navButtons ril__navButtonNext"
+              className={`ril-next-button ril__navButtons ${
+                this.props.nextButtonImage ? '' : 'ril__navButtonPrev'
+              }`}
               key="next"
               aria-label={this.props.nextLabel}
               title={this.props.nextLabel}
               onClick={!this.isAnimating() ? this.requestMoveNext : undefined} // Ignore clicks during animation
+              style={{
+                right: 0,
+                background: `url('${this.props.nextButtonImage}') no-repeat center`,
+              }}
             />
           )}
 
@@ -1603,8 +1615,13 @@ class ReactImageLightbox extends Component {
                   key="close"
                   aria-label={this.props.closeLabel}
                   title={this.props.closeLabel}
-                  className="ril-close ril-toolbar__item__child ril__toolbarItemChild ril__builtinButton ril__closeButton"
+                  className={`ril-close ril-toolbar__item__child ril__toolbarItemChild ril__builtinButton ${
+                    this.props.closeButtonImage ? '' : 'ril__closeButton'
+                  }`}
                   onClick={!this.isAnimating() ? this.requestClose : undefined} // Ignore clicks during animation
+                  style={{
+                    background: `url('${this.props.closeButtonImage}') no-repeat center`,
+                  }}
                 />
               </li>
             </ul>
@@ -1770,6 +1787,11 @@ ReactImageLightbox.propTypes = {
 
   // custom loader
   loader: PropTypes.node,
+
+  // custom button images
+  nextButtonImage: PropTypes.string,
+  prevButtonImage: PropTypes.string,
+  closeButtonImage: PropTypes.string,
 };
 
 ReactImageLightbox.defaultProps = {
@@ -1806,6 +1828,9 @@ ReactImageLightbox.defaultProps = {
   zoomOutLabel: 'Zoom out',
   imageLoadErrorMessage: 'This image failed to load',
   loader: undefined,
+  nextButtonImage: null,
+  prevButtonImage: null,
+  closeButtonImage: null,
 };
 
 export default ReactImageLightbox;
