@@ -18,7 +18,6 @@ import image4Thumb from './images/4_thumb.jpg';
 
 import LeftArrow from './leftArrowCarousel.svg';
 import RightArrow from './rightArrowCarousel.svg';
-import Close from './close.svg';
 
 const images = [image1, image2, image3, image4];
 const thumbs = [image1Thumb, image2Thumb, image3Thumb, image4Thumb];

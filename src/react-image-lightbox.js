@@ -1602,7 +1602,7 @@ class ReactImageLightbox extends Component {
                   }
                 />
               )}
-              {this.props.thumbnailImages?.map((img, index) => (
+              {(this.props.thumbnailImages || []).map((img, index) => (
                 <img
                   className={`thumbNails${
                     imageIndex === index + 1 ? 'active' : ''
