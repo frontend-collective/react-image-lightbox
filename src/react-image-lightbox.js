@@ -1602,7 +1602,7 @@ class ReactImageLightbox extends Component {
                   }
                 />
               )}
-              {(this.props.thumbnailImages || []).map((img, index) => (
+              {this.props.thumbnailImages.map((img, index) => (
                 <img
                   className={`thumbNails${
                     imageIndex === index + 1 ? 'active' : ''
@@ -1837,7 +1837,7 @@ ReactImageLightbox.defaultProps = {
   nextButtonImage: null,
   prevButtonImage: null,
   closeButtonImage: null,
-  thumbnailImages: null,
+  thumbnailImages: [],
   closeButtonComponent: null,
   closeButtonComponentProps: {},
   imageHeaderComponent: null,

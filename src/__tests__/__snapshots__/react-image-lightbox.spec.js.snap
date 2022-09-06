@@ -47,7 +47,7 @@ exports[`Snapshot Testing Lightbox renders properly" 1`] = `
     }
   }
   reactModalStyle={Object {}}
-  thumbnailImages={null}
+  thumbnailImages={Array []}
   wrapperClassName=""
   zoomInLabel="Zoom in"
   zoomOutLabel="Zoom out"
