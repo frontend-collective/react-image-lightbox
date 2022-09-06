@@ -23,6 +23,71 @@ import Close from './close.svg';
 const images = [image1, image2, image3, image4];
 const thumbs = [image1Thumb, image2Thumb, image3Thumb, image4Thumb];
 
+const CloseSvg = ({
+  width = 20,
+  height = 20,
+  fill = '#525252',
+  className,
+  onClick,
+  ...svgProps
+}) => {
+  return (
+    <svg
+      width={width}
+      height={height}
+      viewBox="0 0 20 20"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={className}
+      onClick={onClick}
+      {...svgProps}
+    >
+      <path
+        d="M19.1386 18.1946C19.2638 18.3198 19.3341 18.4896 19.3341 18.6666C19.3341 18.8436 19.2638 19.0134 19.1386 19.1386C19.0134 19.2638 18.8436 19.3341 18.6666 19.3341C18.4896 19.3341 18.3198 19.2638 18.1946 19.1386L9.99995 10.9426L1.80528 19.1386C1.6801 19.2638 1.51031 19.3341 1.33328 19.3341C1.15625 19.3341 0.986463 19.2638 0.86128 19.1386C0.736098 19.0134 0.665771 18.8436 0.665771 18.6666C0.665771 18.4896 0.736098 18.3198 0.86128 18.1946L9.05728 9.99995L0.86128 1.80528C0.736098 1.6801 0.665771 1.51031 0.665771 1.33328C0.665771 1.15625 0.736098 0.986463 0.86128 0.86128C0.986463 0.736098 1.15625 0.665771 1.33328 0.665771C1.51031 0.665771 1.6801 0.736098 1.80528 0.86128L9.99995 9.05728L18.1946 0.86128C18.3198 0.736098 18.4896 0.665771 18.6666 0.665771C18.8436 0.665771 19.0134 0.736098 19.1386 0.86128C19.2638 0.986463 19.3341 1.15625 19.3341 1.33328C19.3341 1.51031 19.2638 1.6801 19.1386 1.80528L10.9426 9.99995L19.1386 18.1946Z"
+        fill={fill}
+      />
+    </svg>
+  );
+};
+
+const CloseButton = ({
+  close,
+  className,
+  description = null,
+  label = 'Close',
+  fill = '#525252',
+  height = 20,
+  role = 'button',
+  tabIndex = null,
+  width = 20,
+  ...otherProps
+}) => {
+  return (
+    <CloseSvg
+      aria-label={label}
+      style={{
+        accessibleDescription: {
+          display: 'none',
+        },
+        button: {
+          cursor: 'pointer',
+        },
+        ...otherProps.style,
+      }}
+      className={className}
+      fill={fill}
+      height={height}
+      onClick={close}
+      role={role}
+      {...(tabIndex != null ? { tabIndex } : {})}
+      width={width}
+      {...(description != null
+        ? { 'aria-describedby': 'close-button-description' }
+        : {})}
+    />
+  );
+};
+
 class App extends Component {
   static onImageLoadError(imageSrc, _srcType, errorEvent) {
     console.error(`Could not load image at ${imageSrc}`, errorEvent); // eslint-disable-line no-console
@@ -86,7 +151,14 @@ class App extends Component {
           enableZoom={false}
           nextButtonImage={RightArrow}
           prevButtonImage={LeftArrow}
-          closeButtonImage={Close}
+          // closeButtonImage={Close}
+          closeButtonComponent={CloseButton}
+          closeButtonComponentProps={{
+            style: {
+              padding: '1.833rem',
+            },
+            fill: '#0D74AF',
+          }}
           thumbnailImages={thumbs}
         />
       );

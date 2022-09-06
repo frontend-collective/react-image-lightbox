@@ -1544,24 +1544,31 @@ class ReactImageLightbox extends Component {
                 Image {imageIndex} of {images.length + 1}
               </div>
             </div>
-            <div className=" ril__toolbarItem">
-              <button // Lightbox close button
-                type="button"
-                key="close"
-                aria-label={this.props.closeLabel}
-                title={this.props.closeLabel}
-                className={`ril__toolbarItemChild ril__builtinButton ${
-                  this.props.closeButtonImage ? '' : 'ril__closeButton'
-                }`}
-                onClick={!this.isAnimating() ? this.requestClose : undefined} // Ignore clicks during animation
-                style={
-                  this.props.closeButtonImage
-                    ? {
-                        background: `url('${this.props.closeButtonImage}') no-repeat center`,
-                      }
-                    : {}
-                }
-              />
+            <div className="ril__toolbarItem">
+              {this.props.closeButtonComponent ? (
+                <this.props.closeButtonComponent
+                  close={!this.isAnimating() ? this.requestClose : undefined}
+                  {...this.props.closeButtonComponentProps}
+                />
+              ) : (
+                <button // Lightbox close button
+                  type="button"
+                  key="close"
+                  aria-label={this.props.closeLabel}
+                  title={this.props.closeLabel}
+                  className={`ril__toolbarItemChild ril__builtinButton ${
+                    this.props.closeButtonImage ? '' : 'ril__closeButton'
+                  }`}
+                  onClick={!this.isAnimating() ? this.requestClose : undefined} // Ignore clicks during animation
+                  style={
+                    this.props.closeButtonImage
+                      ? {
+                          background: `url('${this.props.closeButtonImage}') no-repeat center`,
+                        }
+                      : {}
+                  }
+                />
+              )}
             </div>{' '}
           </div>
           <div className="ril__thumbNailsContainer">
@@ -1776,6 +1783,10 @@ ReactImageLightbox.propTypes = {
   prevButtonImage: PropTypes.string,
   closeButtonImage: PropTypes.string,
   thumbnailImages: PropTypes.arrayOf(PropTypes.string),
+
+  // custom close button component
+  closeButtonComponent: PropTypes.element,
+  closeButtonComponentProps: PropTypes.shape({}),
 };
 
 ReactImageLightbox.defaultProps = {
@@ -1817,6 +1828,8 @@ ReactImageLightbox.defaultProps = {
   prevButtonImage: null,
   closeButtonImage: null,
   thumbnailImages: null,
+  closeButtonComponent: null,
+  closeButtonComponentProps: {},
 };
 
 export default ReactImageLightbox;
