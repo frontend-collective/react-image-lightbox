@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Lightbox from '../../src';
+
 // import Lightbox from 'react-image-lightbox';
 // In your own app, you would need to use import styles once in the app
 // import 'react-image-lightbox/styles.css';
@@ -154,11 +155,13 @@ class App extends Component {
           onMovePrevRequest={this.movePrev}
           onMoveNextRequest={this.moveNext}
           onImageLoadError={App.onImageLoadError}
-          imageTitle={titles[this.state.index]}
+          imageTitle="Venue Title"
+          imageIndex={this.state.index + 1}
           enableZoom={false}
           nextButtonImage={RightArrow}
           prevButtonImage={LeftArrow}
           closeButtonImage={Close}
+          thumbnailImages={thumbs}
         />
       );
     }
