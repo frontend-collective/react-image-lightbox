@@ -1,7 +1,7 @@
 {
-  "name": "react-image-lightbox",
+  "name": "react18-image-lightbox",
   "version": "5.1.4",
-  "description": "A lightbox component for React.js",
+  "description": "A lightbox component for React.js | Compatible with React 18.x",
   "scripts": {
     "build": "rollup -c",
     "build:demo": "parcel build examples/cats/index.html --out-dir build --public-url ./",
@@ -28,7 +28,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/frontend-collective/react-image-lightbox.git"
+    "url": "https://github.com/veylkh/react18-image-lightbox.git"
   },
   "homepage": "https://frontend-collective.github.io/react-image-lightbox",
   "bugs": "https://github.com/frontend-collective/react-image-lightbox/issues",
