@@ -1272,12 +1272,10 @@ class ReactImageLightbox extends Component {
       animationDuration,
       clickOutsideToClose,
       discourageDownloads,
-      enableZoom,
       imageTitle,
       imageIndex,
       nextSrc,
       prevSrc,
-      toolbarButtons,
       reactModalStyle,
       onAfterOpen,
       imageCrossOrigin,
@@ -1566,7 +1564,6 @@ class ReactImageLightbox extends Component {
               />
             </div>{' '}
           </div>
-          // eslint-disable-next-line jsx-a11y/no-static-element-interactions
           <div className="ril__thumbNailsContainer">
             <div className="ril__thumbNails">
               {/* TODO previous and Next thumbnail images should show more thumbs if available */}
@@ -1593,14 +1590,11 @@ class ReactImageLightbox extends Component {
               )}
               {this.props.thumbnailImages.map((img, index) => (
                 <img
-                  className={
-                    'thumbNails' + (imageIndex === index + 1 ? 'active' : '')
-                  }
+                  className={`thumbNails${
+                    imageIndex === index + 1 ? 'active' : ''
+                  }`}
                   style={{ height: '48px', width: '48px', padding: '16px' }}
                   src={img}
-                  // onClick={() => {
-                  //   currentSlide(index + 1);
-                  // }}
                   alt={img.caption}
                 />
               ))}
@@ -1781,7 +1775,7 @@ ReactImageLightbox.propTypes = {
   nextButtonImage: PropTypes.string,
   prevButtonImage: PropTypes.string,
   closeButtonImage: PropTypes.string,
-  thumbnailImages: PropTypes.array,
+  thumbnailImages: PropTypes.arrayOf(PropTypes.string),
 };
 
 ReactImageLightbox.defaultProps = {
