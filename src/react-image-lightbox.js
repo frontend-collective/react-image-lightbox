@@ -1538,12 +1538,20 @@ class ReactImageLightbox extends Component {
           )}
           {/* Lightbox toolbar */}
           <div className="ril__toolbar">
-            <div className="ril_title">
-              {imageTitle}
-              <div className="ril_status">
-                Image {imageIndex} of {images.length + 1}
+            {this.props.imageHeaderComponent ? (
+              <this.props.imageHeaderComponent
+                imageTitle={imageTitle}
+                imageIndex={imageIndex}
+                totalImageCount={images.length + 1}
+              />
+            ) : (
+              <div className="ril_title">
+                {imageTitle}
+                <div className="ril_status">
+                  Image {imageIndex} of {images.length + 1}
+                </div>
               </div>
-            </div>
+            )}
             <div className="ril__toolbarItem">
               {this.props.closeButtonComponent ? (
                 <this.props.closeButtonComponent
@@ -1787,6 +1795,9 @@ ReactImageLightbox.propTypes = {
   // custom close button component
   closeButtonComponent: PropTypes.element,
   closeButtonComponentProps: PropTypes.shape({}),
+
+  // image header component
+  imageHeaderComponent: PropTypes.element,
 };
 
 ReactImageLightbox.defaultProps = {
@@ -1830,6 +1841,7 @@ ReactImageLightbox.defaultProps = {
   thumbnailImages: null,
   closeButtonComponent: null,
   closeButtonComponentProps: {},
+  imageHeaderComponent: null,
 };
 
 export default ReactImageLightbox;

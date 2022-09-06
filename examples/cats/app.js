@@ -88,6 +88,17 @@ const CloseButton = ({
   );
 };
 
+const ImageHeader = ({ imageTitle, imageIndex, totalImageCount }) => {
+  return (
+    <div className="ril_title" style={{ paddingTop: 16 }}>
+      {imageTitle}
+      <div className="ril_status" style={{ paddingTop: 1 }}>
+        Image {imageIndex} of {totalImageCount}
+      </div>
+    </div>
+  );
+};
+
 class App extends Component {
   static onImageLoadError(imageSrc, _srcType, errorEvent) {
     console.error(`Could not load image at ${imageSrc}`, errorEvent); // eslint-disable-line no-console
@@ -160,6 +171,7 @@ class App extends Component {
             fill: '#0D74AF',
           }}
           thumbnailImages={thumbs}
+          imageHeaderComponent={ImageHeader}
         />
       );
     }
