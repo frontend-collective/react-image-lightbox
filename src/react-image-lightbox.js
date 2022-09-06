@@ -1761,9 +1761,6 @@ ReactImageLightbox.propTypes = {
   // Other
   //-----------------------------
 
-  // Array of custom toolbar buttons
-  toolbarButtons: PropTypes.arrayOf(PropTypes.node),
-
   // When true, clicks outside of the image close the lightbox
   clickOutsideToClose: PropTypes.bool,
 
@@ -1807,7 +1804,6 @@ ReactImageLightbox.defaultProps = {
   imageTitle: null,
   imageIndex: null,
   imageCaption: null,
-  toolbarButtons: null,
   reactModalProps: {},
   animationDisabled: false,
   animationDuration: 300,
