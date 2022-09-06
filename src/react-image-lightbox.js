@@ -318,11 +318,10 @@ class ReactImageLightbox extends Component {
   getFitSizes(width, height, stretch) {
     const boxSize = this.getLightboxRect();
 
-    // -152 to allow for thumbnails on the bottom of the browser window
-    let maxHeight = boxSize.height - this.props.imagePadding * 2 - 152;
-
-    // -150 to preven t arrow buttons overlapping image
-    let maxWidth = boxSize.width - this.props.imagePadding * 2 - 150;
+    let maxHeight =
+      boxSize.height - this.props.imagePadding * 2 - this.props.maxHeightOffset;
+    let maxWidth =
+      boxSize.width - this.props.imagePadding * 2 - this.props.maxWidthOffset;
 
     if (!stretch) {
       maxHeight = Math.min(maxHeight, height);
@@ -1798,6 +1797,10 @@ ReactImageLightbox.propTypes = {
 
   // image header component
   imageHeaderComponent: PropTypes.element,
+
+  // offset values to set the spacing properly between main image and thumbnails
+  maxHeightOffset: PropTypes.number,
+  maxWidthOffset: PropTypes.number,
 };
 
 ReactImageLightbox.defaultProps = {
@@ -1842,6 +1845,8 @@ ReactImageLightbox.defaultProps = {
   closeButtonComponent: null,
   closeButtonComponentProps: {},
   imageHeaderComponent: null,
+  maxHeightOffset: 0,
+  maxWidthOffset: 0,
 };
 
 export default ReactImageLightbox;

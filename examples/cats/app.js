@@ -172,6 +172,8 @@ class App extends Component {
           }}
           thumbnailImages={thumbs}
           imageHeaderComponent={ImageHeader}
+          maxHeightOffset={152}
+          maxWidthOffset={150}
         />
       );
     }
