@@ -1446,6 +1446,8 @@ class ReactImageLightbox extends Component {
         ...reactModalStyle.content, // Allow style overrides via props
       },
     };
+    const widthBreakpoint = 960;
+    const isMobile = getWindowWidth() < widthBreakpoint;
 
     return (
       <Modal
@@ -1499,7 +1501,7 @@ class ReactImageLightbox extends Component {
           >
             {images}
           </div>
-          {prevSrc && (
+          {prevSrc && !isMobile ? (
             <button // Move to previous image button
               type="button"
               className={`ril-prev-button ril__navButtons ${
@@ -1518,27 +1520,32 @@ class ReactImageLightbox extends Component {
                   : {}
               }
             />
+          ) : (
+            ' '
           )}
-          {nextSrc && (
-            <button // Move to next image button
-              type="button"
-              className={`ril-next-button ril__navButtons ${
-                this.props.nextButtonImage ? '' : 'ril__navButtonPrev'
-              }`}
-              key="next"
-              aria-label={this.props.nextLabel}
-              title={this.props.nextLabel}
-              onClick={!this.isAnimating() ? this.requestMoveNext : undefined} // Ignore clicks during animation
-              style={
-                this.props.nextButtonImage
-                  ? {
-                      right: 0,
-                      background: `url('${this.props.nextButtonImage}') no-repeat center`,
-                    }
-                  : {}
-              }
-            />
-          )}
+          {nextSrc &&
+            (!isMobile ? (
+              <button // Move to next image button
+                type="button"
+                className={`ril-next-button ril__navButtons ${
+                  this.props.nextButtonImage ? '' : 'ril__navButtonPrev'
+                }`}
+                key="next"
+                aria-label={this.props.nextLabel}
+                title={this.props.nextLabel}
+                onClick={!this.isAnimating() ? this.requestMoveNext : undefined} // Ignore clicks during animation
+                style={
+                  this.props.nextButtonImage
+                    ? {
+                        right: 0,
+                        background: `url('${this.props.nextButtonImage}') no-repeat center`,
+                      }
+                    : {}
+                }
+              />
+            ) : (
+              ''
+            ))}
           {/* Lightbox toolbar */}
           <div className="ril__toolbar">
             {this.props.imageHeaderComponent ? (
@@ -1582,68 +1589,70 @@ class ReactImageLightbox extends Component {
               )}
             </div>{' '}
           </div>
-          <div className="ril__thumbNailsContainer">
-            <div className="ril__thumbNails">
-              {/* TODO previous and Next thumbnail images should show more thumbs if available */}
-              {prevSrc && (
-                <button // Move to previous image button
-                  type="button"
-                  className={`ril__thumbNails ril__navButtonsThumbs${
-                    this.props.thumbnailArrowLeft ? '' : 'ril__navButtonPrev'
-                  }`}
-                  key="prev"
-                  aria-label={this.props.prevLabel}
-                  title={this.props.prevLabel}
-                  onClick={
-                    !this.isAnimating() ? this.requestMovePrev : undefined
-                  } // Ignore clicks during animation
-                  style={
-                    this.props.thumbnailArrowLeft
-                      ? {
-                          background: `url('${this.props.thumbnailArrowLeft}') no-repeat center`,
-                        }
-                      : {}
-                  }
-                />
-              )}
-              {this.props.thumbnailImages.map((img, index) => (
-                <img
-                  className={`thumbNails${
-                    imageIndex === index + 1 ? 'active' : ''
-                  }`}
-                  style={{
-                    margin: '14px',
-                    padding: '1px',
-                    borderRadius: '4px',
-                  }}
-                  src={img}
-                  alt={img.caption}
-                />
-              ))}
+          {!isMobile && (
+            <div className="ril__thumbNailsContainer">
+              <div className="ril__thumbNails">
+                {/* TODO previous and Next thumbnail images should show more thumbs if available */}
+                {prevSrc && (
+                  <button // Move to previous image button
+                    type="button"
+                    className={`ril__thumbNails ril__navButtonsThumbs${
+                      this.props.thumbnailArrowLeft ? '' : 'ril__navButtonPrev'
+                    }`}
+                    key="prev"
+                    aria-label={this.props.prevLabel}
+                    title={this.props.prevLabel}
+                    onClick={
+                      !this.isAnimating() ? this.requestMovePrev : undefined
+                    } // Ignore clicks during animation
+                    style={
+                      this.props.thumbnailArrowLeft
+                        ? {
+                            background: `url('${this.props.thumbnailArrowLeft}') no-repeat center`,
+                          }
+                        : {}
+                    }
+                  />
+                )}
+                {this.props.thumbnailImages.map((img, index) => (
+                  <img
+                    className={`thumbNails${
+                      imageIndex === index + 1 ? 'active' : ''
+                    }`}
+                    style={{
+                      margin: '14px',
+                      padding: '1px',
+                      borderRadius: '4px',
+                    }}
+                    src={img}
+                    alt={img.caption}
+                  />
+                ))}
 
-              {nextSrc && (
-                <button // Move to next image button
-                  type="button"
-                  className={`ril__thumbNails ril__navButtonsThumbs${
-                    this.props.thumbnailArrowRight ? '' : 'ril__navButtonNext'
-                  }`}
-                  key="next"
-                  aria-label={this.props.nextLabel}
-                  title={this.props.nextLabel}
-                  onClick={
-                    !this.isAnimating() ? this.requestMoveNext : undefined
-                  } // Ignore clicks during animation
-                  style={
-                    this.props.thumbnailArrowRight
-                      ? {
-                          background: `url('${this.props.thumbnailArrowRight}') no-repeat center`,
-                        }
-                      : {}
-                  }
-                />
-              )}
+                {nextSrc && (
+                  <button // Move to next image button
+                    type="button"
+                    className={`ril__thumbNails ril__navButtonsThumbs${
+                      this.props.thumbnailArrowRight ? '' : 'ril__navButtonNext'
+                    }`}
+                    key="next"
+                    aria-label={this.props.nextLabel}
+                    title={this.props.nextLabel}
+                    onClick={
+                      !this.isAnimating() ? this.requestMoveNext : undefined
+                    } // Ignore clicks during animation
+                    style={
+                      this.props.thumbnailArrowRight
+                        ? {
+                            background: `url('${this.props.thumbnailArrowRight}') no-repeat center`,
+                          }
+                        : {}
+                    }
+                  />
+                )}
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </Modal>
     );
