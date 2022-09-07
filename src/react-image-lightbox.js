@@ -1817,7 +1817,7 @@ ReactImageLightbox.propTypes = {
   maxWidthOffset: PropTypes.number,
   thumbnailArrowLeft: PropTypes.element,
   thumbnailArrowRight: PropTypes.element,
-  widthBreakPoint: PropTypes.string,
+  widthBreakPoint: PropTypes.number,
 };
 
 ReactImageLightbox.defaultProps = {
@@ -1865,7 +1865,7 @@ ReactImageLightbox.defaultProps = {
   maxWidthOffset: 0,
   thumbnailArrowLeft: null,
   thumbnailArrowRight: null,
-  widthBreakPoint: null,
+  widthBreakPoint: 960,
 };
 
 export default ReactImageLightbox;
