@@ -406,5 +406,8 @@
 
 .thumbNails img {
   display: inline;
-  padding: 16px;
+}
+
+.thumbNailsactive {
+  border: 1px solid gray;
 }

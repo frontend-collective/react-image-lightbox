@@ -47,6 +47,8 @@ exports[`Snapshot Testing Lightbox renders properly" 1`] = `
     }
   }
   reactModalStyle={Object {}}
+  thumbnailArrowLeft={null}
+  thumbnailArrowRight={null}
   thumbnailImages={Array []}
   wrapperClassName=""
   zoomInLabel="Zoom in"
@@ -64,6 +66,7 @@ exports[`Snapshot Testing Lightbox renders properly" 1`] = `
     contentElement={[Function]}
     contentLabel="Lightbox"
     isOpen={true}
+    onAfterClose={[Function]}
     onAfterOpen={[Function]}
     onRequestClose={[Function]}
     overlayElement={[Function]}
@@ -118,6 +121,7 @@ exports[`Snapshot Testing Lightbox renders properly" 1`] = `
                 tabindex="-1"
               >
                 <div
+                  aria-hidden="true"
                   class="ril-inner ril__inner"
                 >
                   <div
@@ -247,6 +251,7 @@ exports[`Snapshot Testing Lightbox renders properly" 1`] = `
           }
         }
         isOpen={true}
+        onAfterClose={[Function]}
         onAfterOpen={[Function]}
         onRequestClose={[Function]}
         overlayElement={[Function]}
@@ -341,6 +346,7 @@ exports[`Snapshot Testing Lightbox renders properly" 1`] = `
               tabIndex="-1"
             >
               <div
+                aria-hidden="true"
                 className="ril-inner ril__inner"
                 onClick={[Function]}
               >

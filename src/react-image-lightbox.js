@@ -1456,8 +1456,11 @@ class ReactImageLightbox extends Component {
           if (this.outerEl.current) {
             this.outerEl.current.focus();
           }
-
+          document.body.style.overflow = 'hidden';
           onAfterOpen();
+        }}
+        onAfterClose={() => {
+          document.body.removeAttribute('style');
         }}
         style={modalStyle}
         contentLabel={translate('Lightbox')}
@@ -1492,6 +1495,7 @@ class ReactImageLightbox extends Component {
             // Image holder
             className="ril-inner ril__inner"
             onClick={clickOutsideToClose ? this.closeIfClickInner : undefined}
+            aria-hidden="true"
           >
             {images}
           </div>
@@ -1585,7 +1589,7 @@ class ReactImageLightbox extends Component {
                 <button // Move to previous image button
                   type="button"
                   className={`ril__thumbNails ril__navButtonsThumbs${
-                    this.props.prevButtonImage ? '' : 'ril__navButtonPrev'
+                    this.props.thumbnailArrowLeft ? '' : 'ril__navButtonPrev'
                   }`}
                   key="prev"
                   aria-label={this.props.prevLabel}
@@ -1594,9 +1598,9 @@ class ReactImageLightbox extends Component {
                     !this.isAnimating() ? this.requestMovePrev : undefined
                   } // Ignore clicks during animation
                   style={
-                    this.props.prevButtonImage
+                    this.props.thumbnailArrowLeft
                       ? {
-                          background: `url('${this.props.prevButtonImage}') no-repeat center`,
+                          background: `url('${this.props.thumbnailArrowLeft}') no-repeat center`,
                         }
                       : {}
                   }
@@ -1607,7 +1611,11 @@ class ReactImageLightbox extends Component {
                   className={`thumbNails${
                     imageIndex === index + 1 ? 'active' : ''
                   }`}
-                  style={{ height: '48px', width: '48px', padding: '16px' }}
+                  style={{
+                    margin: '14px',
+                    padding: '1px',
+                    borderRadius: '4px',
+                  }}
                   src={img}
                   alt={img.caption}
                 />
@@ -1617,7 +1625,7 @@ class ReactImageLightbox extends Component {
                 <button // Move to next image button
                   type="button"
                   className={`ril__thumbNails ril__navButtonsThumbs${
-                    this.props.nextButtonImage ? '' : 'ril__navButtonNext'
+                    this.props.thumbnailArrowRight ? '' : 'ril__navButtonNext'
                   }`}
                   key="next"
                   aria-label={this.props.nextLabel}
@@ -1626,9 +1634,9 @@ class ReactImageLightbox extends Component {
                     !this.isAnimating() ? this.requestMoveNext : undefined
                   } // Ignore clicks during animation
                   style={
-                    this.props.nextButtonImage
+                    this.props.thumbnailArrowRight
                       ? {
-                          background: `url('${this.props.nextButtonImage}') no-repeat center`,
+                          background: `url('${this.props.thumbnailArrowRight}') no-repeat center`,
                         }
                       : {}
                   }
@@ -1798,6 +1806,8 @@ ReactImageLightbox.propTypes = {
   // offset values to set the spacing properly between main image and thumbnails
   maxHeightOffset: PropTypes.number,
   maxWidthOffset: PropTypes.number,
+  thumbnailArrowLeft: PropTypes.element,
+  thumbnailArrowRight: PropTypes.element,
 };
 
 ReactImageLightbox.defaultProps = {
@@ -1843,6 +1853,8 @@ ReactImageLightbox.defaultProps = {
   imageHeaderComponent: null,
   maxHeightOffset: 0,
   maxWidthOffset: 0,
+  thumbnailArrowLeft: null,
+  thumbnailArrowRight: null,
 };
 
 export default ReactImageLightbox;
