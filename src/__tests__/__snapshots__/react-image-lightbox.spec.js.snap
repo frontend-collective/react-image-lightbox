@@ -50,6 +50,7 @@ exports[`Snapshot Testing Lightbox renders properly" 1`] = `
   thumbnailArrowLeft={null}
   thumbnailArrowRight={null}
   thumbnailImages={Array []}
+  widthBreakPoint={960}
   wrapperClassName=""
   zoomInLabel="Zoom in"
   zoomOutLabel="Zoom out"
@@ -174,6 +175,7 @@ exports[`Snapshot Testing Lightbox renders properly" 1`] = `
                     </div>
                   </div>
                 </div>
+                 
                 <div
                   class="ril__toolbar"
                 >
@@ -417,6 +419,7 @@ exports[`Snapshot Testing Lightbox renders properly" 1`] = `
                   </div>
                 </div>
               </div>
+               
               <div
                 className="ril__toolbar"
               >
