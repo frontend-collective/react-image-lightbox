@@ -1446,8 +1446,8 @@ class ReactImageLightbox extends Component {
         ...reactModalStyle.content, // Allow style overrides via props
       },
     };
-    const widthBreakpoint = 960;
-    const isMobile = getWindowWidth() < widthBreakpoint;
+
+    const isMobile = getWindowWidth() < this.props.widthBreakPoint;
 
     return (
       <Modal
@@ -1817,6 +1817,7 @@ ReactImageLightbox.propTypes = {
   maxWidthOffset: PropTypes.number,
   thumbnailArrowLeft: PropTypes.element,
   thumbnailArrowRight: PropTypes.element,
+  widthBreakPoint: PropTypes.string,
 };
 
 ReactImageLightbox.defaultProps = {
@@ -1864,6 +1865,7 @@ ReactImageLightbox.defaultProps = {
   maxWidthOffset: 0,
   thumbnailArrowLeft: null,
   thumbnailArrowRight: null,
+  widthBreakPoint: null,
 };
 
 export default ReactImageLightbox;

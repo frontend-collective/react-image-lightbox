@@ -22,6 +22,7 @@ import ChevronRight from './ChevronRight.svg';
 
 const images = [image1, image2, image3, image4];
 const thumbs = [image1Thumb, image2Thumb, image3Thumb, image4Thumb];
+const widthBreakPoint = 960;
 
 const CloseSvg = ({
   width = 20,
@@ -176,6 +177,7 @@ class App extends Component {
           maxWidthOffset={150}
           thumbnailArrowLeft={ChevronLeft}
           thumbnailArrowRight={ChevronRight}
+          widthBreakPoint={widthBreakPoint}
         />
       );
     }
