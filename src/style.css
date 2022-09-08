@@ -407,6 +407,9 @@
 .thumbNails img {
   display: inline;
 }
+.thumbNails {
+  border: 2px solid transparent;
+}
 
 .thumbNails:hover {
   border: 2px solid gray;
