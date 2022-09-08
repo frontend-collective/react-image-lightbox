@@ -1,6 +1,6 @@
 {
   "name": "@kunai-consulting/fork-react-image-lightbox",
-  "version": "6.0.0-alpha.2",
+  "version": "6.0.0-alpha.3",
   "description": "A lightbox component for React.js",
   "scripts": {
     "build": "rollup -c",
