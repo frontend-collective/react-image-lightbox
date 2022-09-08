@@ -408,6 +408,10 @@
   display: inline;
 }
 
+.thumbNails {
+  border: 2px solid gray;
+}
+
 .thumbNailsactive {
-  border: 1px solid gray;
+  border: 2px solid rgb(2, 118, 177);
 }

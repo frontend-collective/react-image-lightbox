@@ -1621,7 +1621,7 @@ class ReactImageLightbox extends Component {
                     }`}
                     style={{
                       margin: '14px',
-                      padding: '1px',
+                      padding: '2px',
                       borderRadius: '4px',
                     }}
                     src={img}
