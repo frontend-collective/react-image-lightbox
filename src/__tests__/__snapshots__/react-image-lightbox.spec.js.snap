@@ -35,6 +35,7 @@ exports[`Snapshot Testing Lightbox renders properly" 1`] = `
   onImageLoadError={[Function]}
   onMoveNextRequest={[Function]}
   onMovePrevRequest={[Function]}
+  onMoveToIndexRequest={[Function]}
   prevButtonImage={null}
   prevLabel="Previous image"
   prevSrc={null}
