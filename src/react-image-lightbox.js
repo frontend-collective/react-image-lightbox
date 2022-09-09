@@ -132,6 +132,7 @@ class ReactImageLightbox extends Component {
     this.requestClose = this.requestClose.bind(this);
     this.requestMoveNext = this.requestMoveNext.bind(this);
     this.requestMovePrev = this.requestMovePrev.bind(this);
+    this.requestMoveIndex = this.requestMoveIndex.bind(this);
 
     // Timeouts - always clear it before umount
     this.timeouts = [];
@@ -1265,6 +1266,10 @@ class ReactImageLightbox extends Component {
     this.requestMove('prev', event);
   }
 
+  requestMoveIndex(event) {
+    this.props.onMoveToIndexRequest(event);
+  }
+
   render() {
     const {
       animationDisabled,
@@ -1626,6 +1631,11 @@ class ReactImageLightbox extends Component {
                     }}
                     src={img}
                     alt={img.caption}
+                    onClick={() => {
+                      !this.isAnimating()
+                        ? this.requestMoveIndex({ index })
+                        : undefined;
+                    }}
                   />
                 ))}
 
@@ -1705,6 +1715,9 @@ ReactImageLightbox.propTypes = {
   // Should change the parent state such that props.nextSrc becomes props.mainSrc,
   //  props.mainSrc becomes props.prevSrc, etc.
   onMoveNextRequest: PropTypes.func,
+
+  // Move to selected thumbnail Image
+  onMoveToIndexRequest: PropTypes.func,
 
   // Called when an image fails to load
   // (imageSrc: string, srcType: string, errorEvent: object): void
@@ -1845,6 +1858,7 @@ ReactImageLightbox.defaultProps = {
   onImageLoad: () => {},
   onMoveNextRequest: () => {},
   onMovePrevRequest: () => {},
+  onMoveToIndexRequest: () => {},
   prevLabel: 'Previous image',
   prevSrc: null,
   prevSrcThumbnail: null,

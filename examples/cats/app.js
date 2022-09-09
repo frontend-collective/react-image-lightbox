@@ -117,6 +117,7 @@ class App extends Component {
     this.closeLightbox = this.closeLightbox.bind(this);
     this.moveNext = this.moveNext.bind(this);
     this.movePrev = this.movePrev.bind(this);
+    this.moveIndex = this.moveIndex.bind(this);
   }
 
   openLightbox() {
@@ -139,6 +140,12 @@ class App extends Component {
     }));
   }
 
+  moveIndex(selected) {
+    this.setState({
+      index: selected.index,
+    });
+  }
+
   render() {
     let lightbox;
     if (this.state.isOpen) {
@@ -157,6 +164,7 @@ class App extends Component {
           onCloseRequest={this.closeLightbox}
           onMovePrevRequest={this.movePrev}
           onMoveNextRequest={this.moveNext}
+          onMoveToIndexRequest={this.moveIndex}
           onImageLoadError={App.onImageLoadError}
           imageTitle="Venue Title"
           imageIndex={this.state.index + 1}
