@@ -1630,9 +1630,10 @@ class ReactImageLightbox extends Component {
                       borderRadius: '4px',
                     }}
                     src={img}
+                    role="presentation"
                     alt={img.caption}
                     onClick={() => {
-                      !this.isAnimating()
+                      return !this.isAnimating()
                         ? this.requestMoveIndex({ index })
                         : undefined;
                     }}
