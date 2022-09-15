@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import Lightbox from '../../src';
 
-// import Lightbox from 'react-image-lightbox';
+// import Lightbox from '@kunai-consulting/fork-react-image-lightbox';
 // In your own app, you would need to use import styles once in the app
-// import 'react-image-lightbox/styles.css';
+// import '@kunai-consulting/fork-react-image-lightbox/styles.css';
 import './stylesheets/vendor/stylesheet.css';
 import './stylesheets/vendor/github-light.css';
 import './stylesheets/app.css';
@@ -11,10 +11,10 @@ import image1 from './images/1.jpg';
 import image2 from './images/2.jpg';
 import image3 from './images/3.jpg';
 import image4 from './images/4.jpg';
-import image1Thumb from './images/4_thumb.jpg';
+import image1Thumb from './images/1_thumb.jpg';
 import image2Thumb from './images/2_thumb.jpg';
-import image3Thumb from './images/1_thumb.jpg';
-import image4Thumb from './images/3_thumb.jpg';
+import image3Thumb from './images/3_thumb.jpg';
+import image4Thumb from './images/4_thumb.jpg';
 import LeftArrow from './leftArrowCarousel.svg';
 import RightArrow from './rightArrowCarousel.svg';
 import ChevronLeft from './ChevronLeft.svg';
@@ -171,7 +171,6 @@ class App extends Component {
           enableZoom={false}
           nextButtonImage={RightArrow}
           prevButtonImage={LeftArrow}
-          // closeButtonImage={Close}
           closeButtonComponent={CloseButton}
           closeButtonComponentProps={{
             style: {
