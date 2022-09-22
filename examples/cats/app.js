@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import Lightbox from '../../src';
-// import Lightbox from 'react-image-lightbox';
+
+// import Lightbox from '@kunai-consulting/fork-react-image-lightbox';
 // In your own app, you would need to use import styles once in the app
-// import 'react-image-lightbox/styles.css';
+// import '@kunai-consulting/fork-react-image-lightbox/styles.css';
 import './stylesheets/vendor/stylesheet.css';
 import './stylesheets/vendor/github-light.css';
 import './stylesheets/app.css';
@@ -14,83 +15,90 @@ import image1Thumb from './images/1_thumb.jpg';
 import image2Thumb from './images/2_thumb.jpg';
 import image3Thumb from './images/3_thumb.jpg';
 import image4Thumb from './images/4_thumb.jpg';
+import LeftArrow from './leftArrowCarousel.svg';
+import RightArrow from './rightArrowCarousel.svg';
+import ChevronLeft from './ChevronLeft.svg';
+import ChevronRight from './ChevronRight.svg';
 
 const images = [image1, image2, image3, image4];
 const thumbs = [image1Thumb, image2Thumb, image3Thumb, image4Thumb];
+const widthBreakPoint = 960;
 
-const titles = [
-  '',
-  <span>
-    by&nbsp;
-    <a className="creditLink" href="http://flickr.com/photos/titrans/">
-      quatre mains
-    </a>
-    &nbsp; (
-    <a
-      className="creditLink"
-      href="http://creativecommons.org/licenses/by/2.0/"
-      title="Attribution License"
+const CloseSvg = ({
+  width = 20,
+  height = 20,
+  fill = '#525252',
+  className,
+  onClick,
+  ...svgProps
+}) => {
+  return (
+    <svg
+      width={width}
+      height={height}
+      viewBox="0 0 20 20"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={className}
+      onClick={onClick}
+      {...svgProps}
     >
-      Some rights reserved
-    </a>
-    )
-  </span>,
-  <span>
-    by&nbsp;
-    <a className="creditLink" href="http://flickr.com/photos/lachlanrogers/">
-      latch.r
-    </a>
-    &nbsp; (
-    <a
-      className="creditLink"
-      href="http://creativecommons.org/licenses/by-sa/2.0/"
-      title="Attribution-ShareAlike License"
-    >
-      Some rights reserved
-    </a>
-    )
-  </span>,
-  <span>
-    by&nbsp;
-    <a className="creditLink" href="http://flickr.com/photos/fazen/">
-      fazen
-    </a>
-    &nbsp; (
-    <a
-      className="creditLink"
-      href="http://creativecommons.org/licenses/by/2.0/"
-      title="Attribution License"
-    >
-      Some rights reserved
-    </a>
-    )
-  </span>,
-];
+      <path
+        d="M19.1386 18.1946C19.2638 18.3198 19.3341 18.4896 19.3341 18.6666C19.3341 18.8436 19.2638 19.0134 19.1386 19.1386C19.0134 19.2638 18.8436 19.3341 18.6666 19.3341C18.4896 19.3341 18.3198 19.2638 18.1946 19.1386L9.99995 10.9426L1.80528 19.1386C1.6801 19.2638 1.51031 19.3341 1.33328 19.3341C1.15625 19.3341 0.986463 19.2638 0.86128 19.1386C0.736098 19.0134 0.665771 18.8436 0.665771 18.6666C0.665771 18.4896 0.736098 18.3198 0.86128 18.1946L9.05728 9.99995L0.86128 1.80528C0.736098 1.6801 0.665771 1.51031 0.665771 1.33328C0.665771 1.15625 0.736098 0.986463 0.86128 0.86128C0.986463 0.736098 1.15625 0.665771 1.33328 0.665771C1.51031 0.665771 1.6801 0.736098 1.80528 0.86128L9.99995 9.05728L18.1946 0.86128C18.3198 0.736098 18.4896 0.665771 18.6666 0.665771C18.8436 0.665771 19.0134 0.736098 19.1386 0.86128C19.2638 0.986463 19.3341 1.15625 19.3341 1.33328C19.3341 1.51031 19.2638 1.6801 19.1386 1.80528L10.9426 9.99995L19.1386 18.1946Z"
+        fill={fill}
+      />
+    </svg>
+  );
+};
 
-const captions = [
-  'Cat in the snow',
-  '',
-  <p>
-    .. not in the&nbsp;
-    <em>mood</em>
-    &nbsp;for games right now
-    <br />
-    ...
-    <br />
-    ...
-    <br />
-    ...
-    <br />
-    ...
-    <br />
-    ...
-    <br />
-    ...
-    <br />
-    C&#39;mon. Seriously.
-  </p>,
-  '',
-];
+const CloseButton = ({
+  close,
+  className,
+  description = null,
+  label = 'Close',
+  fill = '#525252',
+  height = 20,
+  role = 'button',
+  tabIndex = null,
+  width = 20,
+  ...otherProps
+}) => {
+  return (
+    <CloseSvg
+      aria-label={label}
+      style={{
+        accessibleDescription: {
+          display: 'none',
+        },
+        button: {
+          cursor: 'pointer',
+        },
+        ...otherProps.style,
+      }}
+      className={className}
+      fill={fill}
+      height={height}
+      onClick={close}
+      role={role}
+      {...(tabIndex != null ? { tabIndex } : {})}
+      width={width}
+      {...(description != null
+        ? { 'aria-describedby': 'close-button-description' }
+        : {})}
+    />
+  );
+};
+
+const ImageHeader = ({ imageTitle, imageIndex, totalImageCount }) => {
+  return (
+    <div className="ril_title" style={{ paddingTop: 16 }}>
+      {imageTitle}
+      <div className="ril_status" style={{ paddingTop: 1 }}>
+        Image {imageIndex} of {totalImageCount}
+      </div>
+    </div>
+  );
+};
 
 class App extends Component {
   static onImageLoadError(imageSrc, _srcType, errorEvent) {
@@ -109,6 +117,7 @@ class App extends Component {
     this.closeLightbox = this.closeLightbox.bind(this);
     this.moveNext = this.moveNext.bind(this);
     this.movePrev = this.movePrev.bind(this);
+    this.moveIndex = this.moveIndex.bind(this);
   }
 
   openLightbox() {
@@ -131,6 +140,12 @@ class App extends Component {
     }));
   }
 
+  moveIndex(selected) {
+    this.setState({
+      index: selected.index,
+    });
+  }
+
   render() {
     let lightbox;
     if (this.state.isOpen) {
@@ -149,9 +164,27 @@ class App extends Component {
           onCloseRequest={this.closeLightbox}
           onMovePrevRequest={this.movePrev}
           onMoveNextRequest={this.moveNext}
+          onMoveToIndexRequest={this.moveIndex}
           onImageLoadError={App.onImageLoadError}
-          imageTitle={titles[this.state.index]}
-          imageCaption={captions[this.state.index]}
+          imageTitle="Venue Title"
+          imageIndex={this.state.index + 1}
+          enableZoom={false}
+          nextButtonImage={RightArrow}
+          prevButtonImage={LeftArrow}
+          closeButtonComponent={CloseButton}
+          closeButtonComponentProps={{
+            style: {
+              padding: '1.833rem',
+            },
+            fill: '#0D74AF',
+          }}
+          thumbnailImages={thumbs}
+          imageHeaderComponent={ImageHeader}
+          maxHeightOffset={152}
+          maxWidthOffset={150}
+          thumbnailArrowLeft={ChevronLeft}
+          thumbnailArrowRight={ChevronRight}
+          widthBreakPoint={widthBreakPoint}
         />
       );
     }

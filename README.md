@@ -124,10 +124,10 @@ Play with the code on the [example on CodeSandbox](https://codesandbox.io/s/l9n3
 
 ## Contributing
 
-After cloning the repository and running `npm install` inside, you can use the following commands to develop and build the project.
+After cloning the repository and running `yarn` inside, you can use the following commands to develop and build the project. (NOTE: if you don't have `yarn`, install it globally by running `npm install -g yarn`)
 
 ```sh
-# Starts a webpack dev server that hosts a demo page with the lightbox.
+# Starts a webpack dev server that hosts a demo page with the lightbox at http://localhost:1234.
 # It uses react-hot-loader so changes are reflected on save.
 npm start
 

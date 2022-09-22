@@ -3,11 +3,6 @@ import React from 'react';
 import Modal from 'react-modal';
 import Lightbox from '../index';
 import { translate, getHighestSafeWindowContext } from '../util';
-import {
-  MAX_ZOOM_LEVEL,
-  MIN_ZOOM_LEVEL,
-  ZOOM_BUTTON_INCREMENT_SIZE,
-} from '../constant';
 
 // Mock the loadStyles static function to avoid
 // issues with a lack of styles._insertCss
@@ -49,17 +44,6 @@ describe('Lightbox structure', () => {
     expect(wrapper.find('.ril-next-button').length).toEqual(1);
   });
 
-  it('contains zoom buttons when enableZoom is true (default)', () => {
-    expect(wrapper.find('.ril-zoom-out').length).toEqual(1);
-    expect(wrapper.find('.ril-zoom-in').length).toEqual(1);
-  });
-
-  it('does not contain zoom buttons when enableZoom is false', () => {
-    wrapper.setProps({ enableZoom: false });
-    expect(wrapper.find('.ril-zoom-out').length).toEqual(0);
-    expect(wrapper.find('.ril-zoom-in').length).toEqual(0);
-  });
-
   it('does not contain a caption bar when no caption is supplied', () => {
     expect(wrapper.find('.ril-caption').length).toEqual(0);
   });
@@ -69,25 +53,12 @@ describe('Lightbox structure', () => {
     expect(wrapper.find('.ril-caption').length).toEqual(0);
   });
 
-  it('contains custom toolbar buttons when supplied', () => {
-    wrapper.setProps({
-      toolbarButtons: [<button type="button" className="my-test-button" />],
-    });
-    expect(wrapper.find('.ril-toolbar__item .my-test-button').length).toEqual(
-      1
-    );
-  });
-
   it('contains image title when supplied', () => {
     wrapper.setProps({
       imageTitle: <div className="my-image-title" />,
     });
 
-    expect(
-      wrapper.find(
-        '.ril-toolbar-left .ril-toolbar__item__child .my-image-title'
-      ).length
-    ).toEqual(1);
+    expect(wrapper.find('.ril_title').length).toEqual(1);
   });
 });
 
@@ -129,11 +100,6 @@ describe('Events', () => {
     <Lightbox {...extendedCommonProps} {...mockFns} animationDisabled />
   );
 
-  // Spy zoomBtn focus
-  const { zoomOutBtn, zoomInBtn } = wrapper.instance();
-  jest.spyOn(zoomOutBtn.current, 'focus');
-  jest.spyOn(zoomInBtn.current, 'focus');
-
   it('Calls onAfterOpen when mounted', async () => {
     // Rough way to wait for react-modal to call its onAfterOpen,
     // which is delayed by a requestAnimationFrame:
@@ -160,7 +126,7 @@ describe('Events', () => {
 
   it('Calls onCloseRequest when close button clicked', () => {
     expect(mockFns.onCloseRequest).toHaveBeenCalledTimes(0);
-    wrapper.find('.ril-close').simulate('click');
+    wrapper.find('.ril__closeButton').simulate('click');
     expect(mockFns.onCloseRequest).toHaveBeenCalledTimes(1);
     expect(mockFns.onCloseRequest).not.toHaveBeenCalledWith();
   });
@@ -189,22 +155,6 @@ describe('Events', () => {
 
     expect(mockFns.onImageLoadError).toHaveBeenCalledTimes(0);
     wrapper.setProps({ mainSrc: LOAD_FAILURE_SRC });
-  });
-
-  it('Calls the the ZoomIn Focus when ZoomOut is disabled', () => {
-    wrapper.setState({
-      zoomLevel: MIN_ZOOM_LEVEL + ZOOM_BUTTON_INCREMENT_SIZE,
-    });
-    wrapper.instance().handleZoomOutButtonClick();
-    expect(zoomInBtn.current.focus).toHaveBeenCalledTimes(1);
-  });
-
-  it('Calls the the ZoomOut Focus when ZoomIn is disabled', () => {
-    wrapper.setState({
-      zoomLevel: MAX_ZOOM_LEVEL - ZOOM_BUTTON_INCREMENT_SIZE,
-    });
-    wrapper.instance().handleZoomInButtonClick();
-    expect(zoomOutBtn.current.focus).toHaveBeenCalledTimes(1);
   });
 });
 

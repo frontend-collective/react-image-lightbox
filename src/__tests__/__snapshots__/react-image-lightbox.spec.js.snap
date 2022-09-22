@@ -6,11 +6,16 @@ exports[`Snapshot Testing Lightbox renders properly" 1`] = `
   animationDuration={300}
   animationOnKeyInput={false}
   clickOutsideToClose={true}
+  closeButtonComponent={null}
+  closeButtonComponentProps={Object {}}
+  closeButtonImage={null}
   closeLabel="Close lightbox"
   discourageDownloads={false}
   enableZoom={true}
   imageCaption={null}
   imageCrossOrigin={null}
+  imageHeaderComponent={null}
+  imageIndex={null}
   imageLoadErrorMessage="This image failed to load"
   imagePadding={10}
   imageTitle={null}
@@ -18,6 +23,9 @@ exports[`Snapshot Testing Lightbox renders properly" 1`] = `
   keyRepeatLimit={180}
   mainSrc="/fake/image/src.jpg"
   mainSrcThumbnail={null}
+  maxHeightOffset={0}
+  maxWidthOffset={0}
+  nextButtonImage={null}
   nextLabel="Next image"
   nextSrc={null}
   nextSrcThumbnail={null}
@@ -27,6 +35,8 @@ exports[`Snapshot Testing Lightbox renders properly" 1`] = `
   onImageLoadError={[Function]}
   onMoveNextRequest={[Function]}
   onMovePrevRequest={[Function]}
+  onMoveToIndexRequest={[Function]}
+  prevButtonImage={null}
   prevLabel="Previous image"
   prevSrc={null}
   prevSrcThumbnail={null}
@@ -38,7 +48,10 @@ exports[`Snapshot Testing Lightbox renders properly" 1`] = `
     }
   }
   reactModalStyle={Object {}}
-  toolbarButtons={null}
+  thumbnailArrowLeft={null}
+  thumbnailArrowRight={null}
+  thumbnailImages={Array []}
+  widthBreakPoint={960}
   wrapperClassName=""
   zoomInLabel="Zoom in"
   zoomOutLabel="Zoom out"
@@ -55,6 +68,7 @@ exports[`Snapshot Testing Lightbox renders properly" 1`] = `
     contentElement={[Function]}
     contentLabel="Lightbox"
     isOpen={true}
+    onAfterClose={[Function]}
     onAfterOpen={[Function]}
     onRequestClose={[Function]}
     overlayElement={[Function]}
@@ -109,6 +123,7 @@ exports[`Snapshot Testing Lightbox renders properly" 1`] = `
                 tabindex="-1"
               >
                 <div
+                  aria-hidden="true"
                   class="ril-inner ril__inner"
                 >
                   <div
@@ -161,55 +176,39 @@ exports[`Snapshot Testing Lightbox renders properly" 1`] = `
                     </div>
                   </div>
                 </div>
+                 
                 <div
-                  class="ril-toolbar ril__toolbar"
+                  class="ril__toolbar"
                 >
-                  <ul
-                    class="ril-toolbar-left ril__toolbarSide ril__toolbarLeftSide"
+                  <div
+                    class="ril_title"
                   >
-                    <li
-                      class="ril-toolbar__item ril__toolbarItem"
+                    <div
+                      class="ril_status"
                     >
-                      <span
-                        class="ril-toolbar__item__child ril__toolbarItemChild"
-                      />
-                    </li>
-                  </ul>
-                  <ul
-                    class="ril-toolbar-right ril__toolbarSide ril__toolbarRightSide"
+                      Image 
+                       of 
+                      2
+                    </div>
+                  </div>
+                  <div
+                    class="ril__toolbarItem"
                   >
-                    <li
-                      class="ril-toolbar__item ril__toolbarItem"
-                    >
-                      <button
-                        aria-label="Zoom in"
-                        class="ril-zoom-in ril__toolbarItemChild ril__builtinButton ril__zoomInButton"
-                        title="Zoom in"
-                        type="button"
-                      />
-                    </li>
-                    <li
-                      class="ril-toolbar__item ril__toolbarItem"
-                    >
-                      <button
-                        aria-label="Zoom out"
-                        class="ril-zoom-out ril__toolbarItemChild ril__builtinButton ril__zoomOutButton ril__builtinButtonDisabled"
-                        disabled=""
-                        title="Zoom out"
-                        type="button"
-                      />
-                    </li>
-                    <li
-                      class="ril-toolbar__item ril__toolbarItem"
-                    >
-                      <button
-                        aria-label="Close lightbox"
-                        class="ril-close ril-toolbar__item__child ril__toolbarItemChild ril__builtinButton ril__closeButton"
-                        title="Close lightbox"
-                        type="button"
-                      />
-                    </li>
-                  </ul>
+                    <button
+                      aria-label="Close lightbox"
+                      class="ril__toolbarItemChild ril__builtinButton ril__closeButton"
+                      title="Close lightbox"
+                      type="button"
+                    />
+                  </div>
+                   
+                </div>
+                <div
+                  class="ril__thumbNailsContainer"
+                >
+                  <div
+                    class="ril__thumbNails"
+                  />
                 </div>
               </div>
             </div>
@@ -255,6 +254,7 @@ exports[`Snapshot Testing Lightbox renders properly" 1`] = `
           }
         }
         isOpen={true}
+        onAfterClose={[Function]}
         onAfterOpen={[Function]}
         onRequestClose={[Function]}
         overlayElement={[Function]}
@@ -349,6 +349,7 @@ exports[`Snapshot Testing Lightbox renders properly" 1`] = `
               tabIndex="-1"
             >
               <div
+                aria-hidden="true"
                 className="ril-inner ril__inner"
                 onClick={[Function]}
               >
@@ -419,61 +420,42 @@ exports[`Snapshot Testing Lightbox renders properly" 1`] = `
                   </div>
                 </div>
               </div>
+               
               <div
-                className="ril-toolbar ril__toolbar"
+                className="ril__toolbar"
               >
-                <ul
-                  className="ril-toolbar-left ril__toolbarSide ril__toolbarLeftSide"
+                <div
+                  className="ril_title"
                 >
-                  <li
-                    className="ril-toolbar__item ril__toolbarItem"
+                  <div
+                    className="ril_status"
                   >
-                    <span
-                      className="ril-toolbar__item__child ril__toolbarItemChild"
-                    />
-                  </li>
-                </ul>
-                <ul
-                  className="ril-toolbar-right ril__toolbarSide ril__toolbarRightSide"
+                    Image 
+                     of 
+                    2
+                  </div>
+                </div>
+                <div
+                  className="ril__toolbarItem"
                 >
-                  <li
-                    className="ril-toolbar__item ril__toolbarItem"
-                  >
-                    <button
-                      aria-label="Zoom in"
-                      className="ril-zoom-in ril__toolbarItemChild ril__builtinButton ril__zoomInButton"
-                      disabled={false}
-                      key="zoom-in"
-                      onClick={[Function]}
-                      title="Zoom in"
-                      type="button"
-                    />
-                  </li>
-                  <li
-                    className="ril-toolbar__item ril__toolbarItem"
-                  >
-                    <button
-                      aria-label="Zoom out"
-                      className="ril-zoom-out ril__toolbarItemChild ril__builtinButton ril__zoomOutButton ril__builtinButtonDisabled"
-                      disabled={true}
-                      key="zoom-out"
-                      title="Zoom out"
-                      type="button"
-                    />
-                  </li>
-                  <li
-                    className="ril-toolbar__item ril__toolbarItem"
-                  >
-                    <button
-                      aria-label="Close lightbox"
-                      className="ril-close ril-toolbar__item__child ril__toolbarItemChild ril__builtinButton ril__closeButton"
-                      key="close"
-                      onClick={[Function]}
-                      title="Close lightbox"
-                      type="button"
-                    />
-                  </li>
-                </ul>
+                  <button
+                    aria-label="Close lightbox"
+                    className="ril__toolbarItemChild ril__builtinButton ril__closeButton"
+                    key="close"
+                    onClick={[Function]}
+                    style={Object {}}
+                    title="Close lightbox"
+                    type="button"
+                  />
+                </div>
+                 
+              </div>
+              <div
+                className="ril__thumbNailsContainer"
+              >
+                <div
+                  className="ril__thumbNails"
+                />
               </div>
             </div>
           </div>

@@ -8,7 +8,7 @@
 }
 
 .ril__outer {
-  background-color: rgba(0, 0, 0, 0.85);
+  background-color: rgba(255, 255, 255, 0.95);
   outline: none;
   top: 0;
   left: 0;
@@ -102,7 +102,7 @@
 
 .ril__caption,
 .ril__toolbar {
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(255, 255, 255, 0.95);
   position: absolute;
   left: 0;
   right: 0;
@@ -111,9 +111,10 @@
 }
 
 .ril__caption {
+  display: flex;
+  flex-direction: column;
   bottom: 0;
-  max-height: 150px;
-  overflow: auto;
+  width: 100%;
 }
 
 .ril__captionContent {
@@ -124,6 +125,7 @@
 .ril__toolbar {
   top: 0;
   height: 50px;
+  justify-content: center;
 }
 
 .ril__toolbarSide {
@@ -146,7 +148,7 @@
 }
 
 .ril__toolbarItem {
-  display: inline-block;
+  display: flex;
   line-height: 50px;
   padding: 0;
   color: #fff;
@@ -159,6 +161,29 @@
 
 .ril__toolbarItemChild {
   vertical-align: middle;
+}
+.ril-top {
+  margin-top: 25;
+}
+.ril_header {
+  margin-top: 25;
+  display: flex;
+  flex-direction: row;
+}
+
+.ril_closeButton {
+  flex: 1;
+}
+
+.ril_status {
+  flex: 4;
+}
+
+.ril_title {
+  display: flex;
+  flex: 5;
+  flex-direction: column;
+  align-items: center;
 }
 
 .ril__builtinButton {
@@ -335,10 +360,60 @@
   display: none;
 }
 
+.ril__navButtonsThumbs {
+  border: none;
+  top: 0;
+  bottom: 0;
+  width: 20px;
+  height: 34px;
+  padding: 40px 30px;
+  margin: auto;
+  cursor: pointer;
+  opacity: 0.7;
+}
+
 .ril__loadingContainer__icon {
   color: #fff;
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translateX(-50%) translateY(-50%);
+}
+
+.ril__thumbNailsContainer {
+  display: flex;
+  bottom: 0;
+  margin-bottom: 12px;
+  margin-top: 12px;
+  height: 50px;
+  justify-content: center;
+  position: absolute;
+  width: 100%;
+  padding: 8px;
+  align-items: center;
+}
+
+.ril__thumbNails {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  max-height: 50px;
+  max-width: 432px;
+}
+
+.thumbNails img {
+  display: inline;
+}
+.thumbNails {
+  border: 2px solid transparent;
+}
+
+.thumbNails:hover {
+  border: 2px solid gray;
+}
+
+.thumbNailsactive {
+  border: 2px solid rgb(2, 118, 177);
 }

@@ -132,6 +132,7 @@ class ReactImageLightbox extends Component {
     this.requestClose = this.requestClose.bind(this);
     this.requestMoveNext = this.requestMoveNext.bind(this);
     this.requestMovePrev = this.requestMovePrev.bind(this);
+    this.requestMoveIndex = this.requestMoveIndex.bind(this);
 
     // Timeouts - always clear it before umount
     this.timeouts = [];
@@ -308,7 +309,6 @@ class ReactImageLightbox extends Component {
 
     return {
       src: imageSrc,
-      height: this.imageCache[imageSrc].height,
       width: this.imageCache[imageSrc].width,
       targetHeight: fitSizes.height,
       targetWidth: fitSizes.width,
@@ -318,8 +318,11 @@ class ReactImageLightbox extends Component {
   // Get sizing for when an image is larger than the window
   getFitSizes(width, height, stretch) {
     const boxSize = this.getLightboxRect();
-    let maxHeight = boxSize.height - this.props.imagePadding * 2;
-    let maxWidth = boxSize.width - this.props.imagePadding * 2;
+
+    let maxHeight =
+      boxSize.height - this.props.imagePadding * 2 - this.props.maxHeightOffset;
+    let maxWidth =
+      boxSize.width - this.props.imagePadding * 2 - this.props.maxWidthOffset;
 
     if (!stretch) {
       maxHeight = Math.min(maxHeight, height);
@@ -1263,17 +1266,20 @@ class ReactImageLightbox extends Component {
     this.requestMove('prev', event);
   }
 
+  requestMoveIndex(event) {
+    this.props.onMoveToIndexRequest(event);
+  }
+
   render() {
     const {
       animationDisabled,
       animationDuration,
       clickOutsideToClose,
       discourageDownloads,
-      enableZoom,
       imageTitle,
+      imageIndex,
       nextSrc,
       prevSrc,
-      toolbarButtons,
       reactModalStyle,
       onAfterOpen,
       imageCrossOrigin,
@@ -1446,6 +1452,8 @@ class ReactImageLightbox extends Component {
       },
     };
 
+    const isMobile = getWindowWidth() < this.props.widthBreakPoint;
+
     return (
       <Modal
         isOpen
@@ -1455,8 +1463,11 @@ class ReactImageLightbox extends Component {
           if (this.outerEl.current) {
             this.outerEl.current.focus();
           }
-
+          document.body.style.overflow = 'hidden';
           onAfterOpen();
+        }}
+        onAfterClose={() => {
+          document.body.removeAttribute('style');
         }}
         style={modalStyle}
         contentLabel={translate('Lightbox')}
@@ -1491,135 +1502,165 @@ class ReactImageLightbox extends Component {
             // Image holder
             className="ril-inner ril__inner"
             onClick={clickOutsideToClose ? this.closeIfClickInner : undefined}
+            aria-hidden="true"
           >
             {images}
           </div>
-
-          {prevSrc && (
+          {prevSrc && !isMobile ? (
             <button // Move to previous image button
               type="button"
-              className="ril-prev-button ril__navButtons ril__navButtonPrev"
+              className={`ril-prev-button ril__navButtons ${
+                this.props.prevButtonImage ? '' : 'ril__navButtonPrev'
+              }`}
               key="prev"
               aria-label={this.props.prevLabel}
               title={this.props.prevLabel}
               onClick={!this.isAnimating() ? this.requestMovePrev : undefined} // Ignore clicks during animation
+              style={
+                this.props.prevButtonImage
+                  ? {
+                      left: 0,
+                      background: `url('${this.props.prevButtonImage}') no-repeat center`,
+                    }
+                  : {}
+              }
             />
+          ) : (
+            ' '
           )}
-
-          {nextSrc && (
-            <button // Move to next image button
-              type="button"
-              className="ril-next-button ril__navButtons ril__navButtonNext"
-              key="next"
-              aria-label={this.props.nextLabel}
-              title={this.props.nextLabel}
-              onClick={!this.isAnimating() ? this.requestMoveNext : undefined} // Ignore clicks during animation
-            />
-          )}
-
-          <div // Lightbox toolbar
-            className="ril-toolbar ril__toolbar"
-          >
-            <ul className="ril-toolbar-left ril__toolbarSide ril__toolbarLeftSide">
-              <li className="ril-toolbar__item ril__toolbarItem">
-                <span className="ril-toolbar__item__child ril__toolbarItemChild">
-                  {imageTitle}
-                </span>
-              </li>
-            </ul>
-
-            <ul className="ril-toolbar-right ril__toolbarSide ril__toolbarRightSide">
-              {toolbarButtons &&
-                toolbarButtons.map((button, i) => (
-                  <li
-                    key={`button_${i + 1}`}
-                    className="ril-toolbar__item ril__toolbarItem"
-                  >
-                    {button}
-                  </li>
-                ))}
-
-              {enableZoom && (
-                <li className="ril-toolbar__item ril__toolbarItem">
-                  <button // Lightbox zoom in button
-                    type="button"
-                    key="zoom-in"
-                    aria-label={this.props.zoomInLabel}
-                    title={this.props.zoomInLabel}
-                    className={[
-                      'ril-zoom-in',
-                      'ril__toolbarItemChild',
-                      'ril__builtinButton',
-                      'ril__zoomInButton',
-                      ...(zoomLevel === MAX_ZOOM_LEVEL
-                        ? ['ril__builtinButtonDisabled']
-                        : []),
-                    ].join(' ')}
-                    ref={this.zoomInBtn}
-                    disabled={
-                      this.isAnimating() || zoomLevel === MAX_ZOOM_LEVEL
-                    }
-                    onClick={
-                      !this.isAnimating() && zoomLevel !== MAX_ZOOM_LEVEL
-                        ? this.handleZoomInButtonClick
-                        : undefined
-                    }
-                  />
-                </li>
-              )}
-
-              {enableZoom && (
-                <li className="ril-toolbar__item ril__toolbarItem">
-                  <button // Lightbox zoom out button
-                    type="button"
-                    key="zoom-out"
-                    aria-label={this.props.zoomOutLabel}
-                    title={this.props.zoomOutLabel}
-                    className={[
-                      'ril-zoom-out',
-                      'ril__toolbarItemChild',
-                      'ril__builtinButton',
-                      'ril__zoomOutButton',
-                      ...(zoomLevel === MIN_ZOOM_LEVEL
-                        ? ['ril__builtinButtonDisabled']
-                        : []),
-                    ].join(' ')}
-                    ref={this.zoomOutBtn}
-                    disabled={
-                      this.isAnimating() || zoomLevel === MIN_ZOOM_LEVEL
-                    }
-                    onClick={
-                      !this.isAnimating() && zoomLevel !== MIN_ZOOM_LEVEL
-                        ? this.handleZoomOutButtonClick
-                        : undefined
-                    }
-                  />
-                </li>
-              )}
-
-              <li className="ril-toolbar__item ril__toolbarItem">
+          {nextSrc &&
+            (!isMobile ? (
+              <button // Move to next image button
+                type="button"
+                className={`ril-next-button ril__navButtons ${
+                  this.props.nextButtonImage ? '' : 'ril__navButtonPrev'
+                }`}
+                key="next"
+                aria-label={this.props.nextLabel}
+                title={this.props.nextLabel}
+                onClick={!this.isAnimating() ? this.requestMoveNext : undefined} // Ignore clicks during animation
+                style={
+                  this.props.nextButtonImage
+                    ? {
+                        right: 0,
+                        background: `url('${this.props.nextButtonImage}') no-repeat center`,
+                      }
+                    : {}
+                }
+              />
+            ) : (
+              ''
+            ))}
+          {/* Lightbox toolbar */}
+          <div className="ril__toolbar">
+            {this.props.imageHeaderComponent ? (
+              <this.props.imageHeaderComponent
+                imageTitle={imageTitle}
+                imageIndex={imageIndex}
+                totalImageCount={images.length + 1}
+              />
+            ) : (
+              <div className="ril_title">
+                {imageTitle}
+                <div className="ril_status">
+                  Image {imageIndex} of {images.length + 1}
+                </div>
+              </div>
+            )}
+            <div className="ril__toolbarItem">
+              {this.props.closeButtonComponent ? (
+                <this.props.closeButtonComponent
+                  close={!this.isAnimating() ? this.requestClose : undefined}
+                  {...this.props.closeButtonComponentProps}
+                />
+              ) : (
                 <button // Lightbox close button
                   type="button"
                   key="close"
                   aria-label={this.props.closeLabel}
                   title={this.props.closeLabel}
-                  className="ril-close ril-toolbar__item__child ril__toolbarItemChild ril__builtinButton ril__closeButton"
+                  className={`ril__toolbarItemChild ril__builtinButton ${
+                    this.props.closeButtonImage ? '' : 'ril__closeButton'
+                  }`}
                   onClick={!this.isAnimating() ? this.requestClose : undefined} // Ignore clicks during animation
+                  style={
+                    this.props.closeButtonImage
+                      ? {
+                          background: `url('${this.props.closeButtonImage}') no-repeat center`,
+                        }
+                      : {}
+                  }
                 />
-              </li>
-            </ul>
+              )}
+            </div>{' '}
           </div>
+          {!isMobile && (
+            <div className="ril__thumbNailsContainer">
+              <div className="ril__thumbNails">
+                {/* TODO previous and Next thumbnail images should show more thumbs if available */}
+                {prevSrc && (
+                  <button // Move to previous image button
+                    type="button"
+                    className={`ril__thumbNails ril__navButtonsThumbs${
+                      this.props.thumbnailArrowLeft ? '' : 'ril__navButtonPrev'
+                    }`}
+                    key="prev"
+                    aria-label={this.props.prevLabel}
+                    title={this.props.prevLabel}
+                    onClick={
+                      !this.isAnimating() ? this.requestMovePrev : undefined
+                    } // Ignore clicks during animation
+                    style={
+                      this.props.thumbnailArrowLeft
+                        ? {
+                            background: `url('${this.props.thumbnailArrowLeft}') no-repeat center`,
+                          }
+                        : {}
+                    }
+                  />
+                )}
+                {this.props.thumbnailImages.map((img, index) => (
+                  <img
+                    className={`thumbNails${
+                      imageIndex === index + 1 ? 'active' : ''
+                    }`}
+                    style={{
+                      margin: '14px',
+                      padding: '2px',
+                      borderRadius: '4px',
+                    }}
+                    src={img}
+                    role="presentation"
+                    alt={img.caption}
+                    onClick={() => {
+                      return !this.isAnimating()
+                        ? this.requestMoveIndex({ index })
+                        : undefined;
+                    }}
+                  />
+                ))}
 
-          {this.props.imageCaption && (
-            // eslint-disable-next-line jsx-a11y/no-static-element-interactions
-            <div // Image caption
-              onWheel={this.handleCaptionMousewheel}
-              onMouseDown={event => event.stopPropagation()}
-              className="ril-caption ril__caption"
-              ref={this.caption}
-            >
-              <div className="ril-caption-content ril__captionContent">
-                {this.props.imageCaption}
+                {nextSrc && (
+                  <button // Move to next image button
+                    type="button"
+                    className={`ril__thumbNails ril__navButtonsThumbs${
+                      this.props.thumbnailArrowRight ? '' : 'ril__navButtonNext'
+                    }`}
+                    key="next"
+                    aria-label={this.props.nextLabel}
+                    title={this.props.nextLabel}
+                    onClick={
+                      !this.isAnimating() ? this.requestMoveNext : undefined
+                    } // Ignore clicks during animation
+                    style={
+                      this.props.thumbnailArrowRight
+                        ? {
+                            background: `url('${this.props.thumbnailArrowRight}') no-repeat center`,
+                          }
+                        : {}
+                    }
+                  />
+                )}
               </div>
             </div>
           )}
@@ -1676,6 +1717,9 @@ ReactImageLightbox.propTypes = {
   //  props.mainSrc becomes props.prevSrc, etc.
   onMoveNextRequest: PropTypes.func,
 
+  // Move to selected thumbnail Image
+  onMoveToIndexRequest: PropTypes.func,
+
   // Called when an image fails to load
   // (imageSrc: string, srcType: string, errorEvent: object): void
   onImageLoadError: PropTypes.func,
@@ -1724,6 +1768,7 @@ ReactImageLightbox.propTypes = {
 
   // Image title
   imageTitle: PropTypes.node,
+  imageIndex: PropTypes.node,
 
   // Image caption
   imageCaption: PropTypes.node,
@@ -1747,9 +1792,6 @@ ReactImageLightbox.propTypes = {
   // Other
   //-----------------------------
 
-  // Array of custom toolbar buttons
-  toolbarButtons: PropTypes.arrayOf(PropTypes.node),
-
   // When true, clicks outside of the image close the lightbox
   clickOutsideToClose: PropTypes.bool,
 
@@ -1770,12 +1812,32 @@ ReactImageLightbox.propTypes = {
 
   // custom loader
   loader: PropTypes.node,
+
+  // custom button images
+  nextButtonImage: PropTypes.string,
+  prevButtonImage: PropTypes.string,
+  closeButtonImage: PropTypes.string,
+  thumbnailImages: PropTypes.arrayOf(PropTypes.string),
+
+  // custom close button component
+  closeButtonComponent: PropTypes.element,
+  closeButtonComponentProps: PropTypes.shape({}),
+
+  // image header component
+  imageHeaderComponent: PropTypes.element,
+
+  // offset values to set the spacing properly between main image and thumbnails
+  maxHeightOffset: PropTypes.number,
+  maxWidthOffset: PropTypes.number,
+  thumbnailArrowLeft: PropTypes.element,
+  thumbnailArrowRight: PropTypes.element,
+  widthBreakPoint: PropTypes.number,
 };
 
 ReactImageLightbox.defaultProps = {
   imageTitle: null,
+  imageIndex: null,
   imageCaption: null,
-  toolbarButtons: null,
   reactModalProps: {},
   animationDisabled: false,
   animationDuration: 300,
@@ -1797,6 +1859,7 @@ ReactImageLightbox.defaultProps = {
   onImageLoad: () => {},
   onMoveNextRequest: () => {},
   onMovePrevRequest: () => {},
+  onMoveToIndexRequest: () => {},
   prevLabel: 'Previous image',
   prevSrc: null,
   prevSrcThumbnail: null,
@@ -1806,6 +1869,18 @@ ReactImageLightbox.defaultProps = {
   zoomOutLabel: 'Zoom out',
   imageLoadErrorMessage: 'This image failed to load',
   loader: undefined,
+  nextButtonImage: null,
+  prevButtonImage: null,
+  closeButtonImage: null,
+  thumbnailImages: [],
+  closeButtonComponent: null,
+  closeButtonComponentProps: {},
+  imageHeaderComponent: null,
+  maxHeightOffset: 0,
+  maxWidthOffset: 0,
+  thumbnailArrowLeft: null,
+  thumbnailArrowRight: null,
+  widthBreakPoint: 960,
 };
 
 export default ReactImageLightbox;
