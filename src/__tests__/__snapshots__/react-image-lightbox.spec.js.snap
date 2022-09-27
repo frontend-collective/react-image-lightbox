@@ -176,7 +176,6 @@ exports[`Snapshot Testing Lightbox renders properly" 1`] = `
                     </div>
                   </div>
                 </div>
-                 
                 <div
                   class="ril__toolbar"
                 >
@@ -203,6 +202,7 @@ exports[`Snapshot Testing Lightbox renders properly" 1`] = `
                   </div>
                    
                 </div>
+                 
                 <div
                   class="ril__thumbNailsContainer"
                 >
@@ -420,7 +420,6 @@ exports[`Snapshot Testing Lightbox renders properly" 1`] = `
                   </div>
                 </div>
               </div>
-               
               <div
                 className="ril__toolbar"
               >
@@ -450,6 +449,7 @@ exports[`Snapshot Testing Lightbox renders properly" 1`] = `
                 </div>
                  
               </div>
+               
               <div
                 className="ril__thumbNailsContainer"
               >
