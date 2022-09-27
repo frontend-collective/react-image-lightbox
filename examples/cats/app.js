@@ -177,6 +177,7 @@ class App extends Component {
               padding: '1.833rem',
             },
             fill: '#0D74AF',
+            tabIndex: 0,
           }}
           thumbnailImages={thumbs}
           imageHeaderComponent={ImageHeader}

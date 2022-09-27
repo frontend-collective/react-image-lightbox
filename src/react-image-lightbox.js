@@ -1506,6 +1506,49 @@ class ReactImageLightbox extends Component {
           >
             {images}
           </div>
+          {/* Lightbox toolbar */}
+          <div className="ril__toolbar">
+            {this.props.imageHeaderComponent ? (
+              <this.props.imageHeaderComponent
+                imageTitle={imageTitle}
+                imageIndex={imageIndex}
+                totalImageCount={images.length + 1}
+              />
+            ) : (
+              <div className="ril_title">
+                {imageTitle}
+                <div className="ril_status">
+                  Image {imageIndex} of {images.length + 1}
+                </div>
+              </div>
+            )}
+            <div className="ril__toolbarItem">
+              {this.props.closeButtonComponent ? (
+                <this.props.closeButtonComponent
+                  close={!this.isAnimating() ? this.requestClose : undefined}
+                  {...this.props.closeButtonComponentProps}
+                />
+              ) : (
+                <button // Lightbox close button
+                  type="button"
+                  key="close"
+                  aria-label={this.props.closeLabel}
+                  title={this.props.closeLabel}
+                  className={`ril__toolbarItemChild ril__builtinButton ${
+                    this.props.closeButtonImage ? '' : 'ril__closeButton'
+                  }`}
+                  onClick={!this.isAnimating() ? this.requestClose : undefined} // Ignore clicks during animation
+                  style={
+                    this.props.closeButtonImage
+                      ? {
+                          background: `url('${this.props.closeButtonImage}') no-repeat center`,
+                        }
+                      : {}
+                  }
+                />
+              )}
+            </div>{' '}
+          </div>
           {prevSrc && !isMobile ? (
             <button // Move to previous image button
               type="button"
@@ -1551,49 +1594,6 @@ class ReactImageLightbox extends Component {
             ) : (
               ''
             ))}
-          {/* Lightbox toolbar */}
-          <div className="ril__toolbar">
-            {this.props.imageHeaderComponent ? (
-              <this.props.imageHeaderComponent
-                imageTitle={imageTitle}
-                imageIndex={imageIndex}
-                totalImageCount={images.length + 1}
-              />
-            ) : (
-              <div className="ril_title">
-                {imageTitle}
-                <div className="ril_status">
-                  Image {imageIndex} of {images.length + 1}
-                </div>
-              </div>
-            )}
-            <div className="ril__toolbarItem">
-              {this.props.closeButtonComponent ? (
-                <this.props.closeButtonComponent
-                  close={!this.isAnimating() ? this.requestClose : undefined}
-                  {...this.props.closeButtonComponentProps}
-                />
-              ) : (
-                <button // Lightbox close button
-                  type="button"
-                  key="close"
-                  aria-label={this.props.closeLabel}
-                  title={this.props.closeLabel}
-                  className={`ril__toolbarItemChild ril__builtinButton ${
-                    this.props.closeButtonImage ? '' : 'ril__closeButton'
-                  }`}
-                  onClick={!this.isAnimating() ? this.requestClose : undefined} // Ignore clicks during animation
-                  style={
-                    this.props.closeButtonImage
-                      ? {
-                          background: `url('${this.props.closeButtonImage}') no-repeat center`,
-                        }
-                      : {}
-                  }
-                />
-              )}
-            </div>{' '}
-          </div>
           {!isMobile && (
             <div className="ril__thumbNailsContainer">
               <div className="ril__thumbNails">
