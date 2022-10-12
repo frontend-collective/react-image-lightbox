@@ -60,7 +60,7 @@ class ReactImageLightbox extends Component {
   }
 
   // Request to transition to the previous image
-  static getTransform({ x = 0, y = 0, zoom = 1, width, targetWidth }) {
+  static getTransform({ x = 0, y = 0, zoom = 1, rotate = 0, width, targetWidth }) {
     let nextX = x;
     const windowWidth = getWindowWidth();
     if (width > windowWidth) {
@@ -69,7 +69,7 @@ class ReactImageLightbox extends Component {
     const scaleFactor = zoom * (targetWidth / width);
 
     return {
-      transform: `translate3d(${nextX}px,${y}px,0) scale3d(${scaleFactor},${scaleFactor},1)`,
+      transform: `translate3d(${nextX}px,${y}px,0) scale3d(${scaleFactor},${scaleFactor},1) rotate(${rotate}deg)`,
     };
   }
 
@@ -87,6 +87,12 @@ class ReactImageLightbox extends Component {
 
       // Component parts should animate (e.g., when images are moving, or image is being zoomed)
       shouldAnimate: false,
+
+      //-----------------------------
+      // Rotation settings
+      //-----------------------------
+      // degree of rotation
+      rotate: props.rotate || 0,
 
       //-----------------------------
       // Zoom settings
@@ -111,6 +117,7 @@ class ReactImageLightbox extends Component {
     this.outerEl = React.createRef();
     this.zoomInBtn = React.createRef();
     this.zoomOutBtn = React.createRef();
+    this.rotateBtn = React.createRef();
     this.caption = React.createRef();
 
     this.closeIfClickInner = this.closeIfClickInner.bind(this);
@@ -132,6 +139,7 @@ class ReactImageLightbox extends Component {
     this.requestClose = this.requestClose.bind(this);
     this.requestMoveNext = this.requestMoveNext.bind(this);
     this.requestMovePrev = this.requestMovePrev.bind(this);
+    this.handleRotateButtonClick = this.handleRotateButtonClick.bind(this);
 
     // Timeouts - always clear it before umount
     this.timeouts = [];
@@ -1068,6 +1076,20 @@ class ReactImageLightbox extends Component {
     this.resizeTimeout = this.setTimeout(this.forceUpdate.bind(this), 100);
   }
 
+  handleRotateButtonClick() {
+    const { rotate } = this.state;
+    let degree = rotate;
+
+    if (degree >= 270) {
+      degree = 0;
+    } else {
+      degree += 90;
+    }
+
+    this.props.onImageRotate(degree);
+    this.setState({ rotate: degree });
+  }
+
   handleZoomInButtonClick() {
     const nextZoomLevel = this.state.zoomLevel + ZOOM_BUTTON_INCREMENT_SIZE;
     this.changeZoom(nextZoomLevel);
@@ -1220,11 +1242,12 @@ class ReactImageLightbox extends Component {
   }
 
   requestMove(direction, event) {
-    // Reset the zoom level on image move
+    // Reset the zoom level & rotation on image move
     const nextState = {
       zoomLevel: MIN_ZOOM_LEVEL,
       offsetX: 0,
       offsetY: 0,
+      rotate: 0,
     };
 
     // Enable animated states
@@ -1270,6 +1293,7 @@ class ReactImageLightbox extends Component {
       clickOutsideToClose,
       discourageDownloads,
       enableZoom,
+      enableRotate,
       imageTitle,
       nextSrc,
       prevSrc,
@@ -1286,6 +1310,7 @@ class ReactImageLightbox extends Component {
       offsetY,
       isClosing,
       loadErrorStatus,
+      rotate,
     } = this.state;
 
     const boxSize = this.getLightboxRect();
@@ -1420,6 +1445,7 @@ class ReactImageLightbox extends Component {
       x: -1 * offsetX,
       y: -1 * offsetY,
       zoom: zoomMultiplier,
+      rotate,
     });
     // Previous Image (displayed on the left)
     addImage('prevSrc', 'ril-image-prev ril__imagePrev', {
@@ -1538,6 +1564,29 @@ class ReactImageLightbox extends Component {
                     {button}
                   </li>
                 ))}
+
+              {enableRotate && (
+                  <li className="ril-toolbar__item ril__toolbarItem">
+                    <button // Lightbox rotate in button
+                      type="button"
+                      key="rotate"
+                      aria-label={this.props.rotateLabel}
+                      className={[
+                        'ril-rotate',
+                        'ril__toolbarItemChild',
+                        'ril__builtinButton',
+                        'ril__rotateButton',
+                      ].join(' ')}
+                      ref={this.rotateBtn}
+                      disabled={this.isAnimating()}
+                      onClick={
+                        !this.isAnimating()
+                          ? this.handleRotateButtonClick
+                          : undefined
+                      }
+                    />
+                  </li>
+              )}
 
               {enableZoom && (
                 <li className="ril-toolbar__item ril__toolbarItem">
@@ -1676,6 +1725,9 @@ ReactImageLightbox.propTypes = {
   //  props.mainSrc becomes props.prevSrc, etc.
   onMoveNextRequest: PropTypes.func,
 
+  // Called when the rotation of image changed
+  onImageRotate: PropTypes.func,
+
   // Called when an image fails to load
   // (imageSrc: string, srcType: string, errorEvent: object): void
   onImageLoadError: PropTypes.func,
@@ -1756,6 +1808,12 @@ ReactImageLightbox.propTypes = {
   // Set to false to disable zoom functionality and hide zoom buttons
   enableZoom: PropTypes.bool,
 
+  // Set to false to disable rotate functionality and hide rotate buttons
+  enableRotate: PropTypes.bool,
+
+  // Default rotate degree
+  rotate: PropTypes.number,
+
   // Override props set on react-modal (https://github.com/reactjs/react-modal)
   reactModalProps: PropTypes.shape({}),
 
@@ -1765,6 +1823,7 @@ ReactImageLightbox.propTypes = {
   zoomInLabel: PropTypes.string,
   zoomOutLabel: PropTypes.string,
   closeLabel: PropTypes.string,
+  rotateLabel: PropTypes.string,
 
   imageLoadErrorMessage: PropTypes.node,
 
@@ -1784,6 +1843,7 @@ ReactImageLightbox.defaultProps = {
   closeLabel: 'Close lightbox',
   discourageDownloads: false,
   enableZoom: true,
+  enableRotate: true,
   imagePadding: 10,
   imageCrossOrigin: null,
   keyRepeatKeyupBonus: 40,
@@ -1797,6 +1857,7 @@ ReactImageLightbox.defaultProps = {
   onImageLoad: () => {},
   onMoveNextRequest: () => {},
   onMovePrevRequest: () => {},
+  onImageRotate: () => {},
   prevLabel: 'Previous image',
   prevSrc: null,
   prevSrcThumbnail: null,
@@ -1806,6 +1867,8 @@ ReactImageLightbox.defaultProps = {
   zoomOutLabel: 'Zoom out',
   imageLoadErrorMessage: 'This image failed to load',
   loader: undefined,
+  rotate: 0,
+  rotateLabel: 'Rotate',
 };
 
 export default ReactImageLightbox;

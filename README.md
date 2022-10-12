@@ -116,6 +116,10 @@ Play with the code on the [example on CodeSandbox](https://codesandbox.io/s/l9n3
 | zoomOutLabel                    | string | `aria-label` and `title` set on the 'Zoom Out' button. Defaults to `'Zoom out'`.                                                                              |
 | closeLabel                      | string | `aria-label` and `title` set on the 'Close Lightbox' button. Defaults to `'Close lightbox'`.                                                                  |
 | loader                          |  node  | Custom Loading indicator for loading                                                                                                                          |
+| onImageRotate                   |  func  | Called when the rotation button is clicked                                                                                                                    |
+| enableRotate                    |  bool  | Set to `false` to disable rotate functionality and hide rotate buttons. Defaults to `true`.                                                                   |
+| rotateLabel                     | string | `aria-label` and `title` set on the 'Rotate' button. Defaults to `'Rotate'`.                                                                                  |
+| rotate                          | number | The default rotation number (degrees)                                                                                                                         |
 
 ## Browser Compatibility
 

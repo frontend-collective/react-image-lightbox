@@ -12,6 +12,7 @@ export interface ILightBoxProps {
     onMoveNextRequest?(): void;
     onImageLoad?(): void;
     onImageLoadError?(): void;
+    onImageRotate?(degree: number):void;
     imageLoadErrorMessage?: React.ReactNode;
     onAfterOpen?(): void;
     discourageDownloads?: boolean;
@@ -29,12 +30,15 @@ export interface ILightBoxProps {
     imagePadding?: number;
     clickOutsideToClose?: boolean;
     enableZoom?: boolean;
+    enableRotate?: boolean;
     wrapperClassName?: string;
     nextLabel?: string;
     prevLabel?: string;
     zoomInLabel?: string;
     zoomOutLabel?: string;
     closeLabel?: string;
+    rotateLabel?: string;
+    rotate: number;
 }
 
 export default class Lightbox extends React.Component<ILightBoxProps, never> { }

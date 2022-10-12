@@ -8,6 +8,7 @@ exports[`Snapshot Testing Lightbox renders properly" 1`] = `
   clickOutsideToClose={true}
   closeLabel="Close lightbox"
   discourageDownloads={false}
+  enableRotate={true}
   enableZoom={true}
   imageCaption={null}
   imageCrossOrigin={null}
@@ -25,6 +26,7 @@ exports[`Snapshot Testing Lightbox renders properly" 1`] = `
   onCloseRequest={[Function]}
   onImageLoad={[Function]}
   onImageLoadError={[Function]}
+  onImageRotate={[Function]}
   onMoveNextRequest={[Function]}
   onMovePrevRequest={[Function]}
   prevLabel="Previous image"
@@ -38,6 +40,8 @@ exports[`Snapshot Testing Lightbox renders properly" 1`] = `
     }
   }
   reactModalStyle={Object {}}
+  rotate={0}
+  rotateLabel="Rotate"
   toolbarButtons={null}
   wrapperClassName=""
   zoomInLabel="Zoom in"
@@ -113,7 +117,7 @@ exports[`Snapshot Testing Lightbox renders properly" 1`] = `
                 >
                   <div
                     class="ril-image-current ril__image ril-not-loaded"
-                    style="transform: translate3d(0px,0px,0) scale3d(NaN,NaN,1);"
+                    style="transform: translate3d(0px,0px,0) scale3d(NaN,NaN,1) rotate(0deg);"
                   >
                     <div
                       class="ril__loadingContainer"
@@ -178,6 +182,15 @@ exports[`Snapshot Testing Lightbox renders properly" 1`] = `
                   <ul
                     class="ril-toolbar-right ril__toolbarSide ril__toolbarRightSide"
                   >
+                    <li
+                      class="ril-toolbar__item ril__toolbarItem"
+                    >
+                      <button
+                        aria-label="Rotate"
+                        class="ril-rotate ril__toolbarItemChild ril__builtinButton ril__rotateButton"
+                        type="button"
+                      />
+                    </li>
                     <li
                       class="ril-toolbar__item ril__toolbarItem"
                     >
@@ -357,7 +370,7 @@ exports[`Snapshot Testing Lightbox renders properly" 1`] = `
                   key="/fake/image/src.jpgi0"
                   style={
                     Object {
-                      "transform": "translate3d(0px,0px,0) scale3d(NaN,NaN,1)",
+                      "transform": "translate3d(0px,0px,0) scale3d(NaN,NaN,1) rotate(0deg)",
                     }
                   }
                 >
@@ -436,6 +449,18 @@ exports[`Snapshot Testing Lightbox renders properly" 1`] = `
                 <ul
                   className="ril-toolbar-right ril__toolbarSide ril__toolbarRightSide"
                 >
+                  <li
+                    className="ril-toolbar__item ril__toolbarItem"
+                  >
+                    <button
+                      aria-label="Rotate"
+                      className="ril-rotate ril__toolbarItemChild ril__builtinButton ril__rotateButton"
+                      disabled={false}
+                      key="rotate"
+                      onClick={[Function]}
+                      type="button"
+                    />
+                  </li>
                   <li
                     className="ril-toolbar__item ril__toolbarItem"
                   >
