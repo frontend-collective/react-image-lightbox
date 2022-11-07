@@ -1476,6 +1476,7 @@ class ReactImageLightbox extends Component {
             ? global.window.document.body
             : undefined
         }
+        overlayClassName="modalOverlay"
         {...reactModalProps}
       >
         <div // eslint-disable-line jsx-a11y/no-static-element-interactions

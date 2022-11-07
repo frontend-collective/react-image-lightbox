@@ -71,6 +71,7 @@ exports[`Snapshot Testing Lightbox renders properly" 1`] = `
     onAfterClose={[Function]}
     onAfterOpen={[Function]}
     onRequestClose={[Function]}
+    overlayClassName="modalOverlay"
     overlayElement={[Function]}
     parentSelector={[Function]}
     portalClassName="ReactModalPortal"
@@ -106,8 +107,8 @@ exports[`Snapshot Testing Lightbox renders properly" 1`] = `
           class="ReactModalPortal"
         >
           <div
-            class="ReactModal__Overlay"
-            style="position: fixed; top: 0px; left: 0px; right: 0px; bottom: 0px; background-color: transparent; z-index: 1000;"
+            class="ReactModal__Overlay modalOverlay"
+            style="z-index: 1000; background-color: transparent;"
           >
             <div
               aria-label="Lightbox"
@@ -257,6 +258,7 @@ exports[`Snapshot Testing Lightbox renders properly" 1`] = `
         onAfterClose={[Function]}
         onAfterOpen={[Function]}
         onRequestClose={[Function]}
+        overlayClassName="modalOverlay"
         overlayElement={[Function]}
         parentSelector={[Function]}
         portalClassName="ReactModalPortal"
@@ -287,17 +289,12 @@ exports[`Snapshot Testing Lightbox renders properly" 1`] = `
         }
       >
         <div
-          className="ReactModal__Overlay"
+          className="ReactModal__Overlay modalOverlay"
           onClick={[Function]}
           onMouseDown={[Function]}
           style={
             Object {
               "backgroundColor": "transparent",
-              "bottom": 0,
-              "left": 0,
-              "position": "fixed",
-              "right": 0,
-              "top": 0,
               "zIndex": 1000,
             }
           }
