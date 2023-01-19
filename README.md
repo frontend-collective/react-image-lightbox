@@ -1,3 +1,7 @@
+> **NOTE**: This package is not maintained any more and will be archived.
+>
+> [react-photoswipe-gallery](https://www.npmjs.com/package/react-photoswipe-gallery) is a better-maintained and more feature-rich alternative (as of January 2023).
+
 # React Image Lightbox
 
 [![NPM](https://nodei.co/npm/react-image-lightbox.png)](https://npmjs.org/package/react-image-lightbox)
